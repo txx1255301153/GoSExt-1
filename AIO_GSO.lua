@@ -31,7 +31,7 @@ class "__gsoVars"
 --
 function __gsoVars:__init()
     self.loaded = true
-    self.version = "0.642"
+    self.version = "0.60"
     self.hName = myHero.charName
     self.supportedChampions = {
       ["Draven"] = true,
@@ -48,25 +48,6 @@ function __gsoVars:__init()
         self.loaded = false
         print("gamsteronAIO "..self.version.." | hero not supported !")
     end
-    self.Icons = {
-        ["arrow"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png",
-        ["ashe"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ashe.png",
-        ["botrk"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/botrk.png",
-        ["draven"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/draven.png",
-        ["circles"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/circles.png",
-        ["ezreal"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ezreal.png",
-        ["gsoaio"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/gsoaio.png",
-        ["item"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/item.png",
-        ["kog"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/kog.png",
-        ["orb"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png",
-        ["sivir"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/sivir.png",
-        ["teemo"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/teemo.png",
-        ["timer"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/timer.png",
-        ["tristana"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/tristana.png",
-        ["ts"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ts.png",
-        ["twitch"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/twitch.png",
-        ["vayne"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/vayne.png"
-    }
     self._aaSpeed       = function() return myHero.attackSpeed end
     self._champMenu     = function() return 0 end
     self._bonusDmg      = function() return 0 end
@@ -1798,7 +1779,7 @@ end
 --
 --
 function __gsoAshe:_menu()
-    gsoAIO.Load.menu:MenuElement({id = "gsoashe", name = "Ashe", type = MENU, leftIcon = gsoAIO.Vars.Icons["ashe"] })
+    gsoAIO.Load.menu:MenuElement({id = "gsoashe", name = "Ashe", type = MENU })
         gsoAIO.Load.menu.gsoashe:MenuElement({id = "rdist", name = "use R if enemy distance < X", value = 500, min = 250, max = 1000, step = 50})
         gsoAIO.Load.menu.gsoashe:MenuElement({id = "combo", name = "Combo", type = MENU})
             gsoAIO.Load.menu.gsoashe.combo:MenuElement({id = "qc", name = "UseQ", value = true})
@@ -2036,7 +2017,7 @@ end
 --
 --
 function __gsoTwitch:_menu()
-    gsoAIO.Load.menu:MenuElement({name = "Twitch", id = "gsotwitch", type = MENU, leftIcon = gsoAIO.Vars.Icons["twitch"] })
+    gsoAIO.Load.menu:MenuElement({name = "Twitch", id = "gsotwitch", type = MENU })
         gsoAIO.Load.menu.gsotwitch:MenuElement({name = "Q settings", id = "qset", type = MENU })
             gsoAIO.Load.menu.gsotwitch.qset:MenuElement({id = "recallkey", name = "Invisible Recall Key", key = string.byte("T"), value = false, toggle = true})
             gsoAIO.Load.menu.gsotwitch.qset:MenuElement({id = "note1", name = "Note: Key should be diffrent than recall key", type = SPACE})
@@ -2052,7 +2033,7 @@ function __gsoTwitch:_menu()
             gsoAIO.Load.menu.gsotwitch.eset:MenuElement({id = "enemies", name = "X enemies", value = 1, min = 1, max = 5, step = 1 })
         gsoAIO.Load.menu.gsotwitch:MenuElement({name = "Drawings", id = "draws", type = MENU })
             gsoAIO.Load.menu.gsotwitch.draws:MenuElement({id = "enable", name = "Enable", value = true})
-            gsoAIO.Load.menu.gsotwitch.draws:MenuElement({id = "timer", name = "Q Timer", leftIcon = gsoAIO.Vars.Icons["timer"], icon = gsoAIO.Vars.Icons["arrow"], type = SPACE,
+            gsoAIO.Load.menu.gsotwitch.draws:MenuElement({id = "timer", name = "Q Timer", type = SPACE,
                 onclick = function()
                     gsoAIO.Load.menu.gsotwitch.draws.enablet:Hide()
                     gsoAIO.Load.menu.gsotwitch.draws.colort:Hide()
@@ -2064,7 +2045,7 @@ function __gsoTwitch:_menu()
             gsoAIO.Load.menu.gsotwitch.draws:MenuElement({id = "enablet", name = "Enable", value = true})
             gsoAIO.Load.menu.gsotwitch.draws:MenuElement({id = "colort", name = "Color", color = Draw.Color(200, 65, 255, 100)})
             gsoAIO.Load.menu.gsotwitch.draws:MenuElement({id = "note2", name = "", type = SPACE})
-            gsoAIO.Load.menu.gsotwitch.draws:MenuElement({id = "circles1", name = "Circles", leftIcon = gsoAIO.Vars.Icons["circles"], icon = gsoAIO.Vars.Icons["arrow"], type = SPACE,
+            gsoAIO.Load.menu.gsotwitch.draws:MenuElement({id = "circles1", name = "Circles", type = SPACE,
                 onclick = function()
                     gsoAIO.Load.menu.gsotwitch.draws.invenable:Hide()
                     gsoAIO.Load.menu.gsotwitch.draws.notenable:Hide()
@@ -2415,7 +2396,7 @@ end
 --
 --
 function __gsoKogMaw:_menu()
-    gsoAIO.Load.menu:MenuElement({name = "Kog'Maw", id = "gsokog", type = MENU, leftIcon = gsoAIO.Vars.Icons["kog"] })
+    gsoAIO.Load.menu:MenuElement({name = "Kog'Maw", id = "gsokog", type = MENU })
         gsoAIO.Load.menu.gsokog:MenuElement({name = "Q settings", id = "qset", type = MENU })
             gsoAIO.Load.menu.gsokog.qset:MenuElement({id = "combo", name = "Combo", value = true})
             gsoAIO.Load.menu.gsokog.qset:MenuElement({id = "harass", name = "Harass", value = false})
@@ -2642,7 +2623,7 @@ end
 --
 --
 function __gsoDraven:_menu()
-    gsoAIO.Load.menu:MenuElement({name = "Draven", id = "gsodraven", type = MENU, leftIcon = gsoAIO.Vars.Icons["draven"] })
+    gsoAIO.Load.menu:MenuElement({name = "Draven", id = "gsodraven", type = MENU })
         gsoAIO.Load.menu.gsodraven:MenuElement({name = "AXE settings", id = "aset", type = MENU })
             gsoAIO.Load.menu.gsodraven.aset:MenuElement({id = "catch", name = "Catch axes", value = true})
             gsoAIO.Load.menu.gsodraven.aset:MenuElement({id = "catcht", name = "stop under turret", value = true})
@@ -2907,7 +2888,7 @@ end
 --
 --
 function __gsoEzreal:_menu()
-    gsoAIO.Load.menu:MenuElement({name = "Ezreal", id = "gsoezreal", type = MENU, leftIcon = gsoAIO.Vars.Icons["ezreal"] })
+    gsoAIO.Load.menu:MenuElement({name = "Ezreal", id = "gsoezreal", type = MENU })
         gsoAIO.Load.menu.gsoezreal:MenuElement({name = "Auto Q", id = "autoq", type = MENU })
             gsoAIO.Load.menu.gsoezreal.autoq:MenuElement({id = "enable", name = "Enable", value = true, key = string.byte("T"), toggle = true})
             gsoAIO.Load.menu.gsoezreal.autoq:MenuElement({id = "mana", name = "Q Auto min. mana percent", value = 50, min = 0, max = 100, step = 1 })
@@ -3344,7 +3325,7 @@ end
 --
 --
 function __gsoVayne:_menu()
-    gsoAIO.Load.menu:MenuElement({name = "Vayne", id = "gsovayne", type = MENU, leftIcon = gsoAIO.Vars.Icons["vayne"] })
+    gsoAIO.Load.menu:MenuElement({name = "Vayne", id = "gsovayne", type = MENU })
         gsoAIO.Load.menu.gsovayne:MenuElement({name = "Q settings", id = "qset", type = MENU })
             gsoAIO.Load.menu.gsovayne.qset:MenuElement({id = "combo", name = "Combo", value = true})
             gsoAIO.Load.menu.gsovayne.qset:MenuElement({id = "harass", name = "Harass", value = false})
@@ -3495,7 +3476,7 @@ end
 --
 --
 function __gsoTeemo:_menu()
-    gsoAIO.Load.menu:MenuElement({name = "Teemo", id = "gsoteemo", type = MENU, leftIcon = gsoAIO.Vars.Icons["teemo"] })
+    gsoAIO.Load.menu:MenuElement({name = "Teemo", id = "gsoteemo", type = MENU })
         gsoAIO.Load.menu.gsoteemo:MenuElement({name = "Q settings", id = "qset", type = MENU })
             gsoAIO.Load.menu.gsoteemo.qset:MenuElement({id = "combo", name = "Combo", value = true})
             gsoAIO.Load.menu.gsoteemo.qset:MenuElement({id = "harass", name = "Harass", value = false})
@@ -3614,7 +3595,7 @@ end
 --
 --
 function __gsoSivir:_menu()
-    gsoAIO.Load.menu:MenuElement({name = "Sivir", id = "gsosivir", type = MENU, leftIcon = gsoAIO.Vars.Icons["sivir"] })
+    gsoAIO.Load.menu:MenuElement({name = "Sivir", id = "gsosivir", type = MENU })
         gsoAIO.Load.menu.gsosivir:MenuElement({name = "Q settings", id = "qset", type = MENU })
             gsoAIO.Load.menu.gsosivir.qset:MenuElement({id = "combo", name = "Combo", value = true})
             gsoAIO.Load.menu.gsosivir.qset:MenuElement({id = "harass", name = "Harass", value = false})
@@ -3780,7 +3761,7 @@ end
 --
 --
 function __gsoTristana:_menu()
-    gsoAIO.Load.menu:MenuElement({name = "Tristana", id = "gsotristana", type = MENU, leftIcon = gsoAIO.Vars.Icons["tristana"] })
+    gsoAIO.Load.menu:MenuElement({name = "Tristana", id = "gsotristana", type = MENU })
         gsoAIO.Load.menu.gsotristana:MenuElement({name = "Q settings", id = "qset", type = MENU })
             gsoAIO.Load.menu.gsotristana.qset:MenuElement({id = "combo", name = "Combo", value = true})
             gsoAIO.Load.menu.gsotristana.qset:MenuElement({id = "harass", name = "Harass", value = false})
@@ -3963,7 +3944,7 @@ class "__gsoLoad"
 --
 --
 function __gsoLoad:__init()
-    self.menu = MenuElement({name = "Gamsteron AIO", id = "gamsteronaio", type = MENU, leftIcon = gsoAIO.Vars.Icons["gsoaio"] })
+    self.menu = MenuElement({name = "Gamsteron AIO", id = "gamsteronaio", type = MENU })
     Callback.Add('Load', function() self:_load() end)
 end
 --   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
@@ -3971,7 +3952,7 @@ end
 --
 --
 function __gsoLoad:_load()
-    self.menu:MenuElement({name = "Target Selector", id = "ts", type = MENU, leftIcon = gsoAIO.Vars.Icons["ts"] })
+    self.menu:MenuElement({name = "Target Selector", id = "ts", type = MENU })
         self.menu.ts:MenuElement({ id = "Mode", name = "Mode", value = 1, drop = { "Auto", "Closest", "Least Health", "Least Priority" } })
         if gsoAIO.Vars.meTristana then
             self.menu.ts:MenuElement({ id = "tristE", name = "Tristana E Target", type = MENU })
@@ -3987,7 +3968,7 @@ function __gsoLoad:_load()
                 self.menu.ts.selected.draw:MenuElement({name = "Color",  id = "color", color = Draw.Color(255, 204, 0, 0)})
                 self.menu.ts.selected.draw:MenuElement({name = "Width",  id = "width", value = 3, min = 1, max = 10})
                 self.menu.ts.selected.draw:MenuElement({name = "Radius",  id = "radius", value = 150, min = 1, max = 300})
-    self.menu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = gsoAIO.Vars.Icons["orb"] })
+    self.menu:MenuElement({name = "Orbwalker", id = "orb", type = MENU })
         self.menu.orb:MenuElement({name = "Delays", id = "delays", type = MENU})
             self.menu.orb.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 0, min = -50, max = 50, step = 1 })
             self.menu.orb.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = 0, max = 50, step = 1 })
@@ -4012,8 +3993,8 @@ function __gsoLoad:_load()
                 self.menu.orb.draw.cpos:MenuElement({name = "Color",  id = "color", color = Draw.Color(150, 153, 0, 76)})
                 self.menu.orb.draw.cpos:MenuElement({name = "Width",  id = "width", value = 5, min = 1, max = 10})
                 self.menu.orb.draw.cpos:MenuElement({name = "Radius",  id = "radius", value = 250, min = 1, max = 300})
-    self.menu:MenuElement({name = "Items", id = "gsoitem", type = MENU, leftIcon = gsoAIO.Vars.Icons["item"] })
-        self.menu.gsoitem:MenuElement({id = "botrk", name = "        botrk", value = true, leftIcon = gsoAIO.Vars.Icons["botrk"] })
+    self.menu:MenuElement({name = "Items", id = "gsoitem", type = MENU })
+        self.menu.gsoitem:MenuElement({id = "botrk", name = "        botrk", value = true })
     
     gsoAIO.Dmg = __gsoDmg()
     gsoAIO.Items = __gsoItems()
