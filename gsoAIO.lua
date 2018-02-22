@@ -993,18 +993,17 @@ function __gsoOrb:_orb(unit)
         self.animT = animT
     end
     
-    local unitValid = unit and not unit.dead and unit.isTargetable and unit.visible and unit.valid
-    if unitValid and unit.type == Obj_AI_Hero then
-        unitValid = gsoAIO.Utils:_isImmortal(unit, true) == false
-    end
-    
     self.canAA    = self.dActionsC == 0 and gsoAIO.Callbacks._canAttack(unit) and not gsoAIO.TS.isBlinded
     self.canAA    = self.canAA and (self.aaReset or Game.Timer() > self.serverStart - windUpAA + self.animT - gsoAIO.Utils.minPing - 0.05 )
     self.canMove  = self.dActionsC == 0 and gsoAIO.Callbacks._canMove(unit)
     self.canMove  = self.canMove and Game.Timer() > self.serverStart + extraWindUp - ( gsoAIO.Utils.minPing * 0.5 )
     
     unit = unit and unit or self.lastMinion
-    if unit and self.canAA then
+    local unitValid = unit and not unit.dead and unit.isTargetable and unit.visible and unit.valid
+    if unitValid and unit.type == Obj_AI_Hero then
+        unitValid = gsoAIO.Utils:_isImmortal(unit, true) == false
+    end
+    if unitValid and self.canAA then
         self:_attack(unit)
     elseif self.canMove then
         if self.lastMinion then
