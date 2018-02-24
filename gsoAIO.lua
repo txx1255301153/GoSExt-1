@@ -4793,14 +4793,14 @@ function __gsoVayne:_onMove(target)
 end
 
 function __gsoVayne:_canMove(target)
-    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 0, e = 500, r = 0 }) then
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 0, e = 400, r = 0 }) then
         return true
     end
     return false
 end
 
 function __gsoVayne:_canAttack(target)
-    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 400, w = 0, e = 600, r = 0 }) then
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 0, e = 500, r = 0 }) then
         return true
     end
     return false
