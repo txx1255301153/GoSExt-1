@@ -2,48 +2,145 @@
 local version = "0.645"
 local heroName = myHero.charName:lower()
 local supportedChampions = {
-    ["draven"] = true,
-    ["ezreal"] = true,
+    ["aatrox"] = false,
+    ["ahri"] = false,
+    ["akali"] = false,
+    ["alistar"] = false,
+    ["amumu"] = false,
+    ["anivia"] = false,
+    ["annie"] = false,
     ["ashe"] = true,
-    ["twitch"] = true,
+    ["aurelionsol"] = false,
+    ["azir"] = false,
+    ["bard"] = false,
+    ["blitzcrank"] = false,
+    ["brand"] = false,
+    ["braum"] = false,
+    ["caitlyn"] = false,
+    ["camille"] = false,
+    ["cassiopeia"] = false,
+    ["chogath"] = false,
+    ["corki"] = false,
+    ["darius"] = false,
+    ["diana"] = false,
+    ["drmundo"] = false,
+    ["draven"] = true,
+    ["ekko"] = false,
+    ["elise"] = false,
+    ["evelynn"] = false,
+    ["ezreal"] = true,
+    ["fiddlesticks"] = false,
+    ["fiora"] = false,
+    ["fizz"] = false,
+    ["galio"] = false,
+    ["gangplank"] = false,
+    ["garen"] = false,
+    ["gnar"] = false,
+    ["gragas"] = false,
+    ["graves"] = false,
+    ["hecarim"] = false,
+    ["heimerdinger"] = false,
+    ["illaoi"] = false,
+    ["irelia"] = false,
+    ["ivern"] = false,
+    ["janna"] = false,
+    ["jarvaniv"] = false,
+    ["jax"] = false,
+    ["jayce"] = false,
+    ["jhin"] = false,
+    ["jinx"] = true,
+    ["kalista"] = false,
+    ["karma"] = false,
+    ["karthus"] = false,
+    ["kassadin"] = false,
+    ["katarina"] = false,
+    ["kayle"] = false,
+    ["kayn"] = false,
+    ["kennen"] = false,
+    ["khazix"] = false,
+    ["kindred"] = false,
+    ["kled"] = false,
     ["kogmaw"] = true,
-    ["vayne"] = true,
-    ["teemo"] = true,
+    ["leblanc"] = false,
+    ["leesin"] = false,
+    ["leona"] = false,
+    ["lissandra"] = false,
+    ["lucian"] = false,
+    ["lulu"] = false,
+    ["lux"] = false,
+    ["malphite"] = false,
+    ["malzahar"] = false,
+    ["maokai"] = false,
+    ["masteryi"] = false,
+    ["missfortune"] = false,
+    ["monkeyking"] = false,
+    ["mordekaiser"] = false,
+    ["morgana"] = false,
+    ["nami"] = false,
+    ["nasus"] = false,
+    ["nautilus"] = false,
+    ["nidalee"] = false,
+    ["nocturne"] = false,
+    ["nunu"] = false,
+    ["olaf"] = false,
+    ["orianna"] = false,
+    ["ornn"] = false,
+    ["pantheon"] = false,
+    ["poppy"] = false,
+    ["quinn"] = false,
+    ["rakan"] = false,
+    ["rammus"] = false,
+    ["reksai"] = false,
+    ["renekton"] = false,
+    ["rengar"] = false,
+    ["riven"] = false,
+    ["rumble"] = false,
+    ["ryze"] = false,
+    ["sejuani"] = false,
+    ["shaco"] = false,
+    ["shen"] = false,
+    ["shyvana"] = false,
+    ["singed"] = false,
+    ["sion"] = false,
     ["sivir"] = true,
+    ["skarner"] = false,
+    ["sona"] = false,
+    ["soraka"] = false,
+    ["swain"] = false,
+    ["syndra"] = false,
+    ["tahmkench"] = false,
+    ["taliyah"] = false,
+    ["talon"] = false,
+    ["taric"] = false,
+    ["teemo"] = true,
+    ["thresh"] = false,
     ["tristana"] = true,
-    ["jinx"] = true
-    --[[
-    ["nami"] = true,
-    ["heimerdinger"] = true,
-    ["katarina"] = true,
-    ["caitlyn"] = true,
-    ["jhin"] = true,
-    ["lucian"] = true,
-    ["gangplank"] = true,
-    ["karthus"] = true,
-    ["missfortune"] = true,
-    ["sona"] = true,
-    ["janna"] = true,
-    ["morgana"] = true,
-    ["lulu"] = true,
-    ["karma"] = true,
-    ["malzahar"] = true,
-    ["kayle"] = true,
-    ["annie"] = true,
-    ["jax"] = true,
-    ["veigar"] = true,
-    ["kassadin"] = true,
-    ["ryze"] = true,
-    ["wukong"] = true,
-    ["tryndamere"] = true,
-    ["diana"] = true,
-    ["akali"] = true,
-    ["vladimir"] = true,
-    ["xerath"] = true,
-    ["nidalee"] = true,
-    ["twistedfate"] = true,
-    ["lux"] = true,
-    ["kennen"] = true]]
+    ["trundle"] = false,
+    ["tryndamere"] = false,
+    ["twistedfate"] = false,
+    ["twitch"] = true,
+    ["udyr"] = false,
+    ["urgot"] = false,
+    ["varus"] = false,
+    ["vayne"] = true,
+    ["veigar"] = false,
+    ["velkoz"] = false,
+    ["vi"] = false,
+    ["viktor"] = false,
+    ["vladimir"] = false,
+    ["volibear"] = false,
+    ["warwick"] = false,
+    ["xayah"] = false,
+    ["xerath"] = false,
+    ["xinzhao"] = false,
+    ["yasuo"] = false,
+    ["yorick"] = false,
+    ["zac"] = false,
+    ["zed"] = false,
+    ["ziggs"] = false,
+    ["zilean"] = false,
+    ["zoe"] = false,
+    ["zyra"] = false
 }
 if not supportedChampions[heroName] then
     print("gamsteronAIO "..version.." | hero not supported !")
@@ -214,484 +311,329 @@ class "__gsoMenu"
 function __gsoMenu:__init()
     self.Icons = {
         ["arrow"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png",
-        ["ashe"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ashe.png",
         ["botrk"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/botrk.png",
-        ["draven"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/draven.png",
         ["circles"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/circles.png",
-        ["ezreal"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ezreal.png",
         ["gsoaio"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/gsoaio.png",
         ["item"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/item.png",
-        ["kog"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/kog.png",
         ["orb"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png",
-        ["sivir"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/sivir.png",
-        ["teemo"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/teemo.png",
         ["timer"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/timer.png",
-        ["tristana"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/tristana.png",
         ["ts"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ts.png",
-        ["twitch"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/twitch.png",
-        ["vayne"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/vayne.png",
-        ["jinx"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/jinx.png",
         ["mpotion"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/mpotion.png",
-        ["nami"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/nami.png",
-        ["heimerdinger"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/heimerdinger.png",
-        ["katarina"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/katarina.png",
-        ["caitlyn"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/caitlyn.png",
-        ["jhin"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/jhin.png",
-        ["lucian"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/lucian.png",
-        ["gangplank"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/gangplank.png",
-        ["karthus"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/karthus.png",
-        ["missfortune"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/missfortune.png",
-        ["sona"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/sona.png",
-        ["janna"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/janna.png",
-        ["morgana"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/morgana.png",
-        ["lulu"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/lulu.png",
-        ["karma"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/karma.png",
-        ["malzahar"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/malzahar.png",
-        ["kayle"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/kayle.png",
-        ["annie"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/annie.png",
-        ["jax"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/jax.png",
-        ["veigar"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/veigar.png",
-        ["kassadin"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/kassadin.png",
-        ["ryze"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ryze.png",
-        ["wukong"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/wukong.png",
-        ["tryndamere"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/tryndamere.png",
-        ["diana"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/diana.png",
+        ["aatrox"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/aatrox.png",
+        ["ahri"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ahri.png",
         ["akali"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/akali.png",
-        ["xerath"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/xerath.png",
-        ["nidalee"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/nidalee.png",
-        ["twistedfate"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/twistedfate.png",
+        ["alistar"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/alistar.png",
+        ["amumu"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/amumu.png",
+        ["anivia"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/anivia.png",
+        ["annie"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/annie.png",
+        ["ashe"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ashe.png",
+        ["aurelionsol"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/aurelionsol.png",
+        ["azir"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/azir.png",
+        ["bard"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/bard.png",
+        ["blitzcrank"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/blitzcrank.png",
+        ["brand"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/brand.png",
+        ["braum"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/braum.png",
+        ["caitlyn"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/caitlyn.png",
+        ["camille"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/camille.png",
+        ["cassiopeia"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/cassiopeia.png",
+        ["chogath"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/chogath.png",
+        ["corki"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/corki.png",
+        ["darius"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/darius.png",
+        ["diana"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/diana.png",
+        ["drmundo"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/drmundo.png",
+        ["draven"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/draven.png",
+        ["ekko"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ekko.png",
+        ["elise"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/elise.png",
+        ["evelynn"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/evelynn.png",
+        ["ezreal"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ezreal.png",
+        ["fiddlesticks"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/fiddlesticks.png",
+        ["fiora"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/fiora.png",
+        ["fizz"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/fizz.png",
+        ["galio"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/galio.png",
+        ["gangplank"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/gangplank.png",
+        ["garen"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/garen.png",
+        ["gnar"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/gnar.png",
+        ["gragas"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/gragas.png",
+        ["graves"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/graves.png",
+        ["hecarim"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/hecarim.png",
+        ["heimerdinger"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/heimerdinger.png",
+        ["illaoi"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/illaoi.png",
+        ["irelia"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/irelia.png",
+        ["ivern"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ivern.png",
+        ["janna"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/janna.png",
+        ["jarvaniv"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/jarvaniv.png",
+        ["jax"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/jax.png",
+        ["jayce"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/jayce.png",
+        ["jhin"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/jhin.png",
+        ["jinx"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/jinx.png",
+        ["kalista"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/kalista.png",
+        ["karma"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/karma.png",
+        ["karthus"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/karthus.png",
+        ["kassadin"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/kassadin.png",
+        ["katarina"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/katarina.png",
+        ["kayle"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/kayle.png",
+        ["kayn"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/kayn.png",
+        ["kennen"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/kennen.png",
+        ["khazix"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/khazix.png",
+        ["kindred"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/kindred.png",
+        ["kled"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/kled.png",
+        ["kog"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/kog.png",
+        ["leblanc"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/leblanc.png",
+        ["leesin"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/leesin.png",
+        ["leona"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/leona.png",
+        ["lissandra"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/lissandra.png",
+        ["lucian"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/lucian.png",
+        ["lulu"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/lulu.png",
         ["lux"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/lux.png",
-        ["kennen"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/kennen.png"
+        ["malphite"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/malphite.png",
+        ["malzahar"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/malzahar.png",
+        ["maokai"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/maokai.png",
+        ["masteryi"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/masteryi.png",
+        ["missfortune"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/missfortune.png",
+        ["monkeyking"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/monkeyking.png",
+        ["mordekaiser"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/mordekaiser.png",
+        ["morgana"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/morgana.png",
+        ["nami"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/nami.png",
+        ["nasus"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/nasus.png",
+        ["nautilus"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/nautilus.png",
+        ["nidalee"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/nidalee.png",
+        ["nocturne"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/nocturne.png",
+        ["nunu"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/nunu.png",
+        ["olaf"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/olaf.png",
+        ["orianna"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orianna.png",
+        ["ornn"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ornn.png",
+        ["pantheon"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/pantheon.png",
+        ["poppy"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/poppy.png",
+        ["quinn"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/quinn.png",
+        ["rakan"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/rakan.png",
+        ["rammus"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/rammus.png",
+        ["reksai"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/reksai.png",
+        ["renekton"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/renekton.png",
+        ["rengar"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/rengar.png",
+        ["riven"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/riven.png",
+        ["rumble"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/rumble.png",
+        ["ryze"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ryze.png",
+        ["sejuani"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/sejuani.png",
+        ["shaco"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/shaco.png",
+        ["shen"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/shen.png",
+        ["shyvana"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/shyvana.png",
+        ["singed"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/singed.png",
+        ["sion"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/sion.png",
+        ["sivir"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/sivir.png",
+        ["skarner"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/skarner.png",
+        ["sona"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/sona.png",
+        ["soraka"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/soraka.png",
+        ["swain"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/swain.png",
+        ["syndra"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/syndra.png",
+        ["tahmkench"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/tahmkench.png",
+        ["taliyah"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/taliyah.png",
+        ["talon"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/talon.png",
+        ["taric"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/taric.png",
+        ["teemo"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/teemo.png",
+        ["thresh"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/thresh.png",
+        ["tristana"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/tristana.png",
+        ["trundle"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/trundle.png",
+        ["tryndamere"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/tryndamere.png",
+        ["twistedfate"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/twistedfate.png",
+        ["twitch"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/twitch.png",
+        ["udyr"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/udyr.png",
+        ["urgot"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/urgot.png",
+        ["varus"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/varus.png",
+        ["vayne"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/vayne.png",
+        ["veigar"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/veigar.png",
+        ["velkoz"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/velkoz.png",
+        ["vi"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/vi.png",
+        ["viktor"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/viktor.png",
+        ["vladimir"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/vladimir.png",
+        ["volibear"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/volibear.png",
+        ["warwick"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/warwick.png",
+        ["xayah"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/xayah.png",
+        ["xerath"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/xerath.png",
+        ["xinzhao"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/xinzhao.png",
+        ["yasuo"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/yasuo.png",
+        ["yorick"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/yorick.png",
+        ["zac"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/zac.png",
+        ["zed"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/zed.png",
+        ["ziggs"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ziggs.png",
+        ["zilean"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/zilean.png",
+        ["zoe"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/zoe.png",
+        ["zyra"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/zyra.png"
     }
     self.menu = MenuElement({name = "Gamsteron AIO", id = "gamsteronaio", type = MENU, leftIcon = self.Icons["gsoaio"] })
 end
 
 function __gsoMenu:_menuChamp()
-    if gsoAIO.Load.meTristana then self:_menuTristana()
-    elseif gsoAIO.Load.meSivir then self:_menuSivir()
-    elseif gsoAIO.Load.meVayne then self:_menuVayne()
-    elseif gsoAIO.Load.meKog then self:_menuKog()
-    elseif gsoAIO.Load.meTwitch then self:_menuTwitch()
-    elseif gsoAIO.Load.meAshe then self:_menuAshe()
-    elseif gsoAIO.Load.meEzreal then self:_menuEzreal()
-    elseif gsoAIO.Load.meDraven then self:_menuDraven()
-    elseif gsoAIO.Load.meTeemo then self:_menuTeemo()
-    elseif gsoAIO.Load.meJinx then self:_menuJinx()
-    elseif gsoAIO.Load.meNami then self:_menuNami()
-    elseif gsoAIO.Load.menuHeimerdinger then self:_menuHeimerdinger()
-    elseif gsoAIO.Load.menuKatarina then self:_menuKatarina()
-    elseif gsoAIO.Load.meCaitlyn then self:_menuCaitlyn()
-    elseif gsoAIO.Load.meJhin then self:_menuJhin()
-    elseif gsoAIO.Load.meLucian then self:_menuLucian()
-    elseif gsoAIO.Load.meGangplank then self:_menuGangplank()
-    elseif gsoAIO.Load.meKarthus then self:_menuKarthus()
-    elseif gsoAIO.Load.meMissfortune then self:_menuMissfortune()
-    elseif gsoAIO.Load.meSona then self:_menuSona()
-    elseif gsoAIO.Load.meJanna then self:_menuJanna()
-    elseif gsoAIO.Load.meMorgana then self:_menuMorgana()
-    elseif gsoAIO.Load.meLulu then self:_menuLulu()
-    elseif gsoAIO.Load.meKarma then self:_menuKarma()
-    elseif gsoAIO.Load.meMalzahar then self:_menuMalzahar()
-    elseif gsoAIO.Load.meKayle then self:_menuKayle()
-    elseif gsoAIO.Load.meAnnie then self:_menuAnnie()
-    elseif gsoAIO.Load.meJax then self:_menuJax()
-    elseif gsoAIO.Load.meVeigar then self:_menuVeigar()
-    elseif gsoAIO.Load.meKassadin then self:_menuKassadin()
-    elseif gsoAIO.Load.meRyze then self:_menuRyze()
-    elseif gsoAIO.Load.meWukong then self:_menuWukong()
-    elseif gsoAIO.Load.meTryndamere then self:_menuTryndamere()
-    elseif gsoAIO.Load.meDiana then self:_menuDiana()
+    if gsoAIO.Load.meAatrox then self:_menuAatrox()
+    elseif gsoAIO.Load.meAhri then self:_menuAhri()
     elseif gsoAIO.Load.meAkali then self:_menuAkali()
-    elseif gsoAIO.Load.meVladimir then self:_menuVladimir()
-    elseif gsoAIO.Load.meXerath then self:_menuXerath()
-    elseif gsoAIO.Load.meNidalee then self:_menuNidalee()
-    elseif gsoAIO.Load.meTwistedfate then self:_menuTwistedfate()
+    elseif gsoAIO.Load.meAlistar then self:_menuAlistar()
+    elseif gsoAIO.Load.meAmumu then self:_menuAmumu()
+    elseif gsoAIO.Load.meAnivia then self:_menuAnivia()
+    elseif gsoAIO.Load.meAnnie then self:_menuAnnie()
+    elseif gsoAIO.Load.meAshe then self:_menuAshe()
+    elseif gsoAIO.Load.meAurelionSol then self:_menuAurelionSol()
+    elseif gsoAIO.Load.meAzir then self:_menuAzir()
+    elseif gsoAIO.Load.meBard then self:_menuBard()
+    elseif gsoAIO.Load.meBlitzcrank then self:_menuBlitzcrank()
+    elseif gsoAIO.Load.meBrand then self:_menuBrand()
+    elseif gsoAIO.Load.meBraum then self:_menuBraum()
+    elseif gsoAIO.Load.meCaitlyn then self:_menuCaitlyn()
+    elseif gsoAIO.Load.meCamille then self:_menuCamille()
+    elseif gsoAIO.Load.meCassiopeia then self:_menuCassiopeia()
+    elseif gsoAIO.Load.meChogath then self:_menuChogath()
+    elseif gsoAIO.Load.meCorki then self:_menuCorki()
+    elseif gsoAIO.Load.meDarius then self:_menuDarius()
+    elseif gsoAIO.Load.meDiana then self:_menuDiana()
+    elseif gsoAIO.Load.meDrMundo then self:_menuDrMundo()
+    elseif gsoAIO.Load.meDraven then self:_menuDraven()
+    elseif gsoAIO.Load.meEkko then self:_menuEkko()
+    elseif gsoAIO.Load.meElise then self:_menuElise()
+    elseif gsoAIO.Load.meEvelynn then self:_menuEvelynn()
+    elseif gsoAIO.Load.meEzreal then self:_menuEzreal()
+    elseif gsoAIO.Load.meFiddlesticks then self:_menuFiddlesticks()
+    elseif gsoAIO.Load.meFiora then self:_menuFiora()
+    elseif gsoAIO.Load.meFizz then self:_menuFizz()
+    elseif gsoAIO.Load.meGalio then self:_menuGalio()
+    elseif gsoAIO.Load.meGangplank then self:_menuGangplank()
+    elseif gsoAIO.Load.meGaren then self:_menuGaren()
+    elseif gsoAIO.Load.meGnar then self:_menuGnar()
+    elseif gsoAIO.Load.meGragas then self:_menuGragas()
+    elseif gsoAIO.Load.meGraves then self:_menuGraves()
+    elseif gsoAIO.Load.meHecarim then self:_menuHecarim()
+    elseif gsoAIO.Load.meHeimerdinger then self:_menuHeimerdinger()
+    elseif gsoAIO.Load.meIllaoi then self:_menuIllaoi()
+    elseif gsoAIO.Load.meIrelia then self:_menuIrelia()
+    elseif gsoAIO.Load.meIvern then self:_menuIvern()
+    elseif gsoAIO.Load.meJanna then self:_menuJanna()
+    elseif gsoAIO.Load.meJarvanIV then self:_menuJarvanIV()
+    elseif gsoAIO.Load.meJax then self:_menuJax()
+    elseif gsoAIO.Load.meJayce then self:_menuJayce()
+    elseif gsoAIO.Load.meJhin then self:_menuJhin()
+    elseif gsoAIO.Load.meJinx then self:_menuJinx()
+    elseif gsoAIO.Load.meKalista then self:_menuKalista()
+    elseif gsoAIO.Load.meKarma then self:_menuKarma()
+    elseif gsoAIO.Load.meKarthus then self:_menuKarthus()
+    elseif gsoAIO.Load.meKassadin then self:_menuKassadin()
+    elseif gsoAIO.Load.meKatarina then self:_menuKatarina()
+    elseif gsoAIO.Load.meKayle then self:_menuKayle()
+    elseif gsoAIO.Load.meKayn then self:_menuKayn()
+    elseif gsoAIO.Load.meKennen then self:_menuKennen()
+    elseif gsoAIO.Load.meKhazix then self:_menuKhazix()
+    elseif gsoAIO.Load.meKindred then self:_menuKindred()
+    elseif gsoAIO.Load.meKled then self:_menuKled()
+    elseif gsoAIO.Load.meKogMaw then self:_menuKogMaw()
+    elseif gsoAIO.Load.meLeblanc then self:_menuLeblanc()
+    elseif gsoAIO.Load.meLeeSin then self:_menuLeeSin()
+    elseif gsoAIO.Load.meLeona then self:_menuLeona()
+    elseif gsoAIO.Load.meLissandra then self:_menuLissandra()
+    elseif gsoAIO.Load.meLucian then self:_menuLucian()
+    elseif gsoAIO.Load.meLulu then self:_menuLulu()
     elseif gsoAIO.Load.meLux then self:_menuLux()
-    elseif gsoAIO.Load.meKennen then self:_menuKennen() end
+    elseif gsoAIO.Load.meMalphite then self:_menuMalphite()
+    elseif gsoAIO.Load.meMalzahar then self:_menuMalzahar()
+    elseif gsoAIO.Load.meMaokai then self:_menuMaokai()
+    elseif gsoAIO.Load.meMasterYi then self:_menuMasterYi()
+    elseif gsoAIO.Load.meMissFortune then self:_menuMissFortune()
+    elseif gsoAIO.Load.meMonkeyKing then self:_menuMonkeyKing()
+    elseif gsoAIO.Load.meMordekaiser then self:_menuMordekaiser()
+    elseif gsoAIO.Load.meMorgana then self:_menuMorgana()
+    elseif gsoAIO.Load.meNami then self:_menuNami()
+    elseif gsoAIO.Load.meNasus then self:_menuNasus()
+    elseif gsoAIO.Load.meNautilus then self:_menuNautilus()
+    elseif gsoAIO.Load.meNidalee then self:_menuNidalee()
+    elseif gsoAIO.Load.meNocturne then self:_menuNocturne()
+    elseif gsoAIO.Load.meNunu then self:_menuNunu()
+    elseif gsoAIO.Load.meOlaf then self:_menuOlaf()
+    elseif gsoAIO.Load.meOrianna then self:_menuOrianna()
+    elseif gsoAIO.Load.meOrnn then self:_menuOrnn()
+    elseif gsoAIO.Load.mePantheon then self:_menuPantheon()
+    elseif gsoAIO.Load.mePoppy then self:_menuPoppy()
+    elseif gsoAIO.Load.meQuinn then self:_menuQuinn()
+    elseif gsoAIO.Load.meRakan then self:_menuRakan()
+    elseif gsoAIO.Load.meRammus then self:_menuRammus()
+    elseif gsoAIO.Load.meRekSai then self:_menuRekSai()
+    elseif gsoAIO.Load.meRenekton then self:_menuRenekton()
+    elseif gsoAIO.Load.meRengar then self:_menuRengar()
+    elseif gsoAIO.Load.meRiven then self:_menuRiven()
+    elseif gsoAIO.Load.meRumble then self:_menuRumble()
+    elseif gsoAIO.Load.meRyze then self:_menuRyze()
+    elseif gsoAIO.Load.meSejuani then self:_menuSejuani()
+    elseif gsoAIO.Load.meShaco then self:_menuShaco()
+    elseif gsoAIO.Load.meShen then self:_menuShen()
+    elseif gsoAIO.Load.meShyvana then self:_menuShyvana()
+    elseif gsoAIO.Load.meSinged then self:_menuSinged()
+    elseif gsoAIO.Load.meSion then self:_menuSion()
+    elseif gsoAIO.Load.meSivir then self:_menuSivir()
+    elseif gsoAIO.Load.meSkarner then self:_menuSkarner()
+    elseif gsoAIO.Load.meSona then self:_menuSona()
+    elseif gsoAIO.Load.meSoraka then self:_menuSoraka()
+    elseif gsoAIO.Load.meSwain then self:_menuSwain()
+    elseif gsoAIO.Load.meSyndra then self:_menuSyndra()
+    elseif gsoAIO.Load.meTahmKench then self:_menuTahmKench()
+    elseif gsoAIO.Load.meTaliyah then self:_menuTaliyah()
+    elseif gsoAIO.Load.meTalon then self:_menuTalon()
+    elseif gsoAIO.Load.meTaric then self:_menuTaric()
+    elseif gsoAIO.Load.meTeemo then self:_menuTeemo()
+    elseif gsoAIO.Load.meThresh then self:_menuThresh()
+    elseif gsoAIO.Load.meTristana then self:_menuTristana()
+    elseif gsoAIO.Load.meTrundle then self:_menuTrundle()
+    elseif gsoAIO.Load.meTryndamere then self:_menuTryndamere()
+    elseif gsoAIO.Load.meTwistedFate then self:_menuTwistedFate()
+    elseif gsoAIO.Load.meTwitch then self:_menuTwitch()
+    elseif gsoAIO.Load.meUdyr then self:_menuUdyr()
+    elseif gsoAIO.Load.meUrgot then self:_menuUrgot()
+    elseif gsoAIO.Load.meVarus then self:_menuVarus()
+    elseif gsoAIO.Load.meVayne then self:_menuVayne()
+    elseif gsoAIO.Load.meVeigar then self:_menuVeigar()
+    elseif gsoAIO.Load.meVelkoz then self:_menuVelkoz()
+    elseif gsoAIO.Load.meVi then self:_menuVi()
+    elseif gsoAIO.Load.meViktor then self:_menuViktor()
+    elseif gsoAIO.Load.meVladimir then self:_menuVladimir()
+    elseif gsoAIO.Load.meVolibear then self:_menuVolibear()
+    elseif gsoAIO.Load.meWarwick then self:_menuWarwick()
+    elseif gsoAIO.Load.meXayah then self:_menuXayah()
+    elseif gsoAIO.Load.meXerath then self:_menuXerath()
+    elseif gsoAIO.Load.meXinZhao then self:_menuXinZhao()
+    elseif gsoAIO.Load.meYasuo then self:_menuYasuo()
+    elseif gsoAIO.Load.meYorick then self:_menuYorick()
+    elseif gsoAIO.Load.meZac then self:_menuZac()
+    elseif gsoAIO.Load.meZed then self:_menuZed()
+    elseif gsoAIO.Load.meZiggs then self:_menuZiggs()
+    elseif gsoAIO.Load.meZilean then self:_menuZilean()
+    elseif gsoAIO.Load.meZoe then self:_menuZoe()
+    elseif gsoAIO.Load.meZyra then self:_menuZyra() end
 end
 
-function __gsoMenu:_menuNami()
-    self.menu:MenuElement({name = "Nami", id = "gsonami", type = MENU, leftIcon = self.Icons["nami"] })
-        self.menu.gsonami:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsonami.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsonami.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsonami:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsonami.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsonami.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsonami:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsonami.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsonami.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsonami:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsonami.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsonami.rset:MenuElement({id = "harass", name = "Harass", value = false})
+function __gsoMenu:_menuAatrox()
+    self.menu:MenuElement({name = "Aatrox", id = "gsoaatrox", type = MENU, leftIcon = self.Icons["aatrox"] })
+        self.menu.gsoaatrox:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoaatrox.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoaatrox.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoaatrox:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoaatrox.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoaatrox.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoaatrox:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoaatrox.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoaatrox.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoaatrox:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoaatrox.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoaatrox.rset:MenuElement({id = "harass", name = "Harass", value = false})
 end
 
-function __gsoMenu:_menuHeimerdinger()
-    self.menu:MenuElement({name = "Heimerdinger", id = "gsoheimerdinger", type = MENU, leftIcon = self.Icons["heimerdinger"] })
-        self.menu.gsoheimerdinger:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsoheimerdinger.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoheimerdinger.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoheimerdinger:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsoheimerdinger.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoheimerdinger.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoheimerdinger:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsoheimerdinger.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoheimerdinger.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoheimerdinger:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsoheimerdinger.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoheimerdinger.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuKatarina()
-    self.menu:MenuElement({name = "Katarina", id = "gsokatarina", type = MENU, leftIcon = self.Icons["katarina"] })
-        self.menu.gsokatarina:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsokatarina.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokatarina.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokatarina:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsokatarina.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokatarina.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokatarina:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsokatarina.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokatarina.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokatarina:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsokatarina.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokatarina.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuCaitlyn()
-    self.menu:MenuElement({name = "Caitlyn", id = "gsocaitlyn", type = MENU, leftIcon = self.Icons["caitlyn"] })
-        self.menu.gsocaitlyn:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsocaitlyn.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsocaitlyn.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsocaitlyn:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsocaitlyn.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsocaitlyn.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsocaitlyn:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsocaitlyn.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsocaitlyn.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsocaitlyn:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsocaitlyn.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsocaitlyn.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuJhin()
-    self.menu:MenuElement({name = "Jhin", id = "gsojhin", type = MENU, leftIcon = self.Icons["jhin"] })
-        self.menu.gsojhin:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsojhin.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsojhin.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsojhin:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsojhin.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsojhin.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsojhin:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsojhin.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsojhin.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsojhin:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsojhin.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsojhin.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuLucian()
-    self.menu:MenuElement({name = "Lucian", id = "gsolucian", type = MENU, leftIcon = self.Icons["lucian"] })
-        self.menu.gsolucian:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsolucian.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsolucian.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsolucian:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsolucian.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsolucian.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsolucian:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsolucian.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsolucian.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsolucian:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsolucian.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsolucian.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuGangplank()
-    self.menu:MenuElement({name = "Gangplank", id = "gsogangplank", type = MENU, leftIcon = self.Icons["gangplank"] })
-        self.menu.gsogangplank:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsogangplank.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsogangplank.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsogangplank:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsogangplank.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsogangplank.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsogangplank:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsogangplank.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsogangplank.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsogangplank:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsogangplank.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsogangplank.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuKarthus()
-    self.menu:MenuElement({name = "Karthus", id = "gsokarthus", type = MENU, leftIcon = self.Icons["karthus"] })
-        self.menu.gsokarthus:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsokarthus.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokarthus.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokarthus:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsokarthus.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokarthus.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokarthus:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsokarthus.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokarthus.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokarthus:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsokarthus.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokarthus.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuMissfortune()
-    self.menu:MenuElement({name = "Missfortune", id = "gsomissfortune", type = MENU, leftIcon = self.Icons["missfortune"] })
-        self.menu.gsomissfortune:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsomissfortune.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsomissfortune.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsomissfortune:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsomissfortune.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsomissfortune.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsomissfortune:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsomissfortune.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsomissfortune.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsomissfortune:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsomissfortune.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsomissfortune.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuSona()
-    self.menu:MenuElement({name = "Sona", id = "gsosona", type = MENU, leftIcon = self.Icons["sona"] })
-        self.menu.gsosona:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsosona.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsosona.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsosona:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsosona.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsosona.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsosona:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsosona.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsosona.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsosona:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsosona.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsosona.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuJanna()
-    self.menu:MenuElement({name = "Janna", id = "gsojanna", type = MENU, leftIcon = self.Icons["janna"] })
-        self.menu.gsojanna:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsojanna.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsojanna.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsojanna:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsojanna.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsojanna.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsojanna:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsojanna.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsojanna.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsojanna:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsojanna.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsojanna.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuMorgana()
-    self.menu:MenuElement({name = "Morgana", id = "gsomorgana", type = MENU, leftIcon = self.Icons["morgana"] })
-        self.menu.gsomorgana:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsomorgana.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsomorgana.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsomorgana:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsomorgana.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsomorgana.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsomorgana:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsomorgana.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsomorgana.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsomorgana:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsomorgana.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsomorgana.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuLulu()
-    self.menu:MenuElement({name = "Lulu", id = "gsolulu", type = MENU, leftIcon = self.Icons["lulu"] })
-        self.menu.gsolulu:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsolulu.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsolulu.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsolulu:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsolulu.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsolulu.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsolulu:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsolulu.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsolulu.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsolulu:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsolulu.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsolulu.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuKarma()
-    self.menu:MenuElement({name = "Karma", id = "gsokarma", type = MENU, leftIcon = self.Icons["karma"] })
-        self.menu.gsokarma:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsokarma.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokarma.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokarma:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsokarma.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokarma.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokarma:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsokarma.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokarma.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokarma:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsokarma.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokarma.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuMalzahar()
-    self.menu:MenuElement({name = "Malzahar", id = "gsomalzahar", type = MENU, leftIcon = self.Icons["malzahar"] })
-        self.menu.gsomalzahar:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsomalzahar.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsomalzahar.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsomalzahar:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsomalzahar.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsomalzahar.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsomalzahar:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsomalzahar.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsomalzahar.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsomalzahar:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsomalzahar.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsomalzahar.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuKayle()
-    self.menu:MenuElement({name = "Kayle", id = "gsokayle", type = MENU, leftIcon = self.Icons["kayle"] })
-        self.menu.gsokayle:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsokayle.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokayle.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokayle:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsokayle.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokayle.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokayle:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsokayle.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokayle.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokayle:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsokayle.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokayle.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuAnnie()
-    self.menu:MenuElement({name = "Annie", id = "gsoannie", type = MENU, leftIcon = self.Icons["annie"] })
-        self.menu.gsoannie:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsoannie.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoannie.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoannie:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsoannie.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoannie.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoannie:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsoannie.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoannie.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoannie:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsoannie.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoannie.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuJax()
-    self.menu:MenuElement({name = "Jax", id = "gsojax", type = MENU, leftIcon = self.Icons["jax"] })
-        self.menu.gsojax:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsojax.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsojax.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsojax:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsojax.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsojax.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsojax:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsojax.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsojax.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsojax:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsojax.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsojax.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuVeigar()
-    self.menu:MenuElement({name = "Veigar", id = "gsoveigar", type = MENU, leftIcon = self.Icons["veigar"] })
-        self.menu.gsoveigar:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsoveigar.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoveigar.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoveigar:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsoveigar.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoveigar.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoveigar:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsoveigar.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoveigar.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoveigar:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsoveigar.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoveigar.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuKassadin()
-    self.menu:MenuElement({name = "Kassadin", id = "gsokassadin", type = MENU, leftIcon = self.Icons["kassadin"] })
-        self.menu.gsokassadin:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsokassadin.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokassadin.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokassadin:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsokassadin.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokassadin.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokassadin:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsokassadin.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokassadin.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokassadin:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsokassadin.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokassadin.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuRyze()
-    self.menu:MenuElement({name = "Ryze", id = "gsoryze", type = MENU, leftIcon = self.Icons["ryze"] })
-        self.menu.gsoryze:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsoryze.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoryze.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoryze:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsoryze.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoryze.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoryze:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsoryze.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoryze.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoryze:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsoryze.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoryze.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuWukong()
-    self.menu:MenuElement({name = "Wukong", id = "gsowukong", type = MENU, leftIcon = self.Icons["wukong"] })
-        self.menu.gsowukong:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsowukong.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsowukong.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsowukong:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsowukong.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsowukong.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsowukong:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsowukong.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsowukong.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsowukong:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsowukong.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsowukong.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuTryndamere()
-    self.menu:MenuElement({name = "Tryndamere", id = "gsotryndamere", type = MENU, leftIcon = self.Icons["tryndamere"] })
-        self.menu.gsotryndamere:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsotryndamere.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsotryndamere.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsotryndamere:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsotryndamere.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsotryndamere.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsotryndamere:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsotryndamere.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsotryndamere.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsotryndamere:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsotryndamere.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsotryndamere.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuDiana()
-    self.menu:MenuElement({name = "Diana", id = "gsodiana", type = MENU, leftIcon = self.Icons["diana"] })
-        self.menu.gsodiana:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsodiana.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsodiana.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsodiana:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsodiana.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsodiana.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsodiana:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsodiana.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsodiana.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsodiana:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsodiana.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsodiana.rset:MenuElement({id = "harass", name = "Harass", value = false})
+function __gsoMenu:_menuAhri()
+    self.menu:MenuElement({name = "Ahri", id = "gsoahri", type = MENU, leftIcon = self.Icons["ahri"] })
+        self.menu.gsoahri:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoahri.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoahri.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoahri:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoahri.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoahri.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoahri:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoahri.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoahri.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoahri:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoahri.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoahri.rset:MenuElement({id = "harass", name = "Harass", value = false})
 end
 
 function __gsoMenu:_menuAkali()
@@ -710,182 +652,68 @@ function __gsoMenu:_menuAkali()
             self.menu.gsoakali.rset:MenuElement({id = "harass", name = "Harass", value = false})
 end
 
-function __gsoMenu:_menuVladimir()
-    self.menu:MenuElement({name = "Vladimir", id = "gsovladimir", type = MENU, leftIcon = self.Icons["vladimir"] })
-        self.menu.gsovladimir:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsovladimir.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsovladimir.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsovladimir:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsovladimir.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsovladimir.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsovladimir:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsovladimir.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsovladimir.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsovladimir:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsovladimir.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsovladimir.rset:MenuElement({id = "harass", name = "Harass", value = false})
+function __gsoMenu:_menuAlistar()
+    self.menu:MenuElement({name = "Alistar", id = "gsoalistar", type = MENU, leftIcon = self.Icons["alistar"] })
+        self.menu.gsoalistar:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoalistar.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoalistar.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoalistar:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoalistar.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoalistar.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoalistar:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoalistar.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoalistar.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoalistar:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoalistar.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoalistar.rset:MenuElement({id = "harass", name = "Harass", value = false})
 end
 
-function __gsoMenu:_menuXerath()
-    self.menu:MenuElement({name = "Xerath", id = "gsoxerath", type = MENU, leftIcon = self.Icons["xerath"] })
-        self.menu.gsoxerath:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsoxerath.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoxerath.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoxerath:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsoxerath.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoxerath.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoxerath:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsoxerath.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoxerath.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoxerath:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsoxerath.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoxerath.rset:MenuElement({id = "harass", name = "Harass", value = false})
+function __gsoMenu:_menuAmumu()
+    self.menu:MenuElement({name = "Amumu", id = "gsoamumu", type = MENU, leftIcon = self.Icons["amumu"] })
+        self.menu.gsoamumu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoamumu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoamumu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoamumu:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoamumu.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoamumu.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoamumu:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoamumu.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoamumu.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoamumu:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoamumu.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoamumu.rset:MenuElement({id = "harass", name = "Harass", value = false})
 end
 
-function __gsoMenu:_menuNidalee()
-    self.menu:MenuElement({name = "Nidalee", id = "gsonidalee", type = MENU, leftIcon = self.Icons["nidalee"] })
-        self.menu.gsonidalee:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsonidalee.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsonidalee.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsonidalee:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsonidalee.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsonidalee.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsonidalee:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsonidalee.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsonidalee.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsonidalee:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsonidalee.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsonidalee.rset:MenuElement({id = "harass", name = "Harass", value = false})
+function __gsoMenu:_menuAnivia()
+    self.menu:MenuElement({name = "Anivia", id = "gsoanivia", type = MENU, leftIcon = self.Icons["anivia"] })
+        self.menu.gsoanivia:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoanivia.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoanivia.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoanivia:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoanivia.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoanivia.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoanivia:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoanivia.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoanivia.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoanivia:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoanivia.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoanivia.rset:MenuElement({id = "harass", name = "Harass", value = false})
 end
 
-function __gsoMenu:_menuTwistedfate()
-    self.menu:MenuElement({name = "Twistedfate", id = "gsotwistedfate", type = MENU, leftIcon = self.Icons["twistedfate"] })
-        self.menu.gsotwistedfate:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsotwistedfate.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsotwistedfate.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsotwistedfate:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsotwistedfate.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsotwistedfate.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsotwistedfate:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsotwistedfate.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsotwistedfate.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsotwistedfate:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsotwistedfate.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsotwistedfate.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuLux()
-    self.menu:MenuElement({name = "Lux", id = "gsolux", type = MENU, leftIcon = self.Icons["lux"] })
-        self.menu.gsolux:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsolux.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsolux.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsolux:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsolux.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsolux.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsolux:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsolux.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsolux.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsolux:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsolux.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsolux.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuKennen()
-    self.menu:MenuElement({name = "Kennen", id = "gsokennen", type = MENU, leftIcon = self.Icons["kennen"] })
-        self.menu.gsokennen:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsokennen.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokennen.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokennen:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsokennen.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokennen.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokennen:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsokennen.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokennen.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokennen:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsokennen.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokennen.rset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuTristana()
-    self.menu:MenuElement({name = "Tristana", id = "gsotristana", type = MENU, leftIcon = self.Icons["tristana"] })
-        self.menu.gsotristana:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsotristana.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsotristana.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsotristana:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsotristana.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsotristana.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsotristana:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsotristana.rset:MenuElement({id = "ks", name = "KS", value = true})
-            self.menu.gsotristana.rset:MenuElement({id = "kse", name = "KS only E + R", value = false})
-end
-
-function __gsoMenu:_menuSivir()
-    self.menu:MenuElement({name = "Sivir", id = "gsosivir", type = MENU, leftIcon = self.Icons["sivir"] })
-        self.menu.gsosivir:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsosivir.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsosivir.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsosivir:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsosivir.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsosivir.wset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuVayne()
-    self.menu:MenuElement({name = "Vayne", id = "gsovayne", type = MENU, leftIcon = self.Icons["vayne"] })
-        self.menu.gsovayne:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsovayne.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsovayne.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsovayne:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsovayne.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsovayne.eset:MenuElement({id = "harass", name = "Harass", value = false})
-end
-
-function __gsoMenu:_menuKog()
-    self.menu:MenuElement({name = "Kog'Maw", id = "gsokog", type = MENU, leftIcon = self.Icons["kog"] })
-        self.menu.gsokog:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsokog.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokog.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsokog:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsokog.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokog.wset:MenuElement({id = "harass", name = "Harass", value = false})
-            self.menu.gsokog.wset:MenuElement({id = "stopq", name = "Stop Q if has W buff", value = false})
-            self.menu.gsokog.wset:MenuElement({id = "stope", name = "Stop E if has W buff", value = false})
-            self.menu.gsokog.wset:MenuElement({id = "stopr", name = "Stop R if has W buff", value = false})
-        self.menu.gsokog:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsokog.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokog.eset:MenuElement({id = "harass", name = "Harass", value = false})
-            self.menu.gsokog.eset:MenuElement({id = "emana", name = "Minimum Mana %", value = 20, min = 1, max = 100, step = 1 })
-        self.menu.gsokog:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsokog.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsokog.rset:MenuElement({id = "harass", name = "Harass", value = false})
-            self.menu.gsokog.rset:MenuElement({id = "onlylow", name = "Only 0-40 % HP enemies", value = true})
-            self.menu.gsokog.rset:MenuElement({id = "stack", name = "Stop at x stacks", value = 3, min = 1, max = 9, step = 1 })
-            self.menu.gsokog.rset:MenuElement({id = "rmana", name = "Minimum Mana %", value = 20, min = 1, max = 100, step = 1 })
-            self.menu.gsokog.rset:MenuElement({name = "KS", id = "ksmenu", type = MENU })
-                self.menu.gsokog.rset.ksmenu:MenuElement({id = "ksr", name = "KS - Enabled", value = true})
-                self.menu.gsokog.rset.ksmenu:MenuElement({id = "csksr", name = "KS -> Check R stacks", value = false})
-            self.menu.gsokog.rset:MenuElement({name = "Semi Manual", id = "semirmenu", type = MENU })
-                self.menu.gsokog.rset.semirmenu:MenuElement({name = "Semi-Manual Key", id = "semir", key = string.byte("T")})
-                self.menu.gsokog.rset.semirmenu:MenuElement({name = "Check R stacks", id = "semistacks", value = false})
-                self.menu.gsokog.rset.semirmenu:MenuElement({name = "Only 0-40 % HP enemies", id = "semilow",  value = false})
-                self.menu.gsokog.rset.semirmenu:MenuElement({name = "Use on:", id = "useon", type = MENU })
-end
-
-function __gsoMenu:_menuTwitch()
-    self.menu:MenuElement({name = "Twitch", id = "gsotwitch", type = MENU, leftIcon = self.Icons["twitch"] })
-        self.menu.gsotwitch:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsotwitch.qset:MenuElement({id = "recallkey", name = "Invisible Recall Key", key = string.byte("T"), value = false, toggle = true})
-            self.menu.gsotwitch.qset:MenuElement({id = "note1", name = "Note: Key should be diffrent than recall key", type = SPACE})
-        self.menu.gsotwitch:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsotwitch.wset:MenuElement({id = "stopq", name = "Stop if Q invisible", value = true})
-            self.menu.gsotwitch.wset:MenuElement({id = "stopwult", name = "Stop if R", value = false})
-            self.menu.gsotwitch.wset:MenuElement({id = "combo", name = "Use W Combo", value = true})
-            self.menu.gsotwitch.wset:MenuElement({id = "harass", name = "Use W Harass", value = false})
-        self.menu.gsotwitch:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsotwitch.eset:MenuElement({id = "combo", name = "Use E Combo", value = true})
-            self.menu.gsotwitch.eset:MenuElement({id = "harass", name = "Use E Harass", value = false})
-            self.menu.gsotwitch.eset:MenuElement({id = "stacks", name = "X stacks", value = 6, min = 1, max = 6, step = 1 })
-            self.menu.gsotwitch.eset:MenuElement({id = "enemies", name = "X enemies", value = 1, min = 1, max = 5, step = 1 })
-self.menu.gsotwitch.qset.recallkey:Value(false)
+function __gsoMenu:_menuAnnie()
+    self.menu:MenuElement({name = "Annie", id = "gsoannie", type = MENU, leftIcon = self.Icons["annie"] })
+        self.menu.gsoannie:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoannie.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoannie.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoannie:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoannie.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoannie.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoannie:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoannie.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoannie.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoannie:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoannie.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoannie.rset:MenuElement({id = "harass", name = "Harass", value = false})
 end
 
 function __gsoMenu:_menuAshe()
@@ -908,6 +736,305 @@ function __gsoMenu:_menuAshe()
                 self.menu.gsoashe.rset.semirashe:MenuElement({name = "X %", id = "semip", value = 100, min = 1, max = 100, step = 1 })
                 self.menu.gsoashe.rset.semirashe:MenuElement({name = "Semi-Manual Max. Range", id = "rrange", value = 2000, min = 1000, max = 15000, step = 100 })
                 self.menu.gsoashe.rset.semirashe:MenuElement({name = "Use on:", id = "useon", type = MENU })
+end
+
+function __gsoMenu:_menuAurelionSol()
+    self.menu:MenuElement({name = "AurelionSol", id = "gsoaurelionsol", type = MENU, leftIcon = self.Icons["aurelionsol"] })
+        self.menu.gsoaurelionsol:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoaurelionsol.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoaurelionsol.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoaurelionsol:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoaurelionsol.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoaurelionsol.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoaurelionsol:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoaurelionsol.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoaurelionsol.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoaurelionsol:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoaurelionsol.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoaurelionsol.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuAzir()
+    self.menu:MenuElement({name = "Azir", id = "gsoazir", type = MENU, leftIcon = self.Icons["azir"] })
+        self.menu.gsoazir:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoazir.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoazir.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoazir:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoazir.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoazir.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoazir:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoazir.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoazir.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoazir:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoazir.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoazir.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuBard()
+    self.menu:MenuElement({name = "Bard", id = "gsobard", type = MENU, leftIcon = self.Icons["bard"] })
+        self.menu.gsobard:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsobard.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsobard.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsobard:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsobard.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsobard.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsobard:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsobard.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsobard.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsobard:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsobard.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsobard.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuBlitzcrank()
+    self.menu:MenuElement({name = "Blitzcrank", id = "gsoblitzcrank", type = MENU, leftIcon = self.Icons["blitzcrank"] })
+        self.menu.gsoblitzcrank:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoblitzcrank.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoblitzcrank.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoblitzcrank:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoblitzcrank.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoblitzcrank.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoblitzcrank:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoblitzcrank.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoblitzcrank.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoblitzcrank:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoblitzcrank.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoblitzcrank.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuBrand()
+    self.menu:MenuElement({name = "Brand", id = "gsobrand", type = MENU, leftIcon = self.Icons["brand"] })
+        self.menu.gsobrand:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsobrand.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsobrand.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsobrand:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsobrand.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsobrand.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsobrand:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsobrand.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsobrand.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsobrand:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsobrand.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsobrand.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuBraum()
+    self.menu:MenuElement({name = "Braum", id = "gsobraum", type = MENU, leftIcon = self.Icons["braum"] })
+        self.menu.gsobraum:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsobraum.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsobraum.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsobraum:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsobraum.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsobraum.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsobraum:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsobraum.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsobraum.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsobraum:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsobraum.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsobraum.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuCaitlyn()
+    self.menu:MenuElement({name = "Caitlyn", id = "gsocaitlyn", type = MENU, leftIcon = self.Icons["caitlyn"] })
+        self.menu.gsocaitlyn:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsocaitlyn.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocaitlyn.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsocaitlyn:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsocaitlyn.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocaitlyn.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsocaitlyn:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsocaitlyn.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocaitlyn.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsocaitlyn:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsocaitlyn.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocaitlyn.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuCamille()
+    self.menu:MenuElement({name = "Camille", id = "gsocamille", type = MENU, leftIcon = self.Icons["camille"] })
+        self.menu.gsocamille:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsocamille.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocamille.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsocamille:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsocamille.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocamille.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsocamille:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsocamille.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocamille.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsocamille:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsocamille.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocamille.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuCassiopeia()
+    self.menu:MenuElement({name = "Cassiopeia", id = "gsocassiopeia", type = MENU, leftIcon = self.Icons["cassiopeia"] })
+        self.menu.gsocassiopeia:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsocassiopeia.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocassiopeia.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsocassiopeia:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsocassiopeia.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocassiopeia.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsocassiopeia:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsocassiopeia.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocassiopeia.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsocassiopeia:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsocassiopeia.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocassiopeia.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuChogath()
+    self.menu:MenuElement({name = "Chogath", id = "gsochogath", type = MENU, leftIcon = self.Icons["chogath"] })
+        self.menu.gsochogath:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsochogath.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsochogath.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsochogath:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsochogath.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsochogath.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsochogath:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsochogath.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsochogath.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsochogath:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsochogath.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsochogath.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuCorki()
+    self.menu:MenuElement({name = "Corki", id = "gsocorki", type = MENU, leftIcon = self.Icons["corki"] })
+        self.menu.gsocorki:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsocorki.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocorki.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsocorki:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsocorki.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocorki.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsocorki:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsocorki.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocorki.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsocorki:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsocorki.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsocorki.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuDarius()
+    self.menu:MenuElement({name = "Darius", id = "gsodarius", type = MENU, leftIcon = self.Icons["darius"] })
+        self.menu.gsodarius:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsodarius.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodarius.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsodarius:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsodarius.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodarius.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsodarius:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsodarius.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodarius.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsodarius:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsodarius.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodarius.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuDiana()
+    self.menu:MenuElement({name = "Diana", id = "gsodiana", type = MENU, leftIcon = self.Icons["diana"] })
+        self.menu.gsodiana:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsodiana.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodiana.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsodiana:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsodiana.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodiana.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsodiana:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsodiana.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodiana.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsodiana:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsodiana.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodiana.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuDrMundo()
+    self.menu:MenuElement({name = "DrMundo", id = "gsodrmundo", type = MENU, leftIcon = self.Icons["drmundo"] })
+        self.menu.gsodrmundo:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsodrmundo.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodrmundo.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsodrmundo:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsodrmundo.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodrmundo.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsodrmundo:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsodrmundo.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodrmundo.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsodrmundo:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsodrmundo.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodrmundo.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuDraven()
+    self.menu:MenuElement({name = "Draven", id = "gsodraven", type = MENU, leftIcon = self.Icons["draven"] })
+        self.menu.gsodraven:MenuElement({name = "AXE settings", id = "aset", type = MENU })
+            self.menu.gsodraven.aset:MenuElement({id = "stopmove", name = "Hold radius", value = 100, min = 100, max = 125, step = 5 })
+            self.menu.gsodraven.aset:MenuElement({id = "cdist", name = "distance from axe to cursor", value = 750, min = 500, max = 1500, step = 50 })
+            self.menu.gsodraven.aset:MenuElement({id = "catch", name = "Catch axes", value = true})
+            self.menu.gsodraven.aset:MenuElement({id = "catcht", name = "stop under turret", value = true})
+            self.menu.gsodraven.aset:MenuElement({id = "catcho", name = "[combo] stop if no enemy in range", value = true})
+        self.menu.gsodraven:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsodraven.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodraven.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsodraven:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsodraven.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodraven.wset:MenuElement({id = "harass", name = "Harass", value = false})
+            self.menu.gsodraven.wset:MenuElement({id = "hdist", name = "max enemy distance", value = 750, min = 500, max = 2000, step = 50 })
+        self.menu.gsodraven:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsodraven.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsodraven.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsodraven:MenuElement({name = "R Semi Manual", id = "rset", type = MENU })
+            self.menu.gsodraven.rset:MenuElement({name = "Semi Manual", id = "semirdraven", type = MENU })
+                self.menu.gsodraven.rset.semirdraven:MenuElement({name = "Semi-Manual Key", id = "enabled", key = string.byte("T")})
+                self.menu.gsodraven.rset.semirdraven:MenuElement({name = "Only enemies with HP < X%", id = "semilow", value = true})
+                self.menu.gsodraven.rset.semirdraven:MenuElement({name = "X %", id = "semip", value = 35, min = 1, max = 100, step = 1 })
+                self.menu.gsodraven.rset.semirdraven:MenuElement({name = "Semi-Manual Max. Range", id = "rrange", value = 2000, min = 1000, max = 15000, step = 100 })
+                self.menu.gsodraven.rset.semirdraven:MenuElement({name = "Use on:", id = "useon", type = MENU })
+end
+
+function __gsoMenu:_menuEkko()
+    self.menu:MenuElement({name = "Ekko", id = "gsoekko", type = MENU, leftIcon = self.Icons["ekko"] })
+        self.menu.gsoekko:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoekko.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoekko.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoekko:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoekko.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoekko.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoekko:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoekko.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoekko.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoekko:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoekko.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoekko.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuElise()
+    self.menu:MenuElement({name = "Elise", id = "gsoelise", type = MENU, leftIcon = self.Icons["elise"] })
+        self.menu.gsoelise:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoelise.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoelise.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoelise:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoelise.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoelise.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoelise:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoelise.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoelise.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoelise:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoelise.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoelise.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuEvelynn()
+    self.menu:MenuElement({name = "Evelynn", id = "gsoevelynn", type = MENU, leftIcon = self.Icons["evelynn"] })
+        self.menu.gsoevelynn:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoevelynn.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoevelynn.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoevelynn:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoevelynn.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoevelynn.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoevelynn:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoevelynn.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoevelynn.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoevelynn:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoevelynn.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoevelynn.rset:MenuElement({id = "harass", name = "Harass", value = false})
 end
 
 function __gsoMenu:_menuEzreal()
@@ -938,46 +1065,308 @@ function __gsoMenu:_menuEzreal()
                 self.menu.gsoezreal.rset.semirez:MenuElement({name = "Use on:", id = "useon", type = MENU })
 end
 
-function __gsoMenu:_menuDraven()
-    self.menu:MenuElement({name = "Draven", id = "gsodraven", type = MENU, leftIcon = self.Icons["draven"] })
-        self.menu.gsodraven:MenuElement({name = "AXE settings", id = "aset", type = MENU })
-            self.menu.gsodraven.aset:MenuElement({id = "stopmove", name = "Hold radius", value = 100, min = 100, max = 125, step = 5 })
-            self.menu.gsodraven.aset:MenuElement({id = "cdist", name = "distance from axe to cursor", value = 750, min = 500, max = 1500, step = 50 })
-            self.menu.gsodraven.aset:MenuElement({id = "catch", name = "Catch axes", value = true})
-            self.menu.gsodraven.aset:MenuElement({id = "catcht", name = "stop under turret", value = true})
-            self.menu.gsodraven.aset:MenuElement({id = "catcho", name = "[combo] stop if no enemy in range", value = true})
-        self.menu.gsodraven:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsodraven.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsodraven.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsodraven:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsodraven.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsodraven.wset:MenuElement({id = "harass", name = "Harass", value = false})
-            self.menu.gsodraven.wset:MenuElement({id = "hdist", name = "max enemy distance", value = 750, min = 500, max = 2000, step = 50 })
-        self.menu.gsodraven:MenuElement({name = "E settings", id = "eset", type = MENU })
-            self.menu.gsodraven.eset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsodraven.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsodraven:MenuElement({name = "R Semi Manual", id = "rset", type = MENU })
-            self.menu.gsodraven.rset:MenuElement({name = "Semi Manual", id = "semirdraven", type = MENU })
-                self.menu.gsodraven.rset.semirdraven:MenuElement({name = "Semi-Manual Key", id = "enabled", key = string.byte("T")})
-                self.menu.gsodraven.rset.semirdraven:MenuElement({name = "Only enemies with HP < X%", id = "semilow", value = true})
-                self.menu.gsodraven.rset.semirdraven:MenuElement({name = "X %", id = "semip", value = 35, min = 1, max = 100, step = 1 })
-                self.menu.gsodraven.rset.semirdraven:MenuElement({name = "Semi-Manual Max. Range", id = "rrange", value = 2000, min = 1000, max = 15000, step = 100 })
-                self.menu.gsodraven.rset.semirdraven:MenuElement({name = "Use on:", id = "useon", type = MENU })
+function __gsoMenu:_menuFiddlesticks()
+    self.menu:MenuElement({name = "Fiddlesticks", id = "gsofiddlesticks", type = MENU, leftIcon = self.Icons["fiddlesticks"] })
+        self.menu.gsofiddlesticks:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsofiddlesticks.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsofiddlesticks.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsofiddlesticks:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsofiddlesticks.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsofiddlesticks.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsofiddlesticks:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsofiddlesticks.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsofiddlesticks.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsofiddlesticks:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsofiddlesticks.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsofiddlesticks.rset:MenuElement({id = "harass", name = "Harass", value = false})
 end
 
-function __gsoMenu:_menuTeemo()
-    self.menu:MenuElement({name = "Teemo", id = "gsoteemo", type = MENU, leftIcon = self.Icons["teemo"] })
-        self.menu.gsoteemo:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            self.menu.gsoteemo.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoteemo.qset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoteemo:MenuElement({name = "W settings", id = "wset", type = MENU })
-            self.menu.gsoteemo.wset:MenuElement({id = "mindist", name = "Min. distance to enemy", value = 850, min = 680, max = 1250, step = 10 })
-            self.menu.gsoteemo.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoteemo.wset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsoteemo:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsoteemo.rset:MenuElement({id = "immo", name = "only if enemy isImmobile", value = true})
-            self.menu.gsoteemo.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsoteemo.rset:MenuElement({id = "harass", name = "Harass", value = false})
+function __gsoMenu:_menuFiora()
+    self.menu:MenuElement({name = "Fiora", id = "gsofiora", type = MENU, leftIcon = self.Icons["fiora"] })
+        self.menu.gsofiora:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsofiora.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsofiora.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsofiora:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsofiora.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsofiora.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsofiora:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsofiora.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsofiora.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsofiora:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsofiora.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsofiora.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuFizz()
+    self.menu:MenuElement({name = "Fizz", id = "gsofizz", type = MENU, leftIcon = self.Icons["fizz"] })
+        self.menu.gsofizz:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsofizz.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsofizz.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsofizz:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsofizz.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsofizz.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsofizz:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsofizz.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsofizz.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsofizz:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsofizz.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsofizz.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuGalio()
+    self.menu:MenuElement({name = "Galio", id = "gsogalio", type = MENU, leftIcon = self.Icons["galio"] })
+        self.menu.gsogalio:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsogalio.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogalio.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsogalio:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsogalio.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogalio.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsogalio:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsogalio.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogalio.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsogalio:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsogalio.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogalio.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuGangplank()
+    self.menu:MenuElement({name = "Gangplank", id = "gsogangplank", type = MENU, leftIcon = self.Icons["gangplank"] })
+        self.menu.gsogangplank:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsogangplank.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogangplank.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsogangplank:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsogangplank.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogangplank.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsogangplank:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsogangplank.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogangplank.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsogangplank:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsogangplank.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogangplank.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuGaren()
+    self.menu:MenuElement({name = "Garen", id = "gsogaren", type = MENU, leftIcon = self.Icons["garen"] })
+        self.menu.gsogaren:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsogaren.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogaren.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsogaren:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsogaren.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogaren.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsogaren:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsogaren.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogaren.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsogaren:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsogaren.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogaren.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuGnar()
+    self.menu:MenuElement({name = "Gnar", id = "gsognar", type = MENU, leftIcon = self.Icons["gnar"] })
+        self.menu.gsognar:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsognar.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsognar.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsognar:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsognar.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsognar.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsognar:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsognar.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsognar.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsognar:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsognar.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsognar.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuGragas()
+    self.menu:MenuElement({name = "Gragas", id = "gsogragas", type = MENU, leftIcon = self.Icons["gragas"] })
+        self.menu.gsogragas:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsogragas.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogragas.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsogragas:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsogragas.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogragas.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsogragas:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsogragas.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogragas.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsogragas:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsogragas.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsogragas.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuGraves()
+    self.menu:MenuElement({name = "Graves", id = "gsograves", type = MENU, leftIcon = self.Icons["graves"] })
+        self.menu.gsograves:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsograves.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsograves.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsograves:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsograves.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsograves.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsograves:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsograves.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsograves.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsograves:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsograves.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsograves.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuHecarim()
+    self.menu:MenuElement({name = "Hecarim", id = "gsohecarim", type = MENU, leftIcon = self.Icons["hecarim"] })
+        self.menu.gsohecarim:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsohecarim.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsohecarim.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsohecarim:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsohecarim.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsohecarim.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsohecarim:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsohecarim.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsohecarim.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsohecarim:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsohecarim.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsohecarim.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuHeimerdinger()
+    self.menu:MenuElement({name = "Heimerdinger", id = "gsoheimerdinger", type = MENU, leftIcon = self.Icons["heimerdinger"] })
+        self.menu.gsoheimerdinger:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoheimerdinger.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoheimerdinger.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoheimerdinger:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoheimerdinger.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoheimerdinger.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoheimerdinger:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoheimerdinger.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoheimerdinger.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoheimerdinger:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoheimerdinger.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoheimerdinger.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuIllaoi()
+    self.menu:MenuElement({name = "Illaoi", id = "gsoillaoi", type = MENU, leftIcon = self.Icons["illaoi"] })
+        self.menu.gsoillaoi:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoillaoi.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoillaoi.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoillaoi:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoillaoi.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoillaoi.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoillaoi:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoillaoi.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoillaoi.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoillaoi:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoillaoi.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoillaoi.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuIrelia()
+    self.menu:MenuElement({name = "Irelia", id = "gsoirelia", type = MENU, leftIcon = self.Icons["irelia"] })
+        self.menu.gsoirelia:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoirelia.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoirelia.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoirelia:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoirelia.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoirelia.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoirelia:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoirelia.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoirelia.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoirelia:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoirelia.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoirelia.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuIvern()
+    self.menu:MenuElement({name = "Ivern", id = "gsoivern", type = MENU, leftIcon = self.Icons["ivern"] })
+        self.menu.gsoivern:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoivern.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoivern.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoivern:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoivern.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoivern.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoivern:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoivern.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoivern.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoivern:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoivern.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoivern.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuJanna()
+    self.menu:MenuElement({name = "Janna", id = "gsojanna", type = MENU, leftIcon = self.Icons["janna"] })
+        self.menu.gsojanna:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsojanna.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojanna.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojanna:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsojanna.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojanna.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojanna:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsojanna.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojanna.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojanna:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsojanna.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojanna.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuJarvanIV()
+    self.menu:MenuElement({name = "JarvanIV", id = "gsojarvaniv", type = MENU, leftIcon = self.Icons["jarvaniv"] })
+        self.menu.gsojarvaniv:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsojarvaniv.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojarvaniv.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojarvaniv:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsojarvaniv.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojarvaniv.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojarvaniv:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsojarvaniv.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojarvaniv.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojarvaniv:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsojarvaniv.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojarvaniv.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuJax()
+    self.menu:MenuElement({name = "Jax", id = "gsojax", type = MENU, leftIcon = self.Icons["jax"] })
+        self.menu.gsojax:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsojax.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojax.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojax:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsojax.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojax.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojax:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsojax.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojax.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojax:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsojax.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojax.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuJayce()
+    self.menu:MenuElement({name = "Jayce", id = "gsojayce", type = MENU, leftIcon = self.Icons["jayce"] })
+        self.menu.gsojayce:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsojayce.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojayce.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojayce:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsojayce.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojayce.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojayce:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsojayce.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojayce.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojayce:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsojayce.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojayce.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuJhin()
+    self.menu:MenuElement({name = "Jhin", id = "gsojhin", type = MENU, leftIcon = self.Icons["jhin"] })
+        self.menu.gsojhin:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsojhin.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojhin.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojhin:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsojhin.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojhin.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojhin:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsojhin.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojhin.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsojhin:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsojhin.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsojhin.rset:MenuElement({id = "harass", name = "Harass", value = false})
 end
 
 function __gsoMenu:_menuJinx()
@@ -999,6 +1388,1479 @@ function __gsoMenu:_menuJinx()
                 self.menu.gsojinx.rset.semirjinx:MenuElement({name = "X %", id = "semip", value = 35, min = 1, max = 100, step = 1 })
                 self.menu.gsojinx.rset.semirjinx:MenuElement({name = "Semi-Manual Max. Range", id = "rrange", value = 2000, min = 1000, max = 15000, step = 100 })
                 self.menu.gsojinx.rset.semirjinx:MenuElement({name = "Use on:", id = "useon", type = MENU })
+end
+
+function __gsoMenu:_menuKalista()
+    self.menu:MenuElement({name = "Kalista", id = "gsokalista", type = MENU, leftIcon = self.Icons["kalista"] })
+        self.menu.gsokalista:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsokalista.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokalista.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokalista:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsokalista.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokalista.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokalista:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsokalista.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokalista.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokalista:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsokalista.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokalista.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuKarma()
+    self.menu:MenuElement({name = "Karma", id = "gsokarma", type = MENU, leftIcon = self.Icons["karma"] })
+        self.menu.gsokarma:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsokarma.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokarma.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokarma:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsokarma.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokarma.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokarma:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsokarma.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokarma.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokarma:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsokarma.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokarma.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuKarthus()
+    self.menu:MenuElement({name = "Karthus", id = "gsokarthus", type = MENU, leftIcon = self.Icons["karthus"] })
+        self.menu.gsokarthus:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsokarthus.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokarthus.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokarthus:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsokarthus.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokarthus.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokarthus:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsokarthus.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokarthus.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokarthus:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsokarthus.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokarthus.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuKassadin()
+    self.menu:MenuElement({name = "Kassadin", id = "gsokassadin", type = MENU, leftIcon = self.Icons["kassadin"] })
+        self.menu.gsokassadin:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsokassadin.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokassadin.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokassadin:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsokassadin.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokassadin.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokassadin:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsokassadin.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokassadin.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokassadin:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsokassadin.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokassadin.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuKatarina()
+    self.menu:MenuElement({name = "Katarina", id = "gsokatarina", type = MENU, leftIcon = self.Icons["katarina"] })
+        self.menu.gsokatarina:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsokatarina.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokatarina.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokatarina:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsokatarina.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokatarina.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokatarina:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsokatarina.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokatarina.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokatarina:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsokatarina.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokatarina.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuKayle()
+    self.menu:MenuElement({name = "Kayle", id = "gsokayle", type = MENU, leftIcon = self.Icons["kayle"] })
+        self.menu.gsokayle:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsokayle.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokayle.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokayle:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsokayle.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokayle.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokayle:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsokayle.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokayle.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokayle:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsokayle.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokayle.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuKayn()
+    self.menu:MenuElement({name = "Kayn", id = "gsokayn", type = MENU, leftIcon = self.Icons["kayn"] })
+        self.menu.gsokayn:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsokayn.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokayn.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokayn:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsokayn.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokayn.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokayn:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsokayn.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokayn.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokayn:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsokayn.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokayn.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuKennen()
+    self.menu:MenuElement({name = "Kennen", id = "gsokennen", type = MENU, leftIcon = self.Icons["kennen"] })
+        self.menu.gsokennen:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsokennen.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokennen.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokennen:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsokennen.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokennen.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokennen:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsokennen.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokennen.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokennen:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsokennen.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokennen.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuKhazix()
+    self.menu:MenuElement({name = "Khazix", id = "gsokhazix", type = MENU, leftIcon = self.Icons["khazix"] })
+        self.menu.gsokhazix:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsokhazix.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokhazix.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokhazix:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsokhazix.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokhazix.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokhazix:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsokhazix.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokhazix.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokhazix:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsokhazix.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokhazix.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuKindred()
+    self.menu:MenuElement({name = "Kindred", id = "gsokindred", type = MENU, leftIcon = self.Icons["kindred"] })
+        self.menu.gsokindred:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsokindred.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokindred.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokindred:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsokindred.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokindred.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokindred:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsokindred.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokindred.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokindred:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsokindred.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokindred.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuKled()
+    self.menu:MenuElement({name = "Kled", id = "gsokled", type = MENU, leftIcon = self.Icons["kled"] })
+        self.menu.gsokled:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsokled.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokled.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokled:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsokled.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokled.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokled:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsokled.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokled.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokled:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsokled.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokled.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuKogMaw()
+    self.menu:MenuElement({name = "Kog'Maw", id = "gsokog", type = MENU, leftIcon = self.Icons["kog"] })
+        self.menu.gsokog:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsokog.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokog.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsokog:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsokog.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokog.wset:MenuElement({id = "harass", name = "Harass", value = false})
+            self.menu.gsokog.wset:MenuElement({id = "stopq", name = "Stop Q if has W buff", value = false})
+            self.menu.gsokog.wset:MenuElement({id = "stope", name = "Stop E if has W buff", value = false})
+            self.menu.gsokog.wset:MenuElement({id = "stopr", name = "Stop R if has W buff", value = false})
+        self.menu.gsokog:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsokog.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokog.eset:MenuElement({id = "harass", name = "Harass", value = false})
+            self.menu.gsokog.eset:MenuElement({id = "emana", name = "Minimum Mana %", value = 20, min = 1, max = 100, step = 1 })
+        self.menu.gsokog:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsokog.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsokog.rset:MenuElement({id = "harass", name = "Harass", value = false})
+            self.menu.gsokog.rset:MenuElement({id = "onlylow", name = "Only 0-40 % HP enemies", value = true})
+            self.menu.gsokog.rset:MenuElement({id = "stack", name = "Stop at x stacks", value = 3, min = 1, max = 9, step = 1 })
+            self.menu.gsokog.rset:MenuElement({id = "rmana", name = "Minimum Mana %", value = 20, min = 1, max = 100, step = 1 })
+            self.menu.gsokog.rset:MenuElement({name = "KS", id = "ksmenu", type = MENU })
+                self.menu.gsokog.rset.ksmenu:MenuElement({id = "ksr", name = "KS - Enabled", value = true})
+                self.menu.gsokog.rset.ksmenu:MenuElement({id = "csksr", name = "KS -> Check R stacks", value = false})
+            self.menu.gsokog.rset:MenuElement({name = "Semi Manual", id = "semirmenu", type = MENU })
+                self.menu.gsokog.rset.semirmenu:MenuElement({name = "Semi-Manual Key", id = "semir", key = string.byte("T")})
+                self.menu.gsokog.rset.semirmenu:MenuElement({name = "Check R stacks", id = "semistacks", value = false})
+                self.menu.gsokog.rset.semirmenu:MenuElement({name = "Only 0-40 % HP enemies", id = "semilow",  value = false})
+                self.menu.gsokog.rset.semirmenu:MenuElement({name = "Use on:", id = "useon", type = MENU })
+end
+
+function __gsoMenu:_menuLeblanc()
+    self.menu:MenuElement({name = "Leblanc", id = "gsoleblanc", type = MENU, leftIcon = self.Icons["leblanc"] })
+        self.menu.gsoleblanc:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoleblanc.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoleblanc.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoleblanc:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoleblanc.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoleblanc.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoleblanc:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoleblanc.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoleblanc.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoleblanc:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoleblanc.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoleblanc.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuLeeSin()
+    self.menu:MenuElement({name = "LeeSin", id = "gsoleesin", type = MENU, leftIcon = self.Icons["leesin"] })
+        self.menu.gsoleesin:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoleesin.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoleesin.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoleesin:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoleesin.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoleesin.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoleesin:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoleesin.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoleesin.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoleesin:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoleesin.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoleesin.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuLeona()
+    self.menu:MenuElement({name = "Leona", id = "gsoleona", type = MENU, leftIcon = self.Icons["leona"] })
+        self.menu.gsoleona:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoleona.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoleona.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoleona:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoleona.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoleona.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoleona:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoleona.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoleona.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoleona:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoleona.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoleona.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuLissandra()
+    self.menu:MenuElement({name = "Lissandra", id = "gsolissandra", type = MENU, leftIcon = self.Icons["lissandra"] })
+        self.menu.gsolissandra:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsolissandra.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolissandra.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsolissandra:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsolissandra.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolissandra.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsolissandra:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsolissandra.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolissandra.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsolissandra:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsolissandra.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolissandra.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuLucian()
+    self.menu:MenuElement({name = "Lucian", id = "gsolucian", type = MENU, leftIcon = self.Icons["lucian"] })
+        self.menu.gsolucian:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsolucian.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolucian.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsolucian:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsolucian.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolucian.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsolucian:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsolucian.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolucian.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsolucian:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsolucian.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolucian.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuLulu()
+    self.menu:MenuElement({name = "Lulu", id = "gsolulu", type = MENU, leftIcon = self.Icons["lulu"] })
+        self.menu.gsolulu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsolulu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolulu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsolulu:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsolulu.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolulu.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsolulu:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsolulu.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolulu.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsolulu:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsolulu.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolulu.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuLux()
+    self.menu:MenuElement({name = "Lux", id = "gsolux", type = MENU, leftIcon = self.Icons["lux"] })
+        self.menu.gsolux:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsolux.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolux.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsolux:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsolux.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolux.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsolux:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsolux.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolux.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsolux:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsolux.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsolux.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuMalphite()
+    self.menu:MenuElement({name = "Malphite", id = "gsomalphite", type = MENU, leftIcon = self.Icons["malphite"] })
+        self.menu.gsomalphite:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsomalphite.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomalphite.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomalphite:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsomalphite.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomalphite.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomalphite:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsomalphite.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomalphite.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomalphite:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsomalphite.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomalphite.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuMalzahar()
+    self.menu:MenuElement({name = "Malzahar", id = "gsomalzahar", type = MENU, leftIcon = self.Icons["malzahar"] })
+        self.menu.gsomalzahar:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsomalzahar.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomalzahar.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomalzahar:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsomalzahar.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomalzahar.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomalzahar:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsomalzahar.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomalzahar.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomalzahar:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsomalzahar.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomalzahar.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuMaokai()
+    self.menu:MenuElement({name = "Maokai", id = "gsomaokai", type = MENU, leftIcon = self.Icons["maokai"] })
+        self.menu.gsomaokai:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsomaokai.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomaokai.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomaokai:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsomaokai.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomaokai.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomaokai:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsomaokai.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomaokai.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomaokai:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsomaokai.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomaokai.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuMasterYi()
+    self.menu:MenuElement({name = "MasterYi", id = "gsomasteryi", type = MENU, leftIcon = self.Icons["masteryi"] })
+        self.menu.gsomasteryi:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsomasteryi.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomasteryi.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomasteryi:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsomasteryi.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomasteryi.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomasteryi:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsomasteryi.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomasteryi.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomasteryi:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsomasteryi.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomasteryi.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuMissFortune()
+    self.menu:MenuElement({name = "MissFortune", id = "gsomissfortune", type = MENU, leftIcon = self.Icons["missfortune"] })
+        self.menu.gsomissfortune:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsomissfortune.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomissfortune.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomissfortune:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsomissfortune.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomissfortune.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomissfortune:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsomissfortune.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomissfortune.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomissfortune:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsomissfortune.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomissfortune.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuMonkeyKing()
+    self.menu:MenuElement({name = "MonkeyKing", id = "gsomonkeyking", type = MENU, leftIcon = self.Icons["monkeyking"] })
+        self.menu.gsomonkeyking:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsomonkeyking.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomonkeyking.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomonkeyking:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsomonkeyking.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomonkeyking.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomonkeyking:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsomonkeyking.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomonkeyking.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomonkeyking:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsomonkeyking.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomonkeyking.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuMordekaiser()
+    self.menu:MenuElement({name = "Mordekaiser", id = "gsomordekaiser", type = MENU, leftIcon = self.Icons["mordekaiser"] })
+        self.menu.gsomordekaiser:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsomordekaiser.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomordekaiser.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomordekaiser:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsomordekaiser.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomordekaiser.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomordekaiser:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsomordekaiser.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomordekaiser.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomordekaiser:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsomordekaiser.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomordekaiser.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuMorgana()
+    self.menu:MenuElement({name = "Morgana", id = "gsomorgana", type = MENU, leftIcon = self.Icons["morgana"] })
+        self.menu.gsomorgana:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsomorgana.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomorgana.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomorgana:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsomorgana.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomorgana.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomorgana:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsomorgana.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomorgana.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsomorgana:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsomorgana.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsomorgana.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuNami()
+    self.menu:MenuElement({name = "Nami", id = "gsonami", type = MENU, leftIcon = self.Icons["nami"] })
+        self.menu.gsonami:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsonami.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonami.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonami:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsonami.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonami.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonami:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsonami.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonami.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonami:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsonami.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonami.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuNasus()
+    self.menu:MenuElement({name = "Nasus", id = "gsonasus", type = MENU, leftIcon = self.Icons["nasus"] })
+        self.menu.gsonasus:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsonasus.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonasus.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonasus:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsonasus.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonasus.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonasus:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsonasus.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonasus.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonasus:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsonasus.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonasus.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuNautilus()
+    self.menu:MenuElement({name = "Nautilus", id = "gsonautilus", type = MENU, leftIcon = self.Icons["nautilus"] })
+        self.menu.gsonautilus:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsonautilus.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonautilus.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonautilus:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsonautilus.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonautilus.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonautilus:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsonautilus.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonautilus.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonautilus:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsonautilus.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonautilus.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuNidalee()
+    self.menu:MenuElement({name = "Nidalee", id = "gsonidalee", type = MENU, leftIcon = self.Icons["nidalee"] })
+        self.menu.gsonidalee:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsonidalee.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonidalee.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonidalee:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsonidalee.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonidalee.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonidalee:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsonidalee.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonidalee.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonidalee:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsonidalee.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonidalee.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuNocturne()
+    self.menu:MenuElement({name = "Nocturne", id = "gsonocturne", type = MENU, leftIcon = self.Icons["nocturne"] })
+        self.menu.gsonocturne:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsonocturne.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonocturne.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonocturne:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsonocturne.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonocturne.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonocturne:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsonocturne.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonocturne.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonocturne:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsonocturne.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonocturne.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuNunu()
+    self.menu:MenuElement({name = "Nunu", id = "gsonunu", type = MENU, leftIcon = self.Icons["nunu"] })
+        self.menu.gsonunu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsonunu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonunu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonunu:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsonunu.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonunu.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonunu:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsonunu.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonunu.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsonunu:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsonunu.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsonunu.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuOlaf()
+    self.menu:MenuElement({name = "Olaf", id = "gsoolaf", type = MENU, leftIcon = self.Icons["olaf"] })
+        self.menu.gsoolaf:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoolaf.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoolaf.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoolaf:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoolaf.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoolaf.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoolaf:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoolaf.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoolaf.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoolaf:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoolaf.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoolaf.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuOrianna()
+    self.menu:MenuElement({name = "Orianna", id = "gsoorianna", type = MENU, leftIcon = self.Icons["orianna"] })
+        self.menu.gsoorianna:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoorianna.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoorianna.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoorianna:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoorianna.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoorianna.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoorianna:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoorianna.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoorianna.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoorianna:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoorianna.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoorianna.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuOrnn()
+    self.menu:MenuElement({name = "Ornn", id = "gsoornn", type = MENU, leftIcon = self.Icons["ornn"] })
+        self.menu.gsoornn:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoornn.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoornn.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoornn:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoornn.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoornn.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoornn:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoornn.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoornn.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoornn:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoornn.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoornn.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuPantheon()
+    self.menu:MenuElement({name = "Pantheon", id = "gsopantheon", type = MENU, leftIcon = self.Icons["pantheon"] })
+        self.menu.gsopantheon:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsopantheon.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsopantheon.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsopantheon:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsopantheon.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsopantheon.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsopantheon:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsopantheon.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsopantheon.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsopantheon:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsopantheon.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsopantheon.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuPoppy()
+    self.menu:MenuElement({name = "Poppy", id = "gsopoppy", type = MENU, leftIcon = self.Icons["poppy"] })
+        self.menu.gsopoppy:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsopoppy.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsopoppy.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsopoppy:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsopoppy.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsopoppy.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsopoppy:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsopoppy.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsopoppy.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsopoppy:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsopoppy.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsopoppy.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuQuinn()
+    self.menu:MenuElement({name = "Quinn", id = "gsoquinn", type = MENU, leftIcon = self.Icons["quinn"] })
+        self.menu.gsoquinn:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoquinn.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoquinn.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoquinn:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoquinn.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoquinn.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoquinn:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoquinn.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoquinn.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoquinn:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoquinn.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoquinn.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuRakan()
+    self.menu:MenuElement({name = "Rakan", id = "gsorakan", type = MENU, leftIcon = self.Icons["rakan"] })
+        self.menu.gsorakan:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsorakan.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorakan.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorakan:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsorakan.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorakan.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorakan:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsorakan.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorakan.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorakan:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsorakan.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorakan.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuRammus()
+    self.menu:MenuElement({name = "Rammus", id = "gsorammus", type = MENU, leftIcon = self.Icons["rammus"] })
+        self.menu.gsorammus:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsorammus.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorammus.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorammus:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsorammus.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorammus.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorammus:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsorammus.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorammus.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorammus:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsorammus.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorammus.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuRekSai()
+    self.menu:MenuElement({name = "RekSai", id = "gsoreksai", type = MENU, leftIcon = self.Icons["reksai"] })
+        self.menu.gsoreksai:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoreksai.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoreksai.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoreksai:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoreksai.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoreksai.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoreksai:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoreksai.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoreksai.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoreksai:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoreksai.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoreksai.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuRenekton()
+    self.menu:MenuElement({name = "Renekton", id = "gsorenekton", type = MENU, leftIcon = self.Icons["renekton"] })
+        self.menu.gsorenekton:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsorenekton.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorenekton.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorenekton:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsorenekton.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorenekton.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorenekton:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsorenekton.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorenekton.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorenekton:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsorenekton.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorenekton.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuRengar()
+    self.menu:MenuElement({name = "Rengar", id = "gsorengar", type = MENU, leftIcon = self.Icons["rengar"] })
+        self.menu.gsorengar:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsorengar.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorengar.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorengar:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsorengar.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorengar.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorengar:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsorengar.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorengar.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorengar:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsorengar.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorengar.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuRiven()
+    self.menu:MenuElement({name = "Riven", id = "gsoriven", type = MENU, leftIcon = self.Icons["riven"] })
+        self.menu.gsoriven:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoriven.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoriven.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoriven:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoriven.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoriven.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoriven:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoriven.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoriven.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoriven:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoriven.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoriven.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuRumble()
+    self.menu:MenuElement({name = "Rumble", id = "gsorumble", type = MENU, leftIcon = self.Icons["rumble"] })
+        self.menu.gsorumble:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsorumble.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorumble.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorumble:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsorumble.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorumble.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorumble:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsorumble.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorumble.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsorumble:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsorumble.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsorumble.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuRyze()
+    self.menu:MenuElement({name = "Ryze", id = "gsoryze", type = MENU, leftIcon = self.Icons["ryze"] })
+        self.menu.gsoryze:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoryze.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoryze.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoryze:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoryze.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoryze.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoryze:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoryze.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoryze.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoryze:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoryze.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoryze.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuSejuani()
+    self.menu:MenuElement({name = "Sejuani", id = "gsosejuani", type = MENU, leftIcon = self.Icons["sejuani"] })
+        self.menu.gsosejuani:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsosejuani.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosejuani.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosejuani:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsosejuani.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosejuani.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosejuani:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsosejuani.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosejuani.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosejuani:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsosejuani.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosejuani.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuShaco()
+    self.menu:MenuElement({name = "Shaco", id = "gsoshaco", type = MENU, leftIcon = self.Icons["shaco"] })
+        self.menu.gsoshaco:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoshaco.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoshaco.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoshaco:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoshaco.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoshaco.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoshaco:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoshaco.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoshaco.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoshaco:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoshaco.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoshaco.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuShen()
+    self.menu:MenuElement({name = "Shen", id = "gsoshen", type = MENU, leftIcon = self.Icons["shen"] })
+        self.menu.gsoshen:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoshen.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoshen.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoshen:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoshen.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoshen.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoshen:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoshen.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoshen.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoshen:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoshen.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoshen.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuShyvana()
+    self.menu:MenuElement({name = "Shyvana", id = "gsoshyvana", type = MENU, leftIcon = self.Icons["shyvana"] })
+        self.menu.gsoshyvana:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoshyvana.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoshyvana.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoshyvana:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoshyvana.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoshyvana.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoshyvana:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoshyvana.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoshyvana.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoshyvana:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoshyvana.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoshyvana.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuSinged()
+    self.menu:MenuElement({name = "Singed", id = "gsosinged", type = MENU, leftIcon = self.Icons["singed"] })
+        self.menu.gsosinged:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsosinged.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosinged.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosinged:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsosinged.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosinged.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosinged:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsosinged.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosinged.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosinged:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsosinged.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosinged.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuSion()
+    self.menu:MenuElement({name = "Sion", id = "gsosion", type = MENU, leftIcon = self.Icons["sion"] })
+        self.menu.gsosion:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsosion.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosion.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosion:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsosion.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosion.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosion:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsosion.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosion.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosion:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsosion.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosion.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuSivir()
+    self.menu:MenuElement({name = "Sivir", id = "gsosivir", type = MENU, leftIcon = self.Icons["sivir"] })
+        self.menu.gsosivir:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsosivir.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosivir.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosivir:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsosivir.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosivir.wset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuSkarner()
+    self.menu:MenuElement({name = "Skarner", id = "gsoskarner", type = MENU, leftIcon = self.Icons["skarner"] })
+        self.menu.gsoskarner:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoskarner.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoskarner.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoskarner:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoskarner.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoskarner.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoskarner:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoskarner.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoskarner.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoskarner:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoskarner.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoskarner.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuSona()
+    self.menu:MenuElement({name = "Sona", id = "gsosona", type = MENU, leftIcon = self.Icons["sona"] })
+        self.menu.gsosona:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsosona.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosona.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosona:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsosona.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosona.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosona:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsosona.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosona.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosona:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsosona.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosona.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuSoraka()
+    self.menu:MenuElement({name = "Soraka", id = "gsosoraka", type = MENU, leftIcon = self.Icons["soraka"] })
+        self.menu.gsosoraka:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsosoraka.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosoraka.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosoraka:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsosoraka.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosoraka.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosoraka:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsosoraka.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosoraka.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosoraka:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsosoraka.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosoraka.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuSwain()
+    self.menu:MenuElement({name = "Swain", id = "gsoswain", type = MENU, leftIcon = self.Icons["swain"] })
+        self.menu.gsoswain:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoswain.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoswain.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoswain:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoswain.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoswain.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoswain:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoswain.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoswain.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoswain:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoswain.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoswain.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuSyndra()
+    self.menu:MenuElement({name = "Syndra", id = "gsosyndra", type = MENU, leftIcon = self.Icons["syndra"] })
+        self.menu.gsosyndra:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsosyndra.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosyndra.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosyndra:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsosyndra.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosyndra.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosyndra:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsosyndra.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosyndra.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsosyndra:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsosyndra.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsosyndra.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuTahmKench()
+    self.menu:MenuElement({name = "TahmKench", id = "gsotahmkench", type = MENU, leftIcon = self.Icons["tahmkench"] })
+        self.menu.gsotahmkench:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsotahmkench.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotahmkench.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotahmkench:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsotahmkench.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotahmkench.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotahmkench:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsotahmkench.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotahmkench.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotahmkench:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsotahmkench.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotahmkench.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuTaliyah()
+    self.menu:MenuElement({name = "Taliyah", id = "gsotaliyah", type = MENU, leftIcon = self.Icons["taliyah"] })
+        self.menu.gsotaliyah:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsotaliyah.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotaliyah.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotaliyah:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsotaliyah.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotaliyah.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotaliyah:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsotaliyah.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotaliyah.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotaliyah:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsotaliyah.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotaliyah.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuTalon()
+    self.menu:MenuElement({name = "Talon", id = "gsotalon", type = MENU, leftIcon = self.Icons["talon"] })
+        self.menu.gsotalon:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsotalon.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotalon.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotalon:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsotalon.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotalon.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotalon:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsotalon.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotalon.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotalon:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsotalon.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotalon.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuTaric()
+    self.menu:MenuElement({name = "Taric", id = "gsotaric", type = MENU, leftIcon = self.Icons["taric"] })
+        self.menu.gsotaric:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsotaric.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotaric.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotaric:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsotaric.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotaric.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotaric:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsotaric.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotaric.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotaric:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsotaric.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotaric.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuTeemo()
+    self.menu:MenuElement({name = "Teemo", id = "gsoteemo", type = MENU, leftIcon = self.Icons["teemo"] })
+        self.menu.gsoteemo:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoteemo.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoteemo.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoteemo:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoteemo.wset:MenuElement({id = "mindist", name = "Min. distance to enemy", value = 850, min = 680, max = 1250, step = 10 })
+            self.menu.gsoteemo.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoteemo.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoteemo:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoteemo.rset:MenuElement({id = "immo", name = "only if enemy isImmobile", value = true})
+            self.menu.gsoteemo.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoteemo.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuThresh()
+    self.menu:MenuElement({name = "Thresh", id = "gsothresh", type = MENU, leftIcon = self.Icons["thresh"] })
+        self.menu.gsothresh:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsothresh.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsothresh.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsothresh:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsothresh.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsothresh.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsothresh:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsothresh.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsothresh.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsothresh:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsothresh.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsothresh.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuTristana()
+    self.menu:MenuElement({name = "Tristana", id = "gsotristana", type = MENU, leftIcon = self.Icons["tristana"] })
+        self.menu.gsotristana:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsotristana.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotristana.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotristana:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsotristana.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotristana.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotristana:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsotristana.rset:MenuElement({id = "ks", name = "KS", value = true})
+            self.menu.gsotristana.rset:MenuElement({id = "kse", name = "KS only E + R", value = false})
+end
+
+function __gsoMenu:_menuTrundle()
+    self.menu:MenuElement({name = "Trundle", id = "gsotrundle", type = MENU, leftIcon = self.Icons["trundle"] })
+        self.menu.gsotrundle:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsotrundle.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotrundle.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotrundle:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsotrundle.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotrundle.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotrundle:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsotrundle.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotrundle.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotrundle:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsotrundle.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotrundle.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuTryndamere()
+    self.menu:MenuElement({name = "Tryndamere", id = "gsotryndamere", type = MENU, leftIcon = self.Icons["tryndamere"] })
+        self.menu.gsotryndamere:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsotryndamere.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotryndamere.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotryndamere:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsotryndamere.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotryndamere.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotryndamere:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsotryndamere.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotryndamere.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotryndamere:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsotryndamere.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotryndamere.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuTwistedFate()
+    self.menu:MenuElement({name = "TwistedFate", id = "gsotwistedfate", type = MENU, leftIcon = self.Icons["twistedfate"] })
+        self.menu.gsotwistedfate:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsotwistedfate.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotwistedfate.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotwistedfate:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsotwistedfate.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotwistedfate.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotwistedfate:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsotwistedfate.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotwistedfate.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsotwistedfate:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsotwistedfate.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsotwistedfate.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuTwitch()
+    self.menu:MenuElement({name = "Twitch", id = "gsotwitch", type = MENU, leftIcon = self.Icons["twitch"] })
+        self.menu.gsotwitch:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsotwitch.qset:MenuElement({id = "recallkey", name = "Invisible Recall Key", key = string.byte("T"), value = false, toggle = true})
+            self.menu.gsotwitch.qset:MenuElement({id = "note1", name = "Note: Key should be diffrent than recall key", type = SPACE})
+        self.menu.gsotwitch:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsotwitch.wset:MenuElement({id = "stopq", name = "Stop if Q invisible", value = true})
+            self.menu.gsotwitch.wset:MenuElement({id = "stopwult", name = "Stop if R", value = false})
+            self.menu.gsotwitch.wset:MenuElement({id = "combo", name = "Use W Combo", value = true})
+            self.menu.gsotwitch.wset:MenuElement({id = "harass", name = "Use W Harass", value = false})
+        self.menu.gsotwitch:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsotwitch.eset:MenuElement({id = "combo", name = "Use E Combo", value = true})
+            self.menu.gsotwitch.eset:MenuElement({id = "harass", name = "Use E Harass", value = false})
+            self.menu.gsotwitch.eset:MenuElement({id = "stacks", name = "X stacks", value = 6, min = 1, max = 6, step = 1 })
+            self.menu.gsotwitch.eset:MenuElement({id = "enemies", name = "X enemies", value = 1, min = 1, max = 5, step = 1 })
+self.menu.gsotwitch.qset.recallkey:Value(false)
+end
+
+function __gsoMenu:_menuUdyr()
+    self.menu:MenuElement({name = "Udyr", id = "gsoudyr", type = MENU, leftIcon = self.Icons["udyr"] })
+        self.menu.gsoudyr:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoudyr.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoudyr.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoudyr:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoudyr.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoudyr.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoudyr:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoudyr.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoudyr.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoudyr:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoudyr.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoudyr.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuUrgot()
+    self.menu:MenuElement({name = "Urgot", id = "gsourgot", type = MENU, leftIcon = self.Icons["urgot"] })
+        self.menu.gsourgot:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsourgot.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsourgot.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsourgot:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsourgot.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsourgot.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsourgot:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsourgot.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsourgot.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsourgot:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsourgot.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsourgot.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuVarus()
+    self.menu:MenuElement({name = "Varus", id = "gsovarus", type = MENU, leftIcon = self.Icons["varus"] })
+        self.menu.gsovarus:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsovarus.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovarus.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovarus:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsovarus.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovarus.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovarus:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsovarus.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovarus.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovarus:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsovarus.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovarus.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuVayne()
+    self.menu:MenuElement({name = "Vayne", id = "gsovayne", type = MENU, leftIcon = self.Icons["vayne"] })
+        self.menu.gsovayne:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsovayne.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovayne.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovayne:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsovayne.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovayne.eset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuVeigar()
+    self.menu:MenuElement({name = "Veigar", id = "gsoveigar", type = MENU, leftIcon = self.Icons["veigar"] })
+        self.menu.gsoveigar:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoveigar.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoveigar.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoveigar:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoveigar.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoveigar.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoveigar:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoveigar.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoveigar.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoveigar:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoveigar.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoveigar.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuVelkoz()
+    self.menu:MenuElement({name = "Velkoz", id = "gsovelkoz", type = MENU, leftIcon = self.Icons["velkoz"] })
+        self.menu.gsovelkoz:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsovelkoz.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovelkoz.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovelkoz:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsovelkoz.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovelkoz.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovelkoz:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsovelkoz.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovelkoz.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovelkoz:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsovelkoz.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovelkoz.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuVi()
+    self.menu:MenuElement({name = "Vi", id = "gsovi", type = MENU, leftIcon = self.Icons["vi"] })
+        self.menu.gsovi:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsovi.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovi.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovi:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsovi.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovi.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovi:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsovi.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovi.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovi:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsovi.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovi.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuViktor()
+    self.menu:MenuElement({name = "Viktor", id = "gsoviktor", type = MENU, leftIcon = self.Icons["viktor"] })
+        self.menu.gsoviktor:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoviktor.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoviktor.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoviktor:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoviktor.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoviktor.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoviktor:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoviktor.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoviktor.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoviktor:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoviktor.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoviktor.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuVladimir()
+    self.menu:MenuElement({name = "Vladimir", id = "gsovladimir", type = MENU, leftIcon = self.Icons["vladimir"] })
+        self.menu.gsovladimir:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsovladimir.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovladimir.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovladimir:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsovladimir.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovladimir.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovladimir:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsovladimir.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovladimir.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovladimir:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsovladimir.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovladimir.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuVolibear()
+    self.menu:MenuElement({name = "Volibear", id = "gsovolibear", type = MENU, leftIcon = self.Icons["volibear"] })
+        self.menu.gsovolibear:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsovolibear.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovolibear.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovolibear:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsovolibear.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovolibear.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovolibear:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsovolibear.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovolibear.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsovolibear:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsovolibear.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsovolibear.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuWarwick()
+    self.menu:MenuElement({name = "Warwick", id = "gsowarwick", type = MENU, leftIcon = self.Icons["warwick"] })
+        self.menu.gsowarwick:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsowarwick.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsowarwick.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsowarwick:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsowarwick.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsowarwick.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsowarwick:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsowarwick.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsowarwick.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsowarwick:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsowarwick.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsowarwick.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuXayah()
+    self.menu:MenuElement({name = "Xayah", id = "gsoxayah", type = MENU, leftIcon = self.Icons["xayah"] })
+        self.menu.gsoxayah:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoxayah.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoxayah.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoxayah:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoxayah.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoxayah.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoxayah:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoxayah.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoxayah.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoxayah:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoxayah.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoxayah.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuXerath()
+    self.menu:MenuElement({name = "Xerath", id = "gsoxerath", type = MENU, leftIcon = self.Icons["xerath"] })
+        self.menu.gsoxerath:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoxerath.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoxerath.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoxerath:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoxerath.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoxerath.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoxerath:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoxerath.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoxerath.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoxerath:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoxerath.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoxerath.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuXinZhao()
+    self.menu:MenuElement({name = "XinZhao", id = "gsoxinzhao", type = MENU, leftIcon = self.Icons["xinzhao"] })
+        self.menu.gsoxinzhao:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoxinzhao.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoxinzhao.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoxinzhao:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoxinzhao.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoxinzhao.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoxinzhao:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoxinzhao.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoxinzhao.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoxinzhao:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoxinzhao.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoxinzhao.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuYasuo()
+    self.menu:MenuElement({name = "Yasuo", id = "gsoyasuo", type = MENU, leftIcon = self.Icons["yasuo"] })
+        self.menu.gsoyasuo:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoyasuo.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoyasuo.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoyasuo:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoyasuo.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoyasuo.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoyasuo:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoyasuo.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoyasuo.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoyasuo:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoyasuo.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoyasuo.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuYorick()
+    self.menu:MenuElement({name = "Yorick", id = "gsoyorick", type = MENU, leftIcon = self.Icons["yorick"] })
+        self.menu.gsoyorick:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoyorick.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoyorick.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoyorick:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoyorick.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoyorick.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoyorick:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoyorick.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoyorick.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoyorick:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoyorick.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoyorick.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuZac()
+    self.menu:MenuElement({name = "Zac", id = "gsozac", type = MENU, leftIcon = self.Icons["zac"] })
+        self.menu.gsozac:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsozac.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozac.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozac:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsozac.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozac.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozac:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsozac.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozac.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozac:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsozac.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozac.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuZed()
+    self.menu:MenuElement({name = "Zed", id = "gsozed", type = MENU, leftIcon = self.Icons["zed"] })
+        self.menu.gsozed:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsozed.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozed.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozed:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsozed.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozed.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozed:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsozed.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozed.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozed:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsozed.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozed.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuZiggs()
+    self.menu:MenuElement({name = "Ziggs", id = "gsoziggs", type = MENU, leftIcon = self.Icons["ziggs"] })
+        self.menu.gsoziggs:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsoziggs.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoziggs.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoziggs:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsoziggs.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoziggs.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoziggs:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsoziggs.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoziggs.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsoziggs:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsoziggs.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsoziggs.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuZilean()
+    self.menu:MenuElement({name = "Zilean", id = "gsozilean", type = MENU, leftIcon = self.Icons["zilean"] })
+        self.menu.gsozilean:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsozilean.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozilean.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozilean:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsozilean.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozilean.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozilean:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsozilean.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozilean.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozilean:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsozilean.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozilean.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuZoe()
+    self.menu:MenuElement({name = "Zoe", id = "gsozoe", type = MENU, leftIcon = self.Icons["zoe"] })
+        self.menu.gsozoe:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsozoe.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozoe.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozoe:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsozoe.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozoe.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozoe:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsozoe.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozoe.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozoe:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsozoe.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozoe.rset:MenuElement({id = "harass", name = "Harass", value = false})
+end
+
+function __gsoMenu:_menuZyra()
+    self.menu:MenuElement({name = "Zyra", id = "gsozyra", type = MENU, leftIcon = self.Icons["zyra"] })
+        self.menu.gsozyra:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            self.menu.gsozyra.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozyra.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozyra:MenuElement({name = "W settings", id = "wset", type = MENU })
+            self.menu.gsozyra.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozyra.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozyra:MenuElement({name = "E settings", id = "eset", type = MENU })
+            self.menu.gsozyra.eset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozyra.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        self.menu.gsozyra:MenuElement({name = "R settings", id = "rset", type = MENU })
+            self.menu.gsozyra.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            self.menu.gsozyra.rset:MenuElement({id = "harass", name = "Harass", value = false})
 end
 
 function __gsoMenu:_menuDraw()
@@ -1812,88 +3674,284 @@ end
 class "__gsoDraw"
 
 function __gsoDraw:__init()
-    if gsoAIO.Load.meTristana then
-        self.drawRanges = { w = true, wrange = 900 }
-    elseif gsoAIO.Load.meSivir then
-        self.drawRanges = { q = true, qrange = 1250, r = true, rrange = 1000 }
-    elseif gsoAIO.Load.meVayne then
-        self.drawRanges = { q = true, qrange = 300, e = true, erange = 550 }
-    elseif gsoAIO.Load.meKog then
-        self.drawRanges = { q = true, qrange = 1175, e = true, erange = 1280, r = true, rfunc = function() return self:_kogR() end }
-    elseif gsoAIO.Load.meTwitch then
-        self.drawRanges = { w = true, wrange = 950, e = true, erange = 1200, r = true, rfunc = function() return self:_twitchR() end }
+    if gsoAIO.Load.meAatrox then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meAhri then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meAkali then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meAlistar then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meAmumu then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meAnivia then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meAnnie then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
     elseif gsoAIO.Load.meAshe then
         self.drawRanges = { w = true, wrange = 1200 }
-    elseif gsoAIO.Load.meEzreal then
-        self.drawRanges = { q = true, qrange = 1150, w = true, wrange = 1000, e = true, erange = 475 }
+    elseif gsoAIO.Load.meAurelionSol then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meAzir then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meBard then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meBlitzcrank then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meBrand then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meBraum then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meCaitlyn then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meCamille then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meCassiopeia then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meChogath then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meCorki then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meDarius then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meDiana then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meDrMundo then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
     elseif gsoAIO.Load.meDraven then
         self.drawRanges = { e = true, erange = 1050 }
-    elseif gsoAIO.Load.meTeemo then
-        self.drawRanges = { q = true, qrange = 680, r = true, rfunc = function() return self:_teemoR() end }
+    elseif gsoAIO.Load.meEkko then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meElise then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meEvelynn then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meEzreal then
+        self.drawRanges = { q = true, qrange = 1150, w = true, wrange = 1000, e = true, erange = 475 }
+    elseif gsoAIO.Load.meFiddlesticks then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meFiora then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meFizz then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meGalio then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meGangplank then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meGaren then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meGnar then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meGragas then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meGraves then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meHecarim then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meHeimerdinger then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meIllaoi then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meIrelia then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meIvern then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meJanna then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meJarvanIV then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meJax then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meJayce then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meJhin then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
     elseif gsoAIO.Load.meJinx then
         self.drawRanges = { q = true, qfunc = function() return self:_jinxQ() end, w = true, wrange = 1450, e = true, erange = 900 }
-    elseif gsoAIO.Load.meNami then
-        self.drawRanges = { q = true, qrange = 875, w = true, wrange = 725, e = true, erange = 800, r = true, rrange = 2750 }
-    elseif gsoAIO.Load.menuHeimerdinger then
-        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 1325, e = true, erange = 970 }
-    elseif gsoAIO.Load.menuKatarina then
-        self.drawRanges = { q = true, qrange = 625, e = true, erange = 725, r = true, rrange = 550 }
-    elseif gsoAIO.Load.meCaitlyn then
-        self.drawRanges = { q = true, qrange = 1250, w = true, wrange = 800, e = true, erange = 750, r = true, rfunc = function() return self:_caitR() end }
-    elseif gsoAIO.Load.meJhin then
-        self.drawRanges = { q = true, qrange = 550, w = true, wrange = 3000, e = true, erange = 750, r = true, rrange = 3500 }
-    elseif gsoAIO.Load.meLucian then
-        self.drawRanges = { q = true, qrange = 500, w = true, wrange = 900, e = true, erange = 425, r = true, rrange = 1200 }
-    elseif gsoAIO.Load.meGangplank then
-        self.drawRanges = { q = true, qrange = 625, e = true, erange = 1000 }
-    elseif gsoAIO.Load.meKarthus then
-        self.drawRanges = { q = true, qrange = 875, w = true, wrange = 1000, e = true, erange = 425 }
-    elseif gsoAIO.Load.meMissfortune then
-        self.drawRanges = { q = true, qrange = 650, e = true, erange = 1000, r = true, rrange = 1400 }
-    elseif gsoAIO.Load.meSona then
-        self.drawRanges = { q = true, qrange = 825, w = true, wrange = 1000, e = true, erange = 430, r = true, rrange = 900 }
-    elseif gsoAIO.Load.meJanna then
-        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 800, r = true, rrange = 725 }
-    elseif gsoAIO.Load.meMorgana then
-        self.drawRanges = { q = true, qrange = 1175, w = true, wrange = 900, e = true, erange = 800, r = true, rrange = 625 }
-    elseif gsoAIO.Load.meLulu then
-        self.drawRanges = { q = true, qrange = 925, w = true, wrange = 650, e = true, erange = 650, r = true, rrange = 900 }
+    elseif gsoAIO.Load.meKalista then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
     elseif gsoAIO.Load.meKarma then
-        self.drawRanges = { q = true, qrange = 950, w = true, wrange = 675, e = true, erange = 800 }
-    elseif gsoAIO.Load.meMalzahar then
-        self.drawRanges = { q = true, qrange = 900, w = true, wrange = 150, e = true, erange = 650, r = true, rrange = 700 }
-    elseif gsoAIO.Load.meKayle then
-        self.drawRanges = { q = true, qrange = 650, w = true, wrange = 900, r = true, rrange = 900 }
-    elseif gsoAIO.Load.meAnnie then
-        self.drawRanges = { q = true, qrange = 625, w = true, wrange = 600, e = true, erange = 650, r = true, rrange = 600 }
-    elseif gsoAIO.Load.meJax then
-        self.drawRanges = { q = true, qrange = 700, e = true, erange = 300 }
-    elseif gsoAIO.Load.meVeigar then
-        self.drawRanges = { q = true, qrange = 950, w = true, wrange = 900, e = true, erange = 700, r = true, rrange = 650 }
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meKarthus then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
     elseif gsoAIO.Load.meKassadin then
-        self.drawRanges = { q = true, qrange = 650, e = true, erange = 600, r = true, rrange = 500 }
-    elseif gsoAIO.Load.meRyze then
-        self.drawRanges = { q = true, qrange = 1000, w = true, wrange = 615, e = true, erange = 615, r = true, rfunc = function() return self:_ryzeR() end }
-    elseif gsoAIO.Load.meWukong then
-        self.drawRanges = { e = true, erange = 625, r = true, rrange = 162.5 }
-    elseif gsoAIO.Load.meTryndamere then
-        self.drawRanges = { w = true, wrange = 850, e = true, erange = 660 }
-    elseif gsoAIO.Load.meDiana then
-        self.drawRanges = { q = true, qrange = 900, w = true, wrange = 200, e = true, erange = 450, r = true, rrange = 825 }
-    elseif gsoAIO.Load.meAkali then
-        self.drawRanges = { q = true, qrange = 600, w = true, wrange = 270, e = true, erange = 300, r = true, rrange = 700 }
-    elseif gsoAIO.Load.meVladimir then
-        self.drawRanges = { q = true, qrange = 600, w = true, wrange = 150, e = true, erange = 600, r = true, rrange = 700 }
-    elseif gsoAIO.Load.meXerath then
-        self.drawRanges = { q = true, qrange = 1400, w = true, wrange = 1100, e = true, erange = 1050, r = true, rfunc = function() return self:_ryzeR() end }
-    elseif gsoAIO.Load.meNidalee then
-        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0 }
-    elseif gsoAIO.Load.meTwistedfate then
-        self.drawRanges = { q = true, qrange = 1450, r = true, rrange = 5500 }
-    elseif gsoAIO.Load.meLux then
-        self.drawRanges = { q = true, qrange = 1175, w = true, wrange = 1075, e = true, erange = 1000, r = true, rrange = 3340 }
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meKatarina then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meKayle then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meKayn then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
     elseif gsoAIO.Load.meKennen then
-        self.drawRanges = { q = true, qrange = 1050, w = true, wrange = 750, r = true, rrange = 550 }
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meKhazix then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meKindred then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meKled then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meKogMaw then
+        self.drawRanges = { q = true, qrange = 1175, e = true, erange = 1280, r = true, rfunc = function() return self:_kogR() end }
+    elseif gsoAIO.Load.meLeblanc then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meLeeSin then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meLeona then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meLissandra then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meLucian then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meLulu then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meLux then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meMalphite then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meMalzahar then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meMaokai then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meMasterYi then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meMissFortune then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meMonkeyKing then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meMordekaiser then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meMorgana then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meNami then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meNasus then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meNautilus then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meNidalee then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meNocturne then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meNunu then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meOlaf then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meOrianna then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meOrnn then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.mePantheon then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.mePoppy then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meQuinn then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meRakan then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meRammus then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meRekSai then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meRenekton then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meRengar then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meRiven then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meRumble then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meRyze then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meSejuani then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meShaco then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meShen then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meShyvana then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meSinged then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meSion then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meSivir then
+        self.drawRanges = { q = true, qrange = 1250, r = true, rrange = 1000 }
+    elseif gsoAIO.Load.meSkarner then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meSona then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meSoraka then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meSwain then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meSyndra then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meTahmKench then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meTaliyah then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meTalon then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meTaric then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meTeemo then
+        self.drawRanges = { q = true, qrange = 680, r = true, rfunc = function() return self:_teemoR() end }
+    elseif gsoAIO.Load.meThresh then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meTristana then
+        self.drawRanges = { w = true, wrange = 900 }
+    elseif gsoAIO.Load.meTrundle then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meTryndamere then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meTwistedFate then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meTwitch then
+        self.drawRanges = { w = true, wrange = 950, e = true, erange = 1200, r = true, rfunc = function() return self:_twitchR() end }
+    elseif gsoAIO.Load.meUdyr then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meUrgot then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meVarus then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meVayne then
+        self.drawRanges = { q = true, qrange = 300, e = true, erange = 550 }
+    elseif gsoAIO.Load.meVeigar then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meVelkoz then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meVi then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meViktor then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meVladimir then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meVolibear then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meWarwick then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meXayah then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meXerath then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meXinZhao then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meYasuo then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meYorick then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meZac then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meZed then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meZiggs then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meZilean then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meZoe then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+    elseif gsoAIO.Load.meZyra then
+        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
     end
     Callback.Add('Draw', function() self:_draw() end)
 end
@@ -3096,6 +5154,370 @@ function __gsoUtils:_countEnemyHeroesInRange(sourcePos, range, bb)
     return count
 end
 
+class "__gsoAatrox"
+
+function __gsoAatrox:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoAatrox:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoAatrox:_onAttack(target)
+end
+
+function __gsoAatrox:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAatrox:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAatrox:_tick()
+    
+end
+
+class "__gsoAhri"
+
+function __gsoAhri:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoAhri:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoAhri:_onAttack(target)
+end
+
+function __gsoAhri:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAhri:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAhri:_tick()
+    
+end
+
+class "__gsoAkali"
+
+function __gsoAkali:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoAkali:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoAkali:_onAttack(target)
+end
+
+function __gsoAkali:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAkali:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAkali:_tick()
+    
+end
+
+class "__gsoAlistar"
+
+function __gsoAlistar:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoAlistar:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoAlistar:_onAttack(target)
+end
+
+function __gsoAlistar:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAlistar:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAlistar:_tick()
+    
+end
+
+class "__gsoAmumu"
+
+function __gsoAmumu:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoAmumu:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoAmumu:_onAttack(target)
+end
+
+function __gsoAmumu:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAmumu:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAmumu:_tick()
+    
+end
+
+class "__gsoAnivia"
+
+function __gsoAnivia:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoAnivia:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoAnivia:_onAttack(target)
+end
+
+function __gsoAnivia:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAnivia:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAnivia:_tick()
+    
+end
+
+class "__gsoAnnie"
+
+function __gsoAnnie:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoAnnie:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoAnnie:_onAttack(target)
+end
+
+function __gsoAnnie:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAnnie:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAnnie:_tick()
+    
+end
+
 class "__gsoAshe"
 
 function __gsoAshe:__init()
@@ -3245,6 +5667,734 @@ function __gsoAshe:_dmgUnit(unit)
         end
     end
     return 0
+end
+
+class "__gsoAurelionSol"
+
+function __gsoAurelionSol:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoAurelionSol:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoAurelionSol:_onAttack(target)
+end
+
+function __gsoAurelionSol:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAurelionSol:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAurelionSol:_tick()
+    
+end
+
+class "__gsoAzir"
+
+function __gsoAzir:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoAzir:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoAzir:_onAttack(target)
+end
+
+function __gsoAzir:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAzir:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoAzir:_tick()
+    
+end
+
+class "__gsoBard"
+
+function __gsoBard:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoBard:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoBard:_onAttack(target)
+end
+
+function __gsoBard:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoBard:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoBard:_tick()
+    
+end
+
+class "__gsoBlitzcrank"
+
+function __gsoBlitzcrank:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoBlitzcrank:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoBlitzcrank:_onAttack(target)
+end
+
+function __gsoBlitzcrank:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoBlitzcrank:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoBlitzcrank:_tick()
+    
+end
+
+class "__gsoBrand"
+
+function __gsoBrand:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoBrand:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoBrand:_onAttack(target)
+end
+
+function __gsoBrand:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoBrand:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoBrand:_tick()
+    
+end
+
+class "__gsoBraum"
+
+function __gsoBraum:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoBraum:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoBraum:_onAttack(target)
+end
+
+function __gsoBraum:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoBraum:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoBraum:_tick()
+    
+end
+
+class "__gsoCaitlyn"
+
+function __gsoCaitlyn:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoCaitlyn:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoCaitlyn:_onAttack(target)
+end
+
+function __gsoCaitlyn:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoCaitlyn:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoCaitlyn:_tick()
+    
+end
+
+class "__gsoCamille"
+
+function __gsoCamille:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoCamille:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoCamille:_onAttack(target)
+end
+
+function __gsoCamille:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoCamille:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoCamille:_tick()
+    
+end
+
+class "__gsoCassiopeia"
+
+function __gsoCassiopeia:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoCassiopeia:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoCassiopeia:_onAttack(target)
+end
+
+function __gsoCassiopeia:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoCassiopeia:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoCassiopeia:_tick()
+    
+end
+
+class "__gsoChogath"
+
+function __gsoChogath:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoChogath:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoChogath:_onAttack(target)
+end
+
+function __gsoChogath:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoChogath:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoChogath:_tick()
+    
+end
+
+class "__gsoCorki"
+
+function __gsoCorki:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoCorki:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoCorki:_onAttack(target)
+end
+
+function __gsoCorki:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoCorki:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoCorki:_tick()
+    
+end
+
+class "__gsoDarius"
+
+function __gsoDarius:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoDarius:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoDarius:_onAttack(target)
+end
+
+function __gsoDarius:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoDarius:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoDarius:_tick()
+    
+end
+
+class "__gsoDiana"
+
+function __gsoDiana:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoDiana:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoDiana:_onAttack(target)
+end
+
+function __gsoDiana:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoDiana:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoDiana:_tick()
+    
+end
+
+class "__gsoDrMundo"
+
+function __gsoDrMundo:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoDrMundo:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoDrMundo:_onAttack(target)
+end
+
+function __gsoDrMundo:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoDrMundo:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoDrMundo:_tick()
+    
 end
 
 class "__gsoDraven"
@@ -3441,6 +6591,162 @@ function __gsoDraven:_draw()
             end
         end
     end
+end
+
+class "__gsoEkko"
+
+function __gsoEkko:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoEkko:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoEkko:_onAttack(target)
+end
+
+function __gsoEkko:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoEkko:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoEkko:_tick()
+    
+end
+
+class "__gsoElise"
+
+function __gsoElise:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoElise:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoElise:_onAttack(target)
+end
+
+function __gsoElise:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoElise:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoElise:_tick()
+    
+end
+
+class "__gsoEvelynn"
+
+function __gsoEvelynn:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoEvelynn:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoEvelynn:_onAttack(target)
+end
+
+function __gsoEvelynn:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoEvelynn:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoEvelynn:_tick()
+    
 end
 
 class "__gsoEzreal"
@@ -3788,6 +7094,994 @@ function __gsoEzreal:_draw()
     end
 end
 
+class "__gsoFiddlesticks"
+
+function __gsoFiddlesticks:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoFiddlesticks:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoFiddlesticks:_onAttack(target)
+end
+
+function __gsoFiddlesticks:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoFiddlesticks:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoFiddlesticks:_tick()
+    
+end
+
+class "__gsoFiora"
+
+function __gsoFiora:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoFiora:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoFiora:_onAttack(target)
+end
+
+function __gsoFiora:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoFiora:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoFiora:_tick()
+    
+end
+
+class "__gsoFizz"
+
+function __gsoFizz:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoFizz:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoFizz:_onAttack(target)
+end
+
+function __gsoFizz:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoFizz:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoFizz:_tick()
+    
+end
+
+class "__gsoGalio"
+
+function __gsoGalio:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoGalio:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoGalio:_onAttack(target)
+end
+
+function __gsoGalio:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoGalio:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoGalio:_tick()
+    
+end
+
+class "__gsoGangplank"
+
+function __gsoGangplank:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoGangplank:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoGangplank:_onAttack(target)
+end
+
+function __gsoGangplank:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoGangplank:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoGangplank:_tick()
+    
+end
+
+class "__gsoGaren"
+
+function __gsoGaren:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoGaren:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoGaren:_onAttack(target)
+end
+
+function __gsoGaren:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoGaren:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoGaren:_tick()
+    
+end
+
+class "__gsoGnar"
+
+function __gsoGnar:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoGnar:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoGnar:_onAttack(target)
+end
+
+function __gsoGnar:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoGnar:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoGnar:_tick()
+    
+end
+
+class "__gsoGragas"
+
+function __gsoGragas:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoGragas:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoGragas:_onAttack(target)
+end
+
+function __gsoGragas:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoGragas:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoGragas:_tick()
+    
+end
+
+class "__gsoGraves"
+
+function __gsoGraves:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoGraves:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoGraves:_onAttack(target)
+end
+
+function __gsoGraves:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoGraves:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoGraves:_tick()
+    
+end
+
+class "__gsoHecarim"
+
+function __gsoHecarim:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoHecarim:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoHecarim:_onAttack(target)
+end
+
+function __gsoHecarim:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoHecarim:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoHecarim:_tick()
+    
+end
+
+class "__gsoHeimerdinger"
+
+function __gsoHeimerdinger:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoHeimerdinger:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoHeimerdinger:_onAttack(target)
+end
+
+function __gsoHeimerdinger:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoHeimerdinger:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoHeimerdinger:_tick()
+    
+end
+
+class "__gsoIllaoi"
+
+function __gsoIllaoi:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoIllaoi:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoIllaoi:_onAttack(target)
+end
+
+function __gsoIllaoi:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoIllaoi:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoIllaoi:_tick()
+    
+end
+
+class "__gsoIrelia"
+
+function __gsoIrelia:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoIrelia:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoIrelia:_onAttack(target)
+end
+
+function __gsoIrelia:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoIrelia:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoIrelia:_tick()
+    
+end
+
+class "__gsoIvern"
+
+function __gsoIvern:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoIvern:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoIvern:_onAttack(target)
+end
+
+function __gsoIvern:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoIvern:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoIvern:_tick()
+    
+end
+
+class "__gsoJanna"
+
+function __gsoJanna:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoJanna:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoJanna:_onAttack(target)
+end
+
+function __gsoJanna:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoJanna:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoJanna:_tick()
+    
+end
+
+class "__gsoJarvanIV"
+
+function __gsoJarvanIV:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoJarvanIV:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoJarvanIV:_onAttack(target)
+end
+
+function __gsoJarvanIV:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoJarvanIV:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoJarvanIV:_tick()
+    
+end
+
+class "__gsoJax"
+
+function __gsoJax:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoJax:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoJax:_onAttack(target)
+end
+
+function __gsoJax:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoJax:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoJax:_tick()
+    
+end
+
+class "__gsoJayce"
+
+function __gsoJayce:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoJayce:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoJayce:_onAttack(target)
+end
+
+function __gsoJayce:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoJayce:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoJayce:_tick()
+    
+end
+
+class "__gsoJhin"
+
+function __gsoJhin:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoJhin:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoJhin:_onAttack(target)
+end
+
+function __gsoJhin:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoJhin:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoJhin:_tick()
+    
+end
+
 class "__gsoJinx"
 
 function __gsoJinx:__init()
@@ -3906,6 +8200,578 @@ function __gsoJinx:_tick()
             self.lastR = GetTickCount()
         end
     end
+end
+
+class "__gsoKalista"
+
+function __gsoKalista:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoKalista:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoKalista:_onAttack(target)
+end
+
+function __gsoKalista:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKalista:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKalista:_tick()
+    
+end
+
+class "__gsoKarma"
+
+function __gsoKarma:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoKarma:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoKarma:_onAttack(target)
+end
+
+function __gsoKarma:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKarma:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKarma:_tick()
+    
+end
+
+class "__gsoKarthus"
+
+function __gsoKarthus:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoKarthus:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoKarthus:_onAttack(target)
+end
+
+function __gsoKarthus:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKarthus:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKarthus:_tick()
+    
+end
+
+class "__gsoKassadin"
+
+function __gsoKassadin:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoKassadin:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoKassadin:_onAttack(target)
+end
+
+function __gsoKassadin:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKassadin:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKassadin:_tick()
+    
+end
+
+class "__gsoKatarina"
+
+function __gsoKatarina:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoKatarina:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoKatarina:_onAttack(target)
+end
+
+function __gsoKatarina:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKatarina:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKatarina:_tick()
+    
+end
+
+class "__gsoKayle"
+
+function __gsoKayle:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoKayle:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoKayle:_onAttack(target)
+end
+
+function __gsoKayle:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKayle:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKayle:_tick()
+    
+end
+
+class "__gsoKayn"
+
+function __gsoKayn:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoKayn:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoKayn:_onAttack(target)
+end
+
+function __gsoKayn:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKayn:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKayn:_tick()
+    
+end
+
+class "__gsoKennen"
+
+function __gsoKennen:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoKennen:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoKennen:_onAttack(target)
+end
+
+function __gsoKennen:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKennen:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKennen:_tick()
+    
+end
+
+class "__gsoKhazix"
+
+function __gsoKhazix:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoKhazix:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoKhazix:_onAttack(target)
+end
+
+function __gsoKhazix:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKhazix:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKhazix:_tick()
+    
+end
+
+class "__gsoKindred"
+
+function __gsoKindred:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoKindred:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoKindred:_onAttack(target)
+end
+
+function __gsoKindred:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKindred:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKindred:_tick()
+    
+end
+
+class "__gsoKled"
+
+function __gsoKled:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoKled:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoKled:_onAttack(target)
+end
+
+function __gsoKled:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKled:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoKled:_tick()
+    
 end
 
 class "__gsoKogMaw"
@@ -4138,6 +9004,2138 @@ function __gsoKogMaw:_tick()
     end
 end
 
+class "__gsoLeblanc"
+
+function __gsoLeblanc:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoLeblanc:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoLeblanc:_onAttack(target)
+end
+
+function __gsoLeblanc:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoLeblanc:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoLeblanc:_tick()
+    
+end
+
+class "__gsoLeeSin"
+
+function __gsoLeeSin:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoLeeSin:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoLeeSin:_onAttack(target)
+end
+
+function __gsoLeeSin:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoLeeSin:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoLeeSin:_tick()
+    
+end
+
+class "__gsoLeona"
+
+function __gsoLeona:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoLeona:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoLeona:_onAttack(target)
+end
+
+function __gsoLeona:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoLeona:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoLeona:_tick()
+    
+end
+
+class "__gsoLissandra"
+
+function __gsoLissandra:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoLissandra:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoLissandra:_onAttack(target)
+end
+
+function __gsoLissandra:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoLissandra:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoLissandra:_tick()
+    
+end
+
+class "__gsoLucian"
+
+function __gsoLucian:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoLucian:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoLucian:_onAttack(target)
+end
+
+function __gsoLucian:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoLucian:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoLucian:_tick()
+    
+end
+
+class "__gsoLulu"
+
+function __gsoLulu:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoLulu:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoLulu:_onAttack(target)
+end
+
+function __gsoLulu:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoLulu:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoLulu:_tick()
+    
+end
+
+class "__gsoLux"
+
+function __gsoLux:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoLux:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoLux:_onAttack(target)
+end
+
+function __gsoLux:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoLux:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoLux:_tick()
+    
+end
+
+class "__gsoMalphite"
+
+function __gsoMalphite:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoMalphite:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoMalphite:_onAttack(target)
+end
+
+function __gsoMalphite:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMalphite:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMalphite:_tick()
+    
+end
+
+class "__gsoMalzahar"
+
+function __gsoMalzahar:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoMalzahar:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoMalzahar:_onAttack(target)
+end
+
+function __gsoMalzahar:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMalzahar:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMalzahar:_tick()
+    
+end
+
+class "__gsoMaokai"
+
+function __gsoMaokai:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoMaokai:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoMaokai:_onAttack(target)
+end
+
+function __gsoMaokai:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMaokai:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMaokai:_tick()
+    
+end
+
+class "__gsoMasterYi"
+
+function __gsoMasterYi:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoMasterYi:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoMasterYi:_onAttack(target)
+end
+
+function __gsoMasterYi:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMasterYi:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMasterYi:_tick()
+    
+end
+
+class "__gsoMissFortune"
+
+function __gsoMissFortune:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoMissFortune:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoMissFortune:_onAttack(target)
+end
+
+function __gsoMissFortune:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMissFortune:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMissFortune:_tick()
+    
+end
+
+class "__gsoMonkeyKing"
+
+function __gsoMonkeyKing:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoMonkeyKing:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoMonkeyKing:_onAttack(target)
+end
+
+function __gsoMonkeyKing:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMonkeyKing:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMonkeyKing:_tick()
+    
+end
+
+class "__gsoMordekaiser"
+
+function __gsoMordekaiser:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoMordekaiser:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoMordekaiser:_onAttack(target)
+end
+
+function __gsoMordekaiser:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMordekaiser:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMordekaiser:_tick()
+    
+end
+
+class "__gsoMorgana"
+
+function __gsoMorgana:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoMorgana:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoMorgana:_onAttack(target)
+end
+
+function __gsoMorgana:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMorgana:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoMorgana:_tick()
+    
+end
+
+class "__gsoNami"
+
+function __gsoNami:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoNami:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoNami:_onAttack(target)
+end
+
+function __gsoNami:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoNami:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoNami:_tick()
+    
+end
+
+class "__gsoNasus"
+
+function __gsoNasus:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoNasus:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoNasus:_onAttack(target)
+end
+
+function __gsoNasus:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoNasus:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoNasus:_tick()
+    
+end
+
+class "__gsoNautilus"
+
+function __gsoNautilus:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoNautilus:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoNautilus:_onAttack(target)
+end
+
+function __gsoNautilus:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoNautilus:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoNautilus:_tick()
+    
+end
+
+class "__gsoNidalee"
+
+function __gsoNidalee:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoNidalee:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoNidalee:_onAttack(target)
+end
+
+function __gsoNidalee:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoNidalee:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoNidalee:_tick()
+    
+end
+
+class "__gsoNocturne"
+
+function __gsoNocturne:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoNocturne:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoNocturne:_onAttack(target)
+end
+
+function __gsoNocturne:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoNocturne:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoNocturne:_tick()
+    
+end
+
+class "__gsoNunu"
+
+function __gsoNunu:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoNunu:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoNunu:_onAttack(target)
+end
+
+function __gsoNunu:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoNunu:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoNunu:_tick()
+    
+end
+
+class "__gsoOlaf"
+
+function __gsoOlaf:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoOlaf:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoOlaf:_onAttack(target)
+end
+
+function __gsoOlaf:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoOlaf:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoOlaf:_tick()
+    
+end
+
+class "__gsoOrianna"
+
+function __gsoOrianna:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoOrianna:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoOrianna:_onAttack(target)
+end
+
+function __gsoOrianna:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoOrianna:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoOrianna:_tick()
+    
+end
+
+class "__gsoOrnn"
+
+function __gsoOrnn:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoOrnn:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoOrnn:_onAttack(target)
+end
+
+function __gsoOrnn:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoOrnn:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoOrnn:_tick()
+    
+end
+
+class "__gsoPantheon"
+
+function __gsoPantheon:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoPantheon:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoPantheon:_onAttack(target)
+end
+
+function __gsoPantheon:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoPantheon:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoPantheon:_tick()
+    
+end
+
+class "__gsoPoppy"
+
+function __gsoPoppy:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoPoppy:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoPoppy:_onAttack(target)
+end
+
+function __gsoPoppy:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoPoppy:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoPoppy:_tick()
+    
+end
+
+class "__gsoQuinn"
+
+function __gsoQuinn:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoQuinn:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoQuinn:_onAttack(target)
+end
+
+function __gsoQuinn:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoQuinn:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoQuinn:_tick()
+    
+end
+
+class "__gsoRakan"
+
+function __gsoRakan:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoRakan:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoRakan:_onAttack(target)
+end
+
+function __gsoRakan:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRakan:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRakan:_tick()
+    
+end
+
+class "__gsoRammus"
+
+function __gsoRammus:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoRammus:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoRammus:_onAttack(target)
+end
+
+function __gsoRammus:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRammus:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRammus:_tick()
+    
+end
+
+class "__gsoRekSai"
+
+function __gsoRekSai:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoRekSai:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoRekSai:_onAttack(target)
+end
+
+function __gsoRekSai:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRekSai:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRekSai:_tick()
+    
+end
+
+class "__gsoRenekton"
+
+function __gsoRenekton:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoRenekton:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoRenekton:_onAttack(target)
+end
+
+function __gsoRenekton:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRenekton:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRenekton:_tick()
+    
+end
+
+class "__gsoRengar"
+
+function __gsoRengar:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoRengar:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoRengar:_onAttack(target)
+end
+
+function __gsoRengar:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRengar:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRengar:_tick()
+    
+end
+
+class "__gsoRiven"
+
+function __gsoRiven:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoRiven:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoRiven:_onAttack(target)
+end
+
+function __gsoRiven:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRiven:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRiven:_tick()
+    
+end
+
+class "__gsoRumble"
+
+function __gsoRumble:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoRumble:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoRumble:_onAttack(target)
+end
+
+function __gsoRumble:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRumble:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRumble:_tick()
+    
+end
+
+class "__gsoRyze"
+
+function __gsoRyze:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoRyze:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoRyze:_onAttack(target)
+end
+
+function __gsoRyze:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRyze:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoRyze:_tick()
+    
+end
+
+class "__gsoSejuani"
+
+function __gsoSejuani:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoSejuani:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoSejuani:_onAttack(target)
+end
+
+function __gsoSejuani:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSejuani:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSejuani:_tick()
+    
+end
+
+class "__gsoShaco"
+
+function __gsoShaco:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoShaco:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoShaco:_onAttack(target)
+end
+
+function __gsoShaco:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoShaco:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoShaco:_tick()
+    
+end
+
+class "__gsoShen"
+
+function __gsoShen:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoShen:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoShen:_onAttack(target)
+end
+
+function __gsoShen:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoShen:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoShen:_tick()
+    
+end
+
+class "__gsoShyvana"
+
+function __gsoShyvana:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoShyvana:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoShyvana:_onAttack(target)
+end
+
+function __gsoShyvana:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoShyvana:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoShyvana:_tick()
+    
+end
+
+class "__gsoSinged"
+
+function __gsoSinged:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoSinged:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoSinged:_onAttack(target)
+end
+
+function __gsoSinged:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSinged:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSinged:_tick()
+    
+end
+
+class "__gsoSion"
+
+function __gsoSion:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoSion:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoSion:_onAttack(target)
+end
+
+function __gsoSion:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSion:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSion:_tick()
+    
+end
+
 class "__gsoSivir"
 
 function __gsoSivir:__init()
@@ -4210,6 +11208,474 @@ function __gsoSivir:_canAttack(target)
         return true
     end
     return false
+end
+
+class "__gsoSkarner"
+
+function __gsoSkarner:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoSkarner:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoSkarner:_onAttack(target)
+end
+
+function __gsoSkarner:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSkarner:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSkarner:_tick()
+    
+end
+
+class "__gsoSona"
+
+function __gsoSona:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoSona:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoSona:_onAttack(target)
+end
+
+function __gsoSona:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSona:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSona:_tick()
+    
+end
+
+class "__gsoSoraka"
+
+function __gsoSoraka:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoSoraka:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoSoraka:_onAttack(target)
+end
+
+function __gsoSoraka:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSoraka:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSoraka:_tick()
+    
+end
+
+class "__gsoSwain"
+
+function __gsoSwain:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoSwain:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoSwain:_onAttack(target)
+end
+
+function __gsoSwain:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSwain:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSwain:_tick()
+    
+end
+
+class "__gsoSyndra"
+
+function __gsoSyndra:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoSyndra:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoSyndra:_onAttack(target)
+end
+
+function __gsoSyndra:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSyndra:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoSyndra:_tick()
+    
+end
+
+class "__gsoTahmKench"
+
+function __gsoTahmKench:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoTahmKench:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoTahmKench:_onAttack(target)
+end
+
+function __gsoTahmKench:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoTahmKench:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoTahmKench:_tick()
+    
+end
+
+class "__gsoTaliyah"
+
+function __gsoTaliyah:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoTaliyah:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoTaliyah:_onAttack(target)
+end
+
+function __gsoTaliyah:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoTaliyah:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoTaliyah:_tick()
+    
+end
+
+class "__gsoTalon"
+
+function __gsoTalon:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoTalon:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoTalon:_onAttack(target)
+end
+
+function __gsoTalon:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoTalon:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoTalon:_tick()
+    
+end
+
+class "__gsoTaric"
+
+function __gsoTaric:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoTaric:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoTaric:_onAttack(target)
+end
+
+function __gsoTaric:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoTaric:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoTaric:_tick()
+    
 end
 
 class "__gsoTeemo"
@@ -4292,6 +11758,58 @@ function __gsoTeemo:_canAttack(target)
         return true
     end
     return false
+end
+
+class "__gsoThresh"
+
+function __gsoThresh:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoThresh:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoThresh:_onAttack(target)
+end
+
+function __gsoThresh:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoThresh:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoThresh:_tick()
+    
 end
 
 class "__gsoTristana"
@@ -4456,6 +11974,162 @@ function __gsoTristana:_tick()
             end
         end
     end
+end
+
+class "__gsoTrundle"
+
+function __gsoTrundle:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoTrundle:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoTrundle:_onAttack(target)
+end
+
+function __gsoTrundle:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoTrundle:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoTrundle:_tick()
+    
+end
+
+class "__gsoTryndamere"
+
+function __gsoTryndamere:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoTryndamere:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoTryndamere:_onAttack(target)
+end
+
+function __gsoTryndamere:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoTryndamere:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoTryndamere:_tick()
+    
+end
+
+class "__gsoTwistedFate"
+
+function __gsoTwistedFate:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoTwistedFate:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoTwistedFate:_onAttack(target)
+end
+
+function __gsoTwistedFate:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoTwistedFate:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoTwistedFate:_tick()
+    
 end
 
 class "__gsoTwitch"
@@ -4714,6 +12388,162 @@ function __gsoTwitch:_draw()
     end
 end
 
+class "__gsoUdyr"
+
+function __gsoUdyr:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoUdyr:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoUdyr:_onAttack(target)
+end
+
+function __gsoUdyr:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoUdyr:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoUdyr:_tick()
+    
+end
+
+class "__gsoUrgot"
+
+function __gsoUrgot:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoUrgot:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoUrgot:_onAttack(target)
+end
+
+function __gsoUrgot:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoUrgot:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoUrgot:_tick()
+    
+end
+
+class "__gsoVarus"
+
+function __gsoVarus:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoVarus:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoVarus:_onAttack(target)
+end
+
+function __gsoVarus:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoVarus:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoVarus:_tick()
+    
+end
+
 class "__gsoVayne"
 
 function __gsoVayne:__init()
@@ -4816,1158 +12646,6 @@ function __gsoVayne:_tick()
     end
 end
 
-class "__gsoNami"
-
-function __gsoNami:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoNami:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoNami:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoNami:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoNami:_tick()
-end
-
-class "__gsoHeimerdinger"
-
-function __gsoHeimerdinger:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoHeimerdinger:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoHeimerdinger:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoHeimerdinger:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoHeimerdinger:_tick()
-end
-
-class "__gsoKatarina"
-
-function __gsoKatarina:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoKatarina:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoKatarina:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoKatarina:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoKatarina:_tick()
-end
-
-class "__gsoCaitlyn"
-
-function __gsoCaitlyn:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoCaitlyn:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoCaitlyn:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoCaitlyn:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoCaitlyn:_tick()
-end
-
-class "__gsoJhin"
-
-function __gsoJhin:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoJhin:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoJhin:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoJhin:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoJhin:_tick()
-end
-
-class "__gsoLucian"
-
-function __gsoLucian:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoLucian:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoLucian:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoLucian:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoLucian:_tick()
-end
-
-class "__gsoGangplank"
-
-function __gsoGangplank:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoGangplank:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoGangplank:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoGangplank:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoGangplank:_tick()
-end
-
-class "__gsoKarthus"
-
-function __gsoKarthus:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoKarthus:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoKarthus:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoKarthus:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoKarthus:_tick()
-end
-
-class "__gsoMissfortune"
-
-function __gsoMissfortune:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoMissfortune:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoMissfortune:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoMissfortune:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoMissfortune:_tick()
-end
-
-class "__gsoSona"
-
-function __gsoSona:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoSona:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoSona:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoSona:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoSona:_tick()
-end
-
-class "__gsoJanna"
-
-function __gsoJanna:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoJanna:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoJanna:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoJanna:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoJanna:_tick()
-end
-
-class "__gsoMorgana"
-
-function __gsoMorgana:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoMorgana:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoMorgana:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoMorgana:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoMorgana:_tick()
-end
-
-class "__gsoLulu"
-
-function __gsoLulu:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoLulu:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoLulu:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoLulu:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoLulu:_tick()
-end
-
-class "__gsoKarma"
-
-function __gsoKarma:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoKarma:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoKarma:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoKarma:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoKarma:_tick()
-end
-
-class "__gsoMalzahar"
-
-function __gsoMalzahar:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoMalzahar:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoMalzahar:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoMalzahar:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoMalzahar:_tick()
-end
-
-class "__gsoKayle"
-
-function __gsoKayle:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoKayle:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoKayle:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoKayle:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoKayle:_tick()
-end
-
-class "__gsoAnnie"
-
-function __gsoAnnie:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoAnnie:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoAnnie:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoAnnie:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoAnnie:_tick()
-end
-
-class "__gsoJax"
-
-function __gsoJax:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoJax:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoJax:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoJax:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoJax:_tick()
-end
-
 class "__gsoVeigar"
 
 function __gsoVeigar:__init()
@@ -5980,61 +12658,49 @@ function __gsoVeigar:__init()
     self.lastE = 0
     self.lastR = 0
     gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
     gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
     gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
     gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
 end
 
 function __gsoVeigar:_onMove(target)
     local isTarget = target and target.type == Obj_AI_Hero
     local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
     local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
     local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
+    local mePos = myHero.pos
     if not isTarget or afterAttack then
     
     end
 end
 
+function __gsoVeigar:_onAttack(target)
+end
+
 function __gsoVeigar:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
         return true
     end
     return false
 end
 
 function __gsoVeigar:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
         return true
     end
     return false
 end
 
 function __gsoVeigar:_tick()
+    
 end
 
-class "__gsoKassadin"
+class "__gsoVelkoz"
 
-function __gsoKassadin:__init()
+function __gsoVelkoz:__init()
     self.canQ = true
     self.canW = true
     self.canE = true
@@ -6044,61 +12710,49 @@ function __gsoKassadin:__init()
     self.lastE = 0
     self.lastR = 0
     gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
     gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
     gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
     gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
 end
 
-function __gsoKassadin:_onMove(target)
+function __gsoVelkoz:_onMove(target)
     local isTarget = target and target.type == Obj_AI_Hero
     local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
     local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
     local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
+    local mePos = myHero.pos
     if not isTarget or afterAttack then
     
     end
 end
 
-function __gsoKassadin:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
+function __gsoVelkoz:_onAttack(target)
+end
+
+function __gsoVelkoz:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
         return true
     end
     return false
 end
 
-function __gsoKassadin:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
+function __gsoVelkoz:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
         return true
     end
     return false
 end
 
-function __gsoKassadin:_tick()
+function __gsoVelkoz:_tick()
+    
 end
 
-class "__gsoRyze"
+class "__gsoVi"
 
-function __gsoRyze:__init()
+function __gsoVi:__init()
     self.canQ = true
     self.canW = true
     self.canE = true
@@ -6108,61 +12762,49 @@ function __gsoRyze:__init()
     self.lastE = 0
     self.lastR = 0
     gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
     gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
     gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
     gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
 end
 
-function __gsoRyze:_onMove(target)
+function __gsoVi:_onMove(target)
     local isTarget = target and target.type == Obj_AI_Hero
     local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
     local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
     local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
+    local mePos = myHero.pos
     if not isTarget or afterAttack then
     
     end
 end
 
-function __gsoRyze:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
+function __gsoVi:_onAttack(target)
+end
+
+function __gsoVi:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
         return true
     end
     return false
 end
 
-function __gsoRyze:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
+function __gsoVi:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
         return true
     end
     return false
 end
 
-function __gsoRyze:_tick()
+function __gsoVi:_tick()
+    
 end
 
-class "__gsoWukong"
+class "__gsoViktor"
 
-function __gsoWukong:__init()
+function __gsoViktor:__init()
     self.canQ = true
     self.canW = true
     self.canE = true
@@ -6172,248 +12814,44 @@ function __gsoWukong:__init()
     self.lastE = 0
     self.lastR = 0
     gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
     gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
     gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
     gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
 end
 
-function __gsoWukong:_onMove(target)
+function __gsoViktor:_onMove(target)
     local isTarget = target and target.type == Obj_AI_Hero
     local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
     local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
     local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
+    local mePos = myHero.pos
     if not isTarget or afterAttack then
     
     end
 end
 
-function __gsoWukong:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
+function __gsoViktor:_onAttack(target)
+end
+
+function __gsoViktor:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
         return true
     end
     return false
 end
 
-function __gsoWukong:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
+function __gsoViktor:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
         return true
     end
     return false
 end
 
-function __gsoWukong:_tick()
-end
-
-class "__gsoTryndamere"
-
-function __gsoTryndamere:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoTryndamere:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+function __gsoViktor:_tick()
     
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoTryndamere:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoTryndamere:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoTryndamere:_tick()
-end
-
-class "__gsoDiana"
-
-function __gsoDiana:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoDiana:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoDiana:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoDiana:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoDiana:_tick()
-end
-
-class "__gsoAkali"
-
-function __gsoAkali:__init()
-    self.canQ = true
-    self.canW = true
-    self.canE = true
-    self.canR = true
-    self.lastQ = 0
-    self.lastW = 0
-    self.lastE = 0
-    self.lastR = 0
-    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
-    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
-    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
-    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
-end
-
-function __gsoAkali:_onMove(target)
-    local isTarget = target and target.type == Obj_AI_Hero
-    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
-    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
-    if not isTarget or afterAttack then
-    
-    end
-end
-
-function __gsoAkali:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
-        return true
-    end
-    return false
-end
-
-function __gsoAkali:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
-        return true
-    end
-    return false
-end
-
-function __gsoAkali:_tick()
 end
 
 class "__gsoVladimir"
@@ -6428,56 +12866,200 @@ function __gsoVladimir:__init()
     self.lastE = 0
     self.lastR = 0
     gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
     gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
     gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
     gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
 end
 
 function __gsoVladimir:_onMove(target)
     local isTarget = target and target.type == Obj_AI_Hero
     local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
     local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
     local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
+    local mePos = myHero.pos
     if not isTarget or afterAttack then
     
     end
 end
 
+function __gsoVladimir:_onAttack(target)
+end
+
 function __gsoVladimir:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
         return true
     end
     return false
 end
 
 function __gsoVladimir:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
         return true
     end
     return false
 end
 
 function __gsoVladimir:_tick()
+    
+end
+
+class "__gsoVolibear"
+
+function __gsoVolibear:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoVolibear:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoVolibear:_onAttack(target)
+end
+
+function __gsoVolibear:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoVolibear:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoVolibear:_tick()
+    
+end
+
+class "__gsoWarwick"
+
+function __gsoWarwick:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoWarwick:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoWarwick:_onAttack(target)
+end
+
+function __gsoWarwick:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoWarwick:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoWarwick:_tick()
+    
+end
+
+class "__gsoXayah"
+
+function __gsoXayah:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoXayah:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoXayah:_onAttack(target)
+end
+
+function __gsoXayah:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoXayah:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoXayah:_tick()
+    
 end
 
 class "__gsoXerath"
@@ -6492,61 +13074,49 @@ function __gsoXerath:__init()
     self.lastE = 0
     self.lastR = 0
     gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
     gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
     gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
     gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
 end
 
 function __gsoXerath:_onMove(target)
     local isTarget = target and target.type == Obj_AI_Hero
     local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
     local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
     local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
+    local mePos = myHero.pos
     if not isTarget or afterAttack then
     
     end
 end
 
+function __gsoXerath:_onAttack(target)
+end
+
 function __gsoXerath:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
         return true
     end
     return false
 end
 
 function __gsoXerath:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
         return true
     end
     return false
 end
 
 function __gsoXerath:_tick()
+    
 end
 
-class "__gsoNidalee"
+class "__gsoXinZhao"
 
-function __gsoNidalee:__init()
+function __gsoXinZhao:__init()
     self.canQ = true
     self.canW = true
     self.canE = true
@@ -6556,61 +13126,49 @@ function __gsoNidalee:__init()
     self.lastE = 0
     self.lastR = 0
     gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
     gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
     gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
     gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
 end
 
-function __gsoNidalee:_onMove(target)
+function __gsoXinZhao:_onMove(target)
     local isTarget = target and target.type == Obj_AI_Hero
     local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
     local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
     local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
+    local mePos = myHero.pos
     if not isTarget or afterAttack then
     
     end
 end
 
-function __gsoNidalee:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
+function __gsoXinZhao:_onAttack(target)
+end
+
+function __gsoXinZhao:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
         return true
     end
     return false
 end
 
-function __gsoNidalee:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
+function __gsoXinZhao:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
         return true
     end
     return false
 end
 
-function __gsoNidalee:_tick()
+function __gsoXinZhao:_tick()
+    
 end
 
-class "__gsoTwistedfate"
+class "__gsoYasuo"
 
-function __gsoTwistedfate:__init()
+function __gsoYasuo:__init()
     self.canQ = true
     self.canW = true
     self.canE = true
@@ -6620,61 +13178,49 @@ function __gsoTwistedfate:__init()
     self.lastE = 0
     self.lastR = 0
     gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
     gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
     gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
     gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
 end
 
-function __gsoTwistedfate:_onMove(target)
+function __gsoYasuo:_onMove(target)
     local isTarget = target and target.type == Obj_AI_Hero
     local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
     local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
     local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
+    local mePos = myHero.pos
     if not isTarget or afterAttack then
     
     end
 end
 
-function __gsoTwistedfate:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
+function __gsoYasuo:_onAttack(target)
+end
+
+function __gsoYasuo:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
         return true
     end
     return false
 end
 
-function __gsoTwistedfate:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
+function __gsoYasuo:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
         return true
     end
     return false
 end
 
-function __gsoTwistedfate:_tick()
+function __gsoYasuo:_tick()
+    
 end
 
-class "__gsoLux"
+class "__gsoYorick"
 
-function __gsoLux:__init()
+function __gsoYorick:__init()
     self.canQ = true
     self.canW = true
     self.canE = true
@@ -6684,61 +13230,49 @@ function __gsoLux:__init()
     self.lastE = 0
     self.lastR = 0
     gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
     gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
     gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
     gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
 end
 
-function __gsoLux:_onMove(target)
+function __gsoYorick:_onMove(target)
     local isTarget = target and target.type == Obj_AI_Hero
     local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
     local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
     local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
+    local mePos = myHero.pos
     if not isTarget or afterAttack then
     
     end
 end
 
-function __gsoLux:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
+function __gsoYorick:_onAttack(target)
+end
+
+function __gsoYorick:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
         return true
     end
     return false
 end
 
-function __gsoLux:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
+function __gsoYorick:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
         return true
     end
     return false
 end
 
-function __gsoLux:_tick()
+function __gsoYorick:_tick()
+    
 end
 
-class "__gsoKennen"
+class "__gsoZac"
 
-function __gsoKennen:__init()
+function __gsoZac:__init()
     self.canQ = true
     self.canW = true
     self.canE = true
@@ -6748,56 +13282,304 @@ function __gsoKennen:__init()
     self.lastE = 0
     self.lastR = 0
     gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
     gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
     gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
     gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
-    gsoAIO.Callbacks:_setBonusDmg(function() return 3 end)
 end
 
-function __gsoKennen:_onMove(target)
+function __gsoZac:_onMove(target)
     local isTarget = target and target.type == Obj_AI_Hero
     local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
     local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
     local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
-    
-    if isTarget and afterAttack then
-        
-    end
+    local mePos = myHero.pos
     if not isTarget or afterAttack then
     
     end
 end
 
-function __gsoKennen:_canMove(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 250 and qMinuss > 250 and eMinus > 500 and eMinuss > 500 then
+function __gsoZac:_onAttack(target)
+end
+
+function __gsoZac:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
         return true
     end
     return false
 end
 
-function __gsoKennen:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local qMinus = getTick - self.lastQ
-    local qMinuss = getTick - gsoAIO.WndMsg.lastQ
-    local eMinus = getTick - self.lastE
-    local eMinuss = getTick - gsoAIO.WndMsg.lastE
-    if qMinus > 400 and qMinuss > 400 and eMinus > 600 and eMinuss > 600 then
+function __gsoZac:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
         return true
     end
     return false
 end
 
-function __gsoKennen:_tick()
+function __gsoZac:_tick()
+    
+end
+
+class "__gsoZed"
+
+function __gsoZed:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoZed:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoZed:_onAttack(target)
+end
+
+function __gsoZed:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoZed:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoZed:_tick()
+    
+end
+
+class "__gsoZiggs"
+
+function __gsoZiggs:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoZiggs:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoZiggs:_onAttack(target)
+end
+
+function __gsoZiggs:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoZiggs:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoZiggs:_tick()
+    
+end
+
+class "__gsoZilean"
+
+function __gsoZilean:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoZilean:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoZilean:_onAttack(target)
+end
+
+function __gsoZilean:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoZilean:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoZilean:_tick()
+    
+end
+
+class "__gsoZoe"
+
+function __gsoZoe:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoZoe:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoZoe:_onAttack(target)
+end
+
+function __gsoZoe:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoZoe:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoZoe:_tick()
+    
+end
+
+class "__gsoZyra"
+
+function __gsoZyra:__init()
+    self.canQ = true
+    self.canW = true
+    self.canE = true
+    self.canR = true
+    self.lastQ = 0
+    self.lastW = 0
+    self.lastE = 0
+    self.lastR = 0
+    gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
+    gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
+    gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
+    gsoAIO.Callbacks:_setCanAttack(function(target) return self:_canAttack(target) end)
+    gsoAIO.Callbacks:_setOnTick(function() self:_tick() end)
+end
+
+function __gsoZyra:_onMove(target)
+    local isTarget = target and target.type == Obj_AI_Hero
+    local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
+    local gT = gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR)
+    local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+    local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+    local mePos = myHero.pos
+    if not isTarget or afterAttack then
+    
+    end
+end
+
+function __gsoZyra:_onAttack(target)
+end
+
+function __gsoZyra:_canMove(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoZyra:_canAttack(target)
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+        return true
+    end
+    return false
+end
+
+function __gsoZyra:_tick()
+    
 end
 
 gsoAIO = {
@@ -6822,47 +13604,145 @@ class "__gsoLoad"
 
 function __gsoLoad:__init()
     self.loadTime = GetTickCount()
-    self.meTristana = heroName == "tristana"
-    self.meSivir = heroName == "sivir"
-    self.meVayne = heroName == "vayne"
-    self.meKog = heroName == "kogmaw"
-    self.meTwitch = heroName == "twitch"
-    self.meAshe = heroName == "ashe"
-    self.meEzreal = heroName == "ezreal"
-    self.meDraven = heroName == "draven"
-    self.meTeemo = heroName == "teemo"
-    self.meJinx = heroName == "jinx"
-    self.meNami = heroName == "nami"
-    self.meHeimerdinger = heroName == "heimerdinger"
-    self.meKatarina = heroName == "katarina"
-    self.meCaitlyn = heroName == "caitlyn"
-    self.meJhin = heroName == "jhin"
-    self.meLucian = heroName == "lucian"
-    self.meGangplank = heroName == "gangplank"
-    self.meKarthus = heroName == "karthus"
-    self.meMissfortune = heroName == "missfortune"
-    self.meSona = heroName == "sona"
-    self.meJanna = heroName == "janna"
-    self.meMorgana = heroName == "morgana"
-    self.meLulu = heroName == "lulu"
-    self.meKarma = heroName == "karma"
-    self.meMalzahar = heroName == "malzahar"
-    self.meKayle = heroName == "kayle"
-    self.meAnnie = heroName == "annie"
-    self.meJax = heroName == "jax"
-    self.meVeigar = heroName == "veigar"
-    self.meKassadin = heroName == "kassadin"
-    self.meRyze = heroName == "ryze"
-    self.meWukong = heroName == "monkeyking"
-    self.meTryndamere = heroName == "tryndamere"
-    self.meDiana = heroName == "diana"
+    self.meAatrox = heroName == "aatrox"
+    self.meAhri = heroName == "ahri"
     self.meAkali = heroName == "akali"
-    self.meVladimir = heroName == "vladimir"
-    self.meXerath = heroName == "xerath"
-    self.meNidalee = heroName == "nidalee"
-    self.meTwistedfate = heroName == "twistedfate"
-    self.meLux = heroName == "lux"
+    self.meAlistar = heroName == "alistar"
+    self.meAmumu = heroName == "amumu"
+    self.meAnivia = heroName == "anivia"
+    self.meAnnie = heroName == "annie"
+    self.meAshe = heroName == "ashe"
+    self.meAurelionSol = heroName == "aurelionsol"
+    self.meAzir = heroName == "azir"
+    self.meBard = heroName == "bard"
+    self.meBlitzcrank = heroName == "blitzcrank"
+    self.meBrand = heroName == "brand"
+    self.meBraum = heroName == "braum"
+    self.meCaitlyn = heroName == "caitlyn"
+    self.meCamille = heroName == "camille"
+    self.meCassiopeia = heroName == "cassiopeia"
+    self.meChogath = heroName == "chogath"
+    self.meCorki = heroName == "corki"
+    self.meDarius = heroName == "darius"
+    self.meDiana = heroName == "diana"
+    self.meDrMundo = heroName == "drmundo"
+    self.meDraven = heroName == "draven"
+    self.meEkko = heroName == "ekko"
+    self.meElise = heroName == "elise"
+    self.meEvelynn = heroName == "evelynn"
+    self.meEzreal = heroName == "ezreal"
+    self.meFiddlesticks = heroName == "fiddlesticks"
+    self.meFiora = heroName == "fiora"
+    self.meFizz = heroName == "fizz"
+    self.meGalio = heroName == "galio"
+    self.meGangplank = heroName == "gangplank"
+    self.meGaren = heroName == "garen"
+    self.meGnar = heroName == "gnar"
+    self.meGragas = heroName == "gragas"
+    self.meGraves = heroName == "graves"
+    self.meHecarim = heroName == "hecarim"
+    self.meHeimerdinger = heroName == "heimerdinger"
+    self.meIllaoi = heroName == "illaoi"
+    self.meIrelia = heroName == "irelia"
+    self.meIvern = heroName == "ivern"
+    self.meJanna = heroName == "janna"
+    self.meJarvanIV = heroName == "jarvaniv"
+    self.meJax = heroName == "jax"
+    self.meJayce = heroName == "jayce"
+    self.meJhin = heroName == "jhin"
+    self.meJinx = heroName == "jinx"
+    self.meKalista = heroName == "kalista"
+    self.meKarma = heroName == "karma"
+    self.meKarthus = heroName == "karthus"
+    self.meKassadin = heroName == "kassadin"
+    self.meKatarina = heroName == "katarina"
+    self.meKayle = heroName == "kayle"
+    self.meKayn = heroName == "kayn"
     self.meKennen = heroName == "kennen"
+    self.meKhazix = heroName == "khazix"
+    self.meKindred = heroName == "kindred"
+    self.meKled = heroName == "kled"
+    self.meKogMaw = heroName == "kogmaw"
+    self.meLeblanc = heroName == "leblanc"
+    self.meLeeSin = heroName == "leesin"
+    self.meLeona = heroName == "leona"
+    self.meLissandra = heroName == "lissandra"
+    self.meLucian = heroName == "lucian"
+    self.meLulu = heroName == "lulu"
+    self.meLux = heroName == "lux"
+    self.meMalphite = heroName == "malphite"
+    self.meMalzahar = heroName == "malzahar"
+    self.meMaokai = heroName == "maokai"
+    self.meMasterYi = heroName == "masteryi"
+    self.meMissFortune = heroName == "missfortune"
+    self.meMonkeyKing = heroName == "monkeyking"
+    self.meMordekaiser = heroName == "mordekaiser"
+    self.meMorgana = heroName == "morgana"
+    self.meNami = heroName == "nami"
+    self.meNasus = heroName == "nasus"
+    self.meNautilus = heroName == "nautilus"
+    self.meNidalee = heroName == "nidalee"
+    self.meNocturne = heroName == "nocturne"
+    self.meNunu = heroName == "nunu"
+    self.meOlaf = heroName == "olaf"
+    self.meOrianna = heroName == "orianna"
+    self.meOrnn = heroName == "ornn"
+    self.mePantheon = heroName == "pantheon"
+    self.mePoppy = heroName == "poppy"
+    self.meQuinn = heroName == "quinn"
+    self.meRakan = heroName == "rakan"
+    self.meRammus = heroName == "rammus"
+    self.meRekSai = heroName == "reksai"
+    self.meRenekton = heroName == "renekton"
+    self.meRengar = heroName == "rengar"
+    self.meRiven = heroName == "riven"
+    self.meRumble = heroName == "rumble"
+    self.meRyze = heroName == "ryze"
+    self.meSejuani = heroName == "sejuani"
+    self.meShaco = heroName == "shaco"
+    self.meShen = heroName == "shen"
+    self.meShyvana = heroName == "shyvana"
+    self.meSinged = heroName == "singed"
+    self.meSion = heroName == "sion"
+    self.meSivir = heroName == "sivir"
+    self.meSkarner = heroName == "skarner"
+    self.meSona = heroName == "sona"
+    self.meSoraka = heroName == "soraka"
+    self.meSwain = heroName == "swain"
+    self.meSyndra = heroName == "syndra"
+    self.meTahmKench = heroName == "tahmkench"
+    self.meTaliyah = heroName == "taliyah"
+    self.meTalon = heroName == "talon"
+    self.meTaric = heroName == "taric"
+    self.meTeemo = heroName == "teemo"
+    self.meThresh = heroName == "thresh"
+    self.meTristana = heroName == "tristana"
+    self.meTrundle = heroName == "trundle"
+    self.meTryndamere = heroName == "tryndamere"
+    self.meTwistedFate = heroName == "twistedfate"
+    self.meTwitch = heroName == "twitch"
+    self.meUdyr = heroName == "udyr"
+    self.meUrgot = heroName == "urgot"
+    self.meVarus = heroName == "varus"
+    self.meVayne = heroName == "vayne"
+    self.meVeigar = heroName == "veigar"
+    self.meVelkoz = heroName == "velkoz"
+    self.meVi = heroName == "vi"
+    self.meViktor = heroName == "viktor"
+    self.meVladimir = heroName == "vladimir"
+    self.meVolibear = heroName == "volibear"
+    self.meWarwick = heroName == "warwick"
+    self.meXayah = heroName == "xayah"
+    self.meXerath = heroName == "xerath"
+    self.meXinZhao = heroName == "xinzhao"
+    self.meYasuo = heroName == "yasuo"
+    self.meYorick = heroName == "yorick"
+    self.meZac = heroName == "zac"
+    self.meZed = heroName == "zed"
+    self.meZiggs = heroName == "ziggs"
+    self.meZilean = heroName == "zilean"
+    self.meZoe = heroName == "zoe"
+    self.meZyra = heroName == "zyra"
     Callback.Add('Load', function() self:_load() end)
 end
 
@@ -6879,88 +13759,284 @@ function __gsoLoad:_load()
     gsoAIO.Farm = __gsoFarm()
     gsoAIO.TPred = __gsoTPred()
     gsoAIO.Orb = __gsoOrb()
-    if self.meTristana then
-        gsoAIO.Champ = __gsoTristana()
-    elseif self.meSivir then
-        gsoAIO.Champ = __gsoSivir()
-    elseif self.meVayne then
-        gsoAIO.Champ = __gsoVayne()
-    elseif self.meKog then
-        gsoAIO.Champ = __gsoKogMaw()
-    elseif self.meTwitch then
-        gsoAIO.Champ = __gsoTwitch()
-    elseif self.meAshe then
-        gsoAIO.Champ = __gsoAshe()
-    elseif self.meEzreal then
-        gsoAIO.Champ = __gsoEzreal()
-    elseif self.meDraven then
-        gsoAIO.Champ = __gsoDraven()
-    elseif self.meTeemo then
-        gsoAIO.Champ = __gsoTeemo()
-    elseif self.meJinx then
-        gsoAIO.Champ = __gsoJinx()
-    elseif self.meNami then
-        gsoAIO.Champ = __gsoNami()
-    elseif self.menuHeimerdinger then
-        gsoAIO.Champ = __gsoHeimerdinger()
-    elseif self.menuKatarina then
-        gsoAIO.Champ = __gsoKatarina()
-    elseif self.meCaitlyn then
-        gsoAIO.Champ = __gsoCaitlyn()
-    elseif self.meJhin then
-        gsoAIO.Champ = __gsoJhin()
-    elseif self.meLucian then
-        gsoAIO.Champ = __gsoLucian()
-    elseif self.meGangplank then
-        gsoAIO.Champ = __gsoGangplank()
-    elseif self.meKarthus then
-        gsoAIO.Champ = __gsoKarthus()
-    elseif self.meMissfortune then
-        gsoAIO.Champ = __gsoMissfortune()
-    elseif self.meSona then
-        gsoAIO.Champ = __gsoSona()
-    elseif self.meJanna then
-        gsoAIO.Champ = __gsoJanna()
-    elseif self.meMorgana then
-        gsoAIO.Champ = __gsoMorgana()
-    elseif self.meLulu then
-        gsoAIO.Champ = __gsoLulu()
-    elseif self.meKarma then
-        gsoAIO.Champ = __gsoKarma()
-    elseif self.meMalzahar then
-        gsoAIO.Champ = __gsoMalzahar()
-    elseif self.meKayle then
-        gsoAIO.Champ = __gsoKayle()
-    elseif self.meAnnie then
-        gsoAIO.Champ = __gsoAnnie()
-    elseif self.meJax then
-        gsoAIO.Champ = __gsoJax()
-    elseif self.meVeigar then
-        gsoAIO.Champ = __gsoVeigar()
-    elseif self.meKassadin then
-        gsoAIO.Champ = __gsoKassadin()
-    elseif self.meRyze then
-        gsoAIO.Champ = __gsoRyze()
-    elseif self.meWukong then
-        gsoAIO.Champ = __gsoWukong()
-    elseif self.meTryndamere then
-        gsoAIO.Champ = __gsoTryndamere()
-    elseif self.meDiana then
-        gsoAIO.Champ = __gsoDiana()
+    if self.meAatrox then
+        gsoAIO.Champ = __gsoAatrox()
+    elseif self.meAhri then
+        gsoAIO.Champ = __gsoAhri()
     elseif self.meAkali then
         gsoAIO.Champ = __gsoAkali()
-    elseif self.meVladimir then
-        gsoAIO.Champ = __gsoVladimir()
-    elseif self.meXerath then
-        gsoAIO.Champ = __gsoXerath()
-    elseif self.meNidalee then
-        gsoAIO.Champ = __gsoNidalee()
-    elseif self.meTwistedfate then
-        gsoAIO.Champ = __gsoTwistedfate()
-    elseif self.meLux then
-        gsoAIO.Champ = __gsoLux()
+    elseif self.meAlistar then
+        gsoAIO.Champ = __gsoAlistar()
+    elseif self.meAmumu then
+        gsoAIO.Champ = __gsoAmumu()
+    elseif self.meAnivia then
+        gsoAIO.Champ = __gsoAnivia()
+    elseif self.meAnnie then
+        gsoAIO.Champ = __gsoAnnie()
+    elseif self.meAshe then
+        gsoAIO.Champ = __gsoAshe()
+    elseif self.meAurelionSol then
+        gsoAIO.Champ = __gsoAurelionSol()
+    elseif self.meAzir then
+        gsoAIO.Champ = __gsoAzir()
+    elseif self.meBard then
+        gsoAIO.Champ = __gsoBard()
+    elseif self.meBlitzcrank then
+        gsoAIO.Champ = __gsoBlitzcrank()
+    elseif self.meBrand then
+        gsoAIO.Champ = __gsoBrand()
+    elseif self.meBraum then
+        gsoAIO.Champ = __gsoBraum()
+    elseif self.meCaitlyn then
+        gsoAIO.Champ = __gsoCaitlyn()
+    elseif self.meCamille then
+        gsoAIO.Champ = __gsoCamille()
+    elseif self.meCassiopeia then
+        gsoAIO.Champ = __gsoCassiopeia()
+    elseif self.meChogath then
+        gsoAIO.Champ = __gsoChogath()
+    elseif self.meCorki then
+        gsoAIO.Champ = __gsoCorki()
+    elseif self.meDarius then
+        gsoAIO.Champ = __gsoDarius()
+    elseif self.meDiana then
+        gsoAIO.Champ = __gsoDiana()
+    elseif self.meDrMundo then
+        gsoAIO.Champ = __gsoDrMundo()
+    elseif self.meDraven then
+        gsoAIO.Champ = __gsoDraven()
+    elseif self.meEkko then
+        gsoAIO.Champ = __gsoEkko()
+    elseif self.meElise then
+        gsoAIO.Champ = __gsoElise()
+    elseif self.meEvelynn then
+        gsoAIO.Champ = __gsoEvelynn()
+    elseif self.meEzreal then
+        gsoAIO.Champ = __gsoEzreal()
+    elseif self.meFiddlesticks then
+        gsoAIO.Champ = __gsoFiddlesticks()
+    elseif self.meFiora then
+        gsoAIO.Champ = __gsoFiora()
+    elseif self.meFizz then
+        gsoAIO.Champ = __gsoFizz()
+    elseif self.meGalio then
+        gsoAIO.Champ = __gsoGalio()
+    elseif self.meGangplank then
+        gsoAIO.Champ = __gsoGangplank()
+    elseif self.meGaren then
+        gsoAIO.Champ = __gsoGaren()
+    elseif self.meGnar then
+        gsoAIO.Champ = __gsoGnar()
+    elseif self.meGragas then
+        gsoAIO.Champ = __gsoGragas()
+    elseif self.meGraves then
+        gsoAIO.Champ = __gsoGraves()
+    elseif self.meHecarim then
+        gsoAIO.Champ = __gsoHecarim()
+    elseif self.meHeimerdinger then
+        gsoAIO.Champ = __gsoHeimerdinger()
+    elseif self.meIllaoi then
+        gsoAIO.Champ = __gsoIllaoi()
+    elseif self.meIrelia then
+        gsoAIO.Champ = __gsoIrelia()
+    elseif self.meIvern then
+        gsoAIO.Champ = __gsoIvern()
+    elseif self.meJanna then
+        gsoAIO.Champ = __gsoJanna()
+    elseif self.meJarvanIV then
+        gsoAIO.Champ = __gsoJarvanIV()
+    elseif self.meJax then
+        gsoAIO.Champ = __gsoJax()
+    elseif self.meJayce then
+        gsoAIO.Champ = __gsoJayce()
+    elseif self.meJhin then
+        gsoAIO.Champ = __gsoJhin()
+    elseif self.meJinx then
+        gsoAIO.Champ = __gsoJinx()
+    elseif self.meKalista then
+        gsoAIO.Champ = __gsoKalista()
+    elseif self.meKarma then
+        gsoAIO.Champ = __gsoKarma()
+    elseif self.meKarthus then
+        gsoAIO.Champ = __gsoKarthus()
+    elseif self.meKassadin then
+        gsoAIO.Champ = __gsoKassadin()
+    elseif self.meKatarina then
+        gsoAIO.Champ = __gsoKatarina()
+    elseif self.meKayle then
+        gsoAIO.Champ = __gsoKayle()
+    elseif self.meKayn then
+        gsoAIO.Champ = __gsoKayn()
     elseif self.meKennen then
         gsoAIO.Champ = __gsoKennen()
+    elseif self.meKhazix then
+        gsoAIO.Champ = __gsoKhazix()
+    elseif self.meKindred then
+        gsoAIO.Champ = __gsoKindred()
+    elseif self.meKled then
+        gsoAIO.Champ = __gsoKled()
+    elseif self.meKogMaw then
+        gsoAIO.Champ = __gsoKogMaw()
+    elseif self.meLeblanc then
+        gsoAIO.Champ = __gsoLeblanc()
+    elseif self.meLeeSin then
+        gsoAIO.Champ = __gsoLeeSin()
+    elseif self.meLeona then
+        gsoAIO.Champ = __gsoLeona()
+    elseif self.meLissandra then
+        gsoAIO.Champ = __gsoLissandra()
+    elseif self.meLucian then
+        gsoAIO.Champ = __gsoLucian()
+    elseif self.meLulu then
+        gsoAIO.Champ = __gsoLulu()
+    elseif self.meLux then
+        gsoAIO.Champ = __gsoLux()
+    elseif self.meMalphite then
+        gsoAIO.Champ = __gsoMalphite()
+    elseif self.meMalzahar then
+        gsoAIO.Champ = __gsoMalzahar()
+    elseif self.meMaokai then
+        gsoAIO.Champ = __gsoMaokai()
+    elseif self.meMasterYi then
+        gsoAIO.Champ = __gsoMasterYi()
+    elseif self.meMissFortune then
+        gsoAIO.Champ = __gsoMissFortune()
+    elseif self.meMonkeyKing then
+        gsoAIO.Champ = __gsoMonkeyKing()
+    elseif self.meMordekaiser then
+        gsoAIO.Champ = __gsoMordekaiser()
+    elseif self.meMorgana then
+        gsoAIO.Champ = __gsoMorgana()
+    elseif self.meNami then
+        gsoAIO.Champ = __gsoNami()
+    elseif self.meNasus then
+        gsoAIO.Champ = __gsoNasus()
+    elseif self.meNautilus then
+        gsoAIO.Champ = __gsoNautilus()
+    elseif self.meNidalee then
+        gsoAIO.Champ = __gsoNidalee()
+    elseif self.meNocturne then
+        gsoAIO.Champ = __gsoNocturne()
+    elseif self.meNunu then
+        gsoAIO.Champ = __gsoNunu()
+    elseif self.meOlaf then
+        gsoAIO.Champ = __gsoOlaf()
+    elseif self.meOrianna then
+        gsoAIO.Champ = __gsoOrianna()
+    elseif self.meOrnn then
+        gsoAIO.Champ = __gsoOrnn()
+    elseif self.mePantheon then
+        gsoAIO.Champ = __gsoPantheon()
+    elseif self.mePoppy then
+        gsoAIO.Champ = __gsoPoppy()
+    elseif self.meQuinn then
+        gsoAIO.Champ = __gsoQuinn()
+    elseif self.meRakan then
+        gsoAIO.Champ = __gsoRakan()
+    elseif self.meRammus then
+        gsoAIO.Champ = __gsoRammus()
+    elseif self.meRekSai then
+        gsoAIO.Champ = __gsoRekSai()
+    elseif self.meRenekton then
+        gsoAIO.Champ = __gsoRenekton()
+    elseif self.meRengar then
+        gsoAIO.Champ = __gsoRengar()
+    elseif self.meRiven then
+        gsoAIO.Champ = __gsoRiven()
+    elseif self.meRumble then
+        gsoAIO.Champ = __gsoRumble()
+    elseif self.meRyze then
+        gsoAIO.Champ = __gsoRyze()
+    elseif self.meSejuani then
+        gsoAIO.Champ = __gsoSejuani()
+    elseif self.meShaco then
+        gsoAIO.Champ = __gsoShaco()
+    elseif self.meShen then
+        gsoAIO.Champ = __gsoShen()
+    elseif self.meShyvana then
+        gsoAIO.Champ = __gsoShyvana()
+    elseif self.meSinged then
+        gsoAIO.Champ = __gsoSinged()
+    elseif self.meSion then
+        gsoAIO.Champ = __gsoSion()
+    elseif self.meSivir then
+        gsoAIO.Champ = __gsoSivir()
+    elseif self.meSkarner then
+        gsoAIO.Champ = __gsoSkarner()
+    elseif self.meSona then
+        gsoAIO.Champ = __gsoSona()
+    elseif self.meSoraka then
+        gsoAIO.Champ = __gsoSoraka()
+    elseif self.meSwain then
+        gsoAIO.Champ = __gsoSwain()
+    elseif self.meSyndra then
+        gsoAIO.Champ = __gsoSyndra()
+    elseif self.meTahmKench then
+        gsoAIO.Champ = __gsoTahmKench()
+    elseif self.meTaliyah then
+        gsoAIO.Champ = __gsoTaliyah()
+    elseif self.meTalon then
+        gsoAIO.Champ = __gsoTalon()
+    elseif self.meTaric then
+        gsoAIO.Champ = __gsoTaric()
+    elseif self.meTeemo then
+        gsoAIO.Champ = __gsoTeemo()
+    elseif self.meThresh then
+        gsoAIO.Champ = __gsoThresh()
+    elseif self.meTristana then
+        gsoAIO.Champ = __gsoTristana()
+    elseif self.meTrundle then
+        gsoAIO.Champ = __gsoTrundle()
+    elseif self.meTryndamere then
+        gsoAIO.Champ = __gsoTryndamere()
+    elseif self.meTwistedFate then
+        gsoAIO.Champ = __gsoTwistedFate()
+    elseif self.meTwitch then
+        gsoAIO.Champ = __gsoTwitch()
+    elseif self.meUdyr then
+        gsoAIO.Champ = __gsoUdyr()
+    elseif self.meUrgot then
+        gsoAIO.Champ = __gsoUrgot()
+    elseif self.meVarus then
+        gsoAIO.Champ = __gsoVarus()
+    elseif self.meVayne then
+        gsoAIO.Champ = __gsoVayne()
+    elseif self.meVeigar then
+        gsoAIO.Champ = __gsoVeigar()
+    elseif self.meVelkoz then
+        gsoAIO.Champ = __gsoVelkoz()
+    elseif self.meVi then
+        gsoAIO.Champ = __gsoVi()
+    elseif self.meViktor then
+        gsoAIO.Champ = __gsoViktor()
+    elseif self.meVladimir then
+        gsoAIO.Champ = __gsoVladimir()
+    elseif self.meVolibear then
+        gsoAIO.Champ = __gsoVolibear()
+    elseif self.meWarwick then
+        gsoAIO.Champ = __gsoWarwick()
+    elseif self.meXayah then
+        gsoAIO.Champ = __gsoXayah()
+    elseif self.meXerath then
+        gsoAIO.Champ = __gsoXerath()
+    elseif self.meXinZhao then
+        gsoAIO.Champ = __gsoXinZhao()
+    elseif self.meYasuo then
+        gsoAIO.Champ = __gsoYasuo()
+    elseif self.meYorick then
+        gsoAIO.Champ = __gsoYorick()
+    elseif self.meZac then
+        gsoAIO.Champ = __gsoZac()
+    elseif self.meZed then
+        gsoAIO.Champ = __gsoZed()
+    elseif self.meZiggs then
+        gsoAIO.Champ = __gsoZiggs()
+    elseif self.meZilean then
+        gsoAIO.Champ = __gsoZilean()
+    elseif self.meZoe then
+        gsoAIO.Champ = __gsoZoe()
+    elseif self.meZyra then
+        gsoAIO.Champ = __gsoZyra()
     end
     gsoAIO.Menu:_menuChamp()
     if _G.Orbwalker then
