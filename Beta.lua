@@ -118,7 +118,7 @@ local supportedChampions = {
     ["trundle"] = false,
     ["tryndamere"] = false,
     ["twistedfate"] = false,
-    --["twitch"] = true,
+    ["twitch"] = true,
     ["udyr"] = false,
     ["urgot"] = false,
     ["varus"] = false,
@@ -2495,7 +2495,7 @@ function __gsoMenu:_menuTwistedFate()
 end
 
 function __gsoMenu:_menuTwitch()
-    self.menu:MenuElement({name = "Twitch", id = "gsotwitch", type = MENU, leftIcon = self.Icons["twitch"] })
+    self.champ = self.menu:MenuElement({name = "Twitch", id = "gsotwitch", type = MENU, leftIcon = self.Icons["twitch"] })
         self.menu.gsotwitch:MenuElement({name = "Q settings", id = "qset", type = MENU })
             self.menu.gsotwitch.qset:MenuElement({id = "recallkey", name = "Invisible Recall Key", key = string.byte("T"), value = false, toggle = true})
             self.menu.gsotwitch.qset:MenuElement({id = "note1", name = "Note: Key should be diffrent than recall key", type = SPACE})
@@ -12184,18 +12184,29 @@ function __gsoTwitch:__init()
     self.canW = true
     self.canE = true
     self.canR = true
-    self.hasQBuff = false
-    self.qBuffTime = 0
     self.lastQ = 0
     self.lastW = 0
     self.lastE = 0
     self.lastR = 0
-    self.eBuffs = {}
-    self.asNoQ = myHero.attackSpeed
-    self.boolRecall = true
-    self.QASBuff = false
-    self.QASTime = 0
+    
+    --qbuff
+    self.hasQBuff = false
+    self.QEndTime = 0
+    
+    --qASbuff
+    self.hasQASBuff = false
+    self.QASEndTime = 0
     self.lastASCheck = 0
+    self.asNoQ = myHero.attackSpeed
+    self.windUpNoQ = myHero.attackData.windUpTime
+    
+    --ebuff
+    self.eBuffs = {}
+    
+    --recall
+    self.boolRecall = true
+    
+    self.wData = { delay = 0.25, range = 950, width = 275, speed = 1400, sType = "circular", col = false, hCol = false, mCol = false, out = false }
     gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
     gsoAIO.Callbacks:_setAASpeed(function() return self:_aaSpeed() end)
     gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
@@ -12214,7 +12225,6 @@ function __gsoTwitch:_onMove(target)
     
     local isTarget = target and target.type == Obj_AI_Hero
     local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-
     local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
     local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
     local mePos = myHero.pos
@@ -12222,66 +12232,64 @@ function __gsoTwitch:_onMove(target)
     if not isTarget or afterAttack then
         
         -- USE W :
-        local stopWIfR = gsoAIO.Menu.menu.gsotwitch.wset.stopwult:Value() and GetTickCount() < gsoAIO.WndMsg.lastR + 5450
-        local stopWIfQ = gsoAIO.Menu.menu.gsotwitch.wset.stopq:Value() and self.hasQBuff
-        local canW = not stopWIfR and not stopWIfQ and not stopifQBuff and ((isCombo and gsoAIO.Menu.menu.gsotwitch.wset.combo:Value()) or (isHarass and gsoAIO.Menu.menu.gsotwitch.wset.harass:Value()))
-              canW = canW and gsoAIO.Utils:_isReady(gT, { q = 0, w = 1000, e = 350, r = 0 }, _W) and (not isTarget or (isTarget and self.canW))
+        local stopWIfR = gsoAIO.Menu.champ.wset.stopwult:Value() and GetTickCount() < gsoAIO.WndMsg.lastR + 5450
+        local stopWIfQ = gsoAIO.Menu.champ.wset.stopq:Value() and self.hasQBuff
+        local canW = ( isCombo and gsoAIO.Menu.champ.wset.combo:Value() ) or ( isHarass and gsoAIO.Menu.champ.wset.harass:Value() )
+              canW = canW and not stopWIfR and not stopWIfQ and not stopifQBuff and (not isTarget or self.canW) and gsoAIO.Utils:_isReady(_W, { q = 0, w = 1000, e = 250, r = 0 })
         if canW then
-            local wTarget = isTarget and target or gsoAIO.TS:_getTarget(950, false, false, gsoAIO.OB.enemyHeroes)
-            if wTarget and gsoAIO.Utils:_castSpellSkillshot(mePos, wTarget, { delay = 0.25, range = 950, width = 275, speed = 1400, sType = "circular", col = false }, HK_W) then
+            local t = (isTarget and gsoAIO.Utils:_getDistance(mePos, target.pos) < 950) and target or gsoAIO.TS:_getTarget(950, false, false, gsoAIO.OB.enemyHeroes)
+            if t and gsoAIO.Utils:_castSpellSkillShot(HK_W, self.wData, mePos, t) then
                 self.lastW = GetTickCount()
                 self.canE = false
+                --print("w")
                 return true
             end
         end
         
         -- USE E :
-        local canE = (isCombo and gsoAIO.Menu.menu.gsotwitch.eset.combo:Value()) or (isHarass and gsoAIO.Menu.menu.gsotwitch.eset.harass:Value())
-              canE = canE and gsoAIO.Utils:_isReadyFast(gT, { q = 0, w = 350, e = 1000, r = 0 }, _E) and not stopifQBuff and ( not isTarget or (isTarget and self.canE) )
+        local canE = (isCombo and gsoAIO.Menu.champ.eset.combo:Value()) or (isHarass and gsoAIO.Menu.champ.eset.harass:Value())
+              canE = canE and not stopifQBuff and (not isTarget or self.canE) and gsoAIO.Utils:_isReady(_E, { q = 0, w = 250, e = 2500, r = 0 })
         if canE then
-            local xStacks   = gsoAIO.Menu.menu.gsotwitch.eset.stacks:Value()
-            local xEnemies  = gsoAIO.Menu.menu.gsotwitch.eset.enemies:Value()
+            local xStacks   = gsoAIO.Menu.champ.eset.stacks:Value()
+            local xEnemies  = gsoAIO.Menu.champ.eset.enemies:Value()
             local countE    = 0
             for i = 1, #gsoAIO.OB.enemyHeroes do
                 local hero = gsoAIO.OB.enemyHeroes[i]
-                if gsoAIO.Utils:_getDistance(myHero.pos, hero.pos) < 1200 and gsoAIO.Utils:_valid(hero, false) then
+                if hero and gsoAIO.Utils:_getDistance(mePos, hero.pos) < 1200 and gsoAIO.Utils:_valid(hero, false) then
                     local nID = hero.networkID
                     if self.eBuffs[nID] and self.eBuffs[nID].count >= xStacks then
                         countE = countE + 1
                     end
                 end
             end
-            if countE >= xEnemies then
-                Control.KeyDown(HK_E)
-                Control.KeyUp(HK_E)
+            if countE >= xEnemies and gsoAIO.Utils:_castSpell(HK_E) then
                 self.lastE = GetTickCount()
                 self.canW = false
-                gsoAIO.Utils.delayedActions[#gsoAIO.Utils.delayedActions+1] = { func = function() gsoAIO.Orb.lMove = 0 end, endTime = Game.Timer() + 0.05 }
-                return
+                return true
             end
         end
     end
+    return false
 end
 
 function __gsoTwitch:_aaSpeed()
-    local num1 = GetTickCount()-self.QASTime-(gsoAIO.Utils.maxPing*1000)
-    if num1 > -150 and num1 < 1500 then
+    local num = Game.Timer() - self.QASEndTime + gsoAIO.Utils.maxPing
+    if num > -self.windUpNoQ and num < 2 then
         return self.asNoQ
     end
     return myHero.attackSpeed
 end
 
 function __gsoTwitch:_canMove(target)
-    if gsoAIO.Utils:_checkTimers({ q = 0, w = 250, e = 250, r = 0 }) then
+    if gsoAIO.Utils:_checkTimers({ q = 0, w = 200, e = 200, r = 0 }) then
         return true
     end
     return false
 end
 
 function __gsoTwitch:_canAttack(target)
-    local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
-    local num1 = 1350-(getTick-gsoAIO.WndMsg.lastQ)
-    if num1 > -50 and num1 < (gsoAIO.Orb.windUpT*1000) + 250 then
+    local num = 1150 - (GetTickCount() - (gsoAIO.WndMsg.lastQ + (gsoAIO.Utils.maxPing*1000)))
+    if num < (gsoAIO.Orb.windUpT*1000)+50 and num > - 50 then
         return false
     end
     if gsoAIO.Utils:_checkTimers({ q = 0, w = 350, e = 350, r = 0 }) then
@@ -12291,37 +12299,34 @@ function __gsoTwitch:_canAttack(target)
 end
 
 function __gsoTwitch:_tick()
+    
+    --q buff best orbwalker dps
     if GetTickCount() - gsoAIO.WndMsg.lastQ < 500 and GetTickCount() > self.lastASCheck + 1000 then
         self.asNoQ = myHero.attackSpeed
+        self.windUpNoQ = gsoAIO.Orb.windUpT
         self.lastASCheck = GetTickCount()
     end
-    local boolRecall = gsoAIO.Menu.menu.gsotwitch.qset.recallkey:Value()
-    if boolRecall == self.boolRecall then
+    
+    --qrecall
+    if gsoAIO.Menu.champ.qset.recallkey:Value() == self.boolRecall then
         Control.KeyDown(HK_Q)
         Control.KeyUp(HK_Q)
         Control.KeyDown(string.byte("B"))
         Control.KeyUp(string.byte("B"))
         self.boolRecall = not boolRecall
     end
-    local hasQBuff = false
-    local QASBuff = false
-    for i = 0, myHero.buffCount do
-        local buff = myHero:GetBuff(i)
-        local buffName = buff and buff.name or nil
-        if buffName and buff.count > 0 and buff.duration > 0 then
-            if buffName == "globalcamouflage" or buffName == "TwitchHideInShadows" then
-                hasQBuff = true
-                self.qBuffTime = GetTickCount() + (buff.duration*1000)
-                break
-            end
-            if buffName == "twitchhideinshadowsbuff" then
-                QASBuff = true
-                self.QASTime = GetTickCount() + (buff.duration*1000)
-            end
-        end
-    end
-    self.hasQBuff = hasQBuff
-    self.QASBuff = QASBuff
+    
+    --qbuff
+    local qDuration = gsoAIO.Utils:_buffDuration(myHero, "globalcamouflage")--twitchhideinshadows
+    self.hasQBuff = qDuration > 0
+    self.QEndTime = qDuration > 0 and Game.Timer() + qDuration or self.QEndTime
+    
+    --qasbuff
+    local qasDuration = gsoAIO.Utils:_buffDuration(myHero, "twitchhideinshadowsbuff")
+    self.hasQASBuff = qasDuration > 0
+    self.QASEndTime = qasDuration > 0 and Game.Timer() + qasDuration or self.QASEndTime
+    
+    --handle e buffs
     for i = 1, #gsoAIO.OB.enemyHeroes do
         local hero  = gsoAIO.OB.enemyHeroes[i]
         local nID   = hero.networkID
@@ -12353,30 +12358,22 @@ function __gsoTwitch:_tick()
     end
     
     -- E KS :
-
-    local canE = gsoAIO.Utils:_isReadyFast(gT, { q = 0, w = 350, e = 1000, r = 0 }, _E)
+    local canE = gsoAIO.Utils:_isReady(_E, { q = 0, w = 350, e = 2500, r = 0 })
     if canE then
         for i = 1, #gsoAIO.OB.enemyHeroes do
             local hero  = gsoAIO.OB.enemyHeroes[i]
-            local nID   = hero.networkID
-            if self.eBuffs[nID] and self.eBuffs[nID].count > 0 and gsoAIO.Utils:_getDistance(myHero.pos, hero.pos) < 1200 then
+            local nID   = hero and hero.networkID or nil
+            if nID and self.eBuffs[nID] and self.eBuffs[nID].count > 0 and gsoAIO.Utils:_getDistance(myHero.pos, hero.pos) < 1200 and gsoAIO.Utils:_valid(hero, false) then
                 local elvl = myHero:GetSpellData(_E).level
-                local basedmg = 5 + ( elvl * 15 )
+                local basedmg = 15 + ( elvl * 5 )
                 local cstacks = self.eBuffs[nID].count
                 local perstack = ( 10 + (5*elvl) ) * cstacks
                 local bonusAD = myHero.bonusDamage * 0.25 * cstacks
                 local bonusAP = myHero.ap * 0.2 * cstacks
                 local edmg = basedmg + perstack + bonusAD + bonusAP
-                local tarm = hero.armor - myHero.armorPen
-                      tarm = tarm > 0 and myHero.armorPenPercent * tarm or tarm
-                local DmgDealt = tarm > 0 and edmg * ( 100 / ( 100 + tarm ) ) or edmg * ( 2 - ( 100 / ( 100 - tarm ) ) )
-                local HPRegen = hero.hpRegen * 1.5
-                if hero.health + hero.shieldAD + HPRegen < DmgDealt and gsoAIO.Utils:_valid(hero, false) then
-                    Control.KeyDown(HK_E)
-                    Control.KeyUp(HK_E)
+                if gsoAIO.Dmg.PredHP(hero, { dmgType = "ad", dmgAD = edmg }) >= hero.health + (1.5*hero.hpRegen) and gsoAIO.Utils:_castSpell(HK_E) then
                     self.lastE = GetTickCount()
                     self.canW = false
-                    gsoAIO.Utils.delayedActions[#gsoAIO.Utils.delayedActions+1] = { func = function() gsoAIO.Orb.lMove = 0 end, endTime = Game.Timer() + 0.05 }
                 end
             end
         end
@@ -12389,7 +12386,7 @@ function __gsoTwitch:_draw()
         local mePos2D = mePos:To2D()
         local posX = mePos2D.x - 50
         local posY = mePos2D.y
-        local num1 = math.floor(1350+gsoAIO.WndMsg.qLatency-(GetTickCount()-gsoAIO.WndMsg.lastQ))
+        local num1 = math.floor(1350-(GetTickCount()-gsoAIO.WndMsg.lastQ))
         local timerEnabled = gsoAIO.Menu.menu.gsodraw.texts1.enabletime:Value()
         local timerColor = gsoAIO.Menu.menu.gsodraw.texts1.colortime:Value()
         if num1 > 1 then
@@ -12407,7 +12404,7 @@ function __gsoTwitch:_draw()
                 Draw.Text(str2, 50, posX+50, posY-15, timerColor)
             end
         elseif self.hasQBuff then
-            local num2 = math.floor(self.qBuffTime-GetTickCount() + gsoAIO.WndMsg.qLatency)
+            local num2 = math.floor(1000*(self.QEndTime-Game.Timer()))
             if num2 > 1 then
                 if gsoAIO.Menu.menu.gsodraw.circle1.invenable:Value() then
                     Draw.Circle(mePos, 500, 1, gsoAIO.Menu.menu.gsodraw.circle1.invcolor:Value())
