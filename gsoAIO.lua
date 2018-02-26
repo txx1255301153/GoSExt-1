@@ -1,5 +1,5 @@
 
-local version = "0.645"
+local version = "0.6451"
 local heroName = myHero.charName:lower()
 local supportedChampions = {
     ["aatrox"] = false,
@@ -65,7 +65,7 @@ local supportedChampions = {
     ["leesin"] = false,
     ["leona"] = false,
     ["lissandra"] = false,
-    ["lucian"] = false,
+    ["lucian"] = true,
     ["lulu"] = false,
     ["lux"] = false,
     ["malphite"] = false,
@@ -1672,9 +1672,6 @@ function __gsoMenu:_menuLucian()
         self.menu.gsolucian:MenuElement({name = "E settings", id = "eset", type = MENU })
             self.menu.gsolucian.eset:MenuElement({id = "combo", name = "Combo", value = true})
             self.menu.gsolucian.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        self.menu.gsolucian:MenuElement({name = "R settings", id = "rset", type = MENU })
-            self.menu.gsolucian.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            self.menu.gsolucian.rset:MenuElement({id = "harass", name = "Harass", value = false})
 end
 
 function __gsoMenu:_menuLulu()
@@ -3448,19 +3445,19 @@ function __gsoOrb:_orb(unit)
     self.windUpT = windUpT > self.serverWindup and windUpT or self.serverWindup
     self.animT = animT > self.serverAnim and animT or self.serverAnim
     if gsoAIO.Load.meTristana then
-        local hasQBuff = GetTickCount() - gsoAIO.WndMsg.lastQ < 1000 and gsoAIO.Utils:_hasBuff(myHero, { ["tristanaq"] = true })
+        local hasQBuff = GetTickCount() - gsoAIO.WndMsg.lastQ < 1000 and gsoAIO.Utils:_hasBuff(myHero, "tristanaq")
         self.animT = hasQBuff and animT or self.animT
     end
     if gsoAIO.Load.meSivir then
-        local hasWBuff = GetTickCount() - gsoAIO.WndMsg.lastW < 1000 and gsoAIO.Utils:_hasBuff(myHero, { ["sivirwmarker"] = true })
+        local hasWBuff = GetTickCount() - gsoAIO.WndMsg.lastW < 1000 and gsoAIO.Utils:_hasBuff(myHero, "sivirwmarker")
         self.animT = hasWBuff and animT or self.animT
     end
     if gsoAIO.Load.meTwitch then
-        local hasQBuff = GetTickCount() - gsoAIO.WndMsg.lastQ < 3000 and gsoAIO.Utils:_hasBuff(myHero, { ["twitchhideinshadowsbuff"] = true })
+        local hasQBuff = GetTickCount() - gsoAIO.WndMsg.lastQ < 3000 and gsoAIO.Utils:_hasBuff(myHero, "twitchhideinshadowsbuff")
         self.animT = hasQBuff and animT or self.animT
     end
     if gsoAIO.Load.meAshe then
-        local hasQBuff = GetTickCount() - gsoAIO.WndMsg.lastQ < 1000 and gsoAIO.Utils:_hasBuff(myHero, { ["asheqattack"] = true })
+        local hasQBuff = GetTickCount() - gsoAIO.WndMsg.lastQ < 1000 and gsoAIO.Utils:_hasBuff(myHero, "asheqattack")
         self.animT = hasQBuff and animT or self.animT
     end
     if gsoAIO.Load.meDraven then
@@ -3620,7 +3617,7 @@ end
 function __gsoOrb:_move(afterAAIssue)
     local mPos = gsoAIO.Callbacks._mousePos()
     if mPos ~= nil then
-        if gsoAIO.Load.meDraven and afterAAIssue and gsoAIO.Utils:_hasBuff(myHero, { ["dravenspinning"] = true, ["dravenspinningattack"] = true } ) then
+        if gsoAIO.Load.meDraven and afterAAIssue and (gsoAIO.Utils:_hasBuff(myHero, "dravenspinning") or gsoAIO.Utils:_hasBuff(myHero, "dravenspinningattack")) then
             if ExtLibEvade and ExtLibEvade.Evading then return end
             if Control.IsKeyDown(2) then self.lastKey = GetTickCount() end
             Control.mouse_event(MOUSEEVENTF_RIGHTDOWN)
@@ -3801,7 +3798,7 @@ function __gsoDraw:__init()
     elseif gsoAIO.Load.meLissandra then
         self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
     elseif gsoAIO.Load.meLucian then
-        self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
+        self.drawRanges = { q = true, qrange = 500+120, w = true, wrange = 900+350, e = true, erange = 425, r = true, rrange = 1200 }
     elseif gsoAIO.Load.meLulu then
         self.drawRanges = { q = true, qrange = 0, w = true, wrange = 0, e = true, erange = 0, r = true, rrange = 0 }
     elseif gsoAIO.Load.meLux then
@@ -4043,10 +4040,6 @@ function __gsoWndMsg:__init()
     self.lastW    = 0
     self.lastE    = 0
     self.lastR    = 0
-    self.qLatency = 0
-    self.wLatency = 0
-    self.eLatency = 0
-    self.rLatency = 0
     self.delayedSpell = {}
     Callback.Add('WndMsg', function(msg, wParam) self:_onWndMsg(msg, wParam) end)
 end
@@ -4056,25 +4049,21 @@ function __gsoWndMsg:_onWndMsg(msg, wParam)
     local isKey = gsoAIO.Menu.menu.orb.keys.combo:Value() or gsoAIO.Menu.menu.orb.keys.harass:Value() or gsoAIO.Menu.menu.orb.keys.laneClear:Value() or gsoAIO.Menu.menu.orb.keys.lastHit:Value()
     if Game.CanUseSpell(_Q) == 0 and wParam == HK_Q and getTick > self.lastQ + 1000 then
         self.lastQ = getTick
-        self.qLatency = Game.Latency()*1.1
         if isKey and not self.delayedSpell[0] then
             self.delayedSpell[0] = { function() gsoAIO.Utils:_castAgain(wParam) end, getTick }
         end
     elseif Game.CanUseSpell(_W) == 0 and wParam == HK_W and getTick > self.lastW + 1000 then
         self.lastW = getTick
-        self.wLatency = Game.Latency()*1.1
         if isKey and not self.delayedSpell[1] then
             self.delayedSpell[1] = { function() gsoAIO.Utils:_castAgain(wParam) end, getTick }
         end
     elseif Game.CanUseSpell(_E) == 0 and wParam == HK_E and getTick > self.lastE + 1000 then
         self.lastE = getTick
-        self.eLatency = Game.Latency()*1.1
         if isKey and not self.delayedSpell[2] then
             self.delayedSpell[2] = { function() gsoAIO.Utils:_castAgain(wParam) end, getTick }
         end
     elseif Game.CanUseSpell(_R) == 0 and wParam == HK_R and getTick > self.lastR + 1000 then
         self.lastR = getTick
-        self.rLatency = Game.Latency()*1.1
         if isKey and not self.delayedSpell[3] then
             self.delayedSpell[3] = { function() gsoAIO.Utils:_castAgain(wParam) end, getTick }
         end
@@ -4626,7 +4615,7 @@ end
 
 function __gsoTS:_tick()
     if gsoAIO.TS.isTeemo == true then
-        self.isBlinded = gsoAIO.Utils:_hasBuff(myHero, { ["blindingdart"] = true } )
+        self.isBlinded = gsoAIO.Utils:_hasBuff(myHero, "blindingdart")
     end
     if self.loadedChamps == false then
         for i = 1, Game.HeroCount() do
@@ -4915,7 +4904,7 @@ end
 function __gsoUtils:_hasBuff(unit, bName)
     for i = 0, unit.buffCount do
         local buff = unit:GetBuff(i)
-        if buff and buff.count > 0 and bName[buff.name:lower()] then
+        if buff and buff.count > 0 and buff.name:lower() == bName then
             return true
         end
     end
@@ -4966,6 +4955,18 @@ function __gsoUtils:_getTimers(qT, wT, eT, rT)
 end
 
 function __gsoUtils:_checkTimers(gT, sT)
+    --[[assert(type(gT.q) == "number", "this is not number")
+    assert(type(gT.qq) == "number", "this is not number")
+    assert(type(gT.w) == "number", "this is not number")
+    assert(type(gT.ww) == "number", "this is not number")
+    assert(type(gT.e) == "number", "this is not number")
+    assert(type(gT.ee) == "number", "this is not number")
+    assert(type(gT.r) == "number", "this is not number")
+    assert(type(gT.rr) == "number", "this is not number")
+    assert(type(sT.q) == "number", "this is not number")
+    assert(type(sT.w) == "number", "this is not number")
+    assert(type(sT.e) == "number", "this is not number")
+    assert(type(sT.r) == "number", "this is not number")]]
     if gT.q > sT.q and gT.qq > sT.q and gT.w > sT.w and gT.ww > sT.w and gT.e > sT.e and gT.ee > sT.e and gT.r > sT.r and gT.rr > sT.r then
         return true
     end
@@ -8172,7 +8173,7 @@ function __gsoJinx:_canAttack(target)
 end
 
 function __gsoJinx:_tick()
-    self.hasQBuff = gsoAIO.Utils:_hasBuff(myHero, { ["jinxq"] = true } )
+    self.hasQBuff = gsoAIO.Utils:_hasBuff(myHero, "jinxq")
     if not self.loadedChamps and gsoAIO.TS.loadedChamps then
         for i = 1, #gsoAIO.TS.enemyHNames do
             local heroName = gsoAIO.TS.enemyHNames[i]
@@ -9239,7 +9240,56 @@ function __gsoLucian:_onMove(target)
     local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
     local mePos = myHero.pos
     if not isTarget or afterAttack then
-    
+        local canE = ( isCombo and gsoAIO.Menu.menu.gsolucian.eset.combo:Value() ) or ( isHarass and gsoAIO.Menu.menu.gsolucian.eset.harass:Value() )
+              canE = canE and gsoAIO.Utils:_isReadyFast(gT, { q = 500, w = 250, e = 1000, r = 3350 }, _E)
+        if canE and (not isTarget or (isTarget and self.canE)) then
+            local meRange = myHero.range + myHero.boundingRadius
+            for i = 1, #gsoAIO.OB.enemyHeroes do
+                local hero = gsoAIO.OB.enemyHeroes[i]
+                local heroPos = hero.pos
+                local distToMouse = gsoAIO.Utils:_getDistance(mePos, mousePos)
+                local distToHero = gsoAIO.Utils:_getDistance(mePos, heroPos)
+                local distToEndPos = gsoAIO.Utils:_getDistance(mePos, hero.pathing.endPos)
+                local extRange
+                if distToEndPos > distToHero then
+                    extRange = distToMouse > 325 and 325 or distToMouse
+                else
+                    extRange = distToMouse > 425 and 425 or distToMouse
+                end
+                local extPos = mePos + (mousePos-mePos):Normalized() * extRange
+                local distEnemyToExt = gsoAIO.Utils:_getDistance(extPos, heroPos)
+                if gsoAIO.Utils:_valid(hero, true) and distEnemyToExt < meRange + hero.boundingRadius then
+                    Control.KeyDown(HK_E)
+                    Control.KeyUp(HK_E)
+                    self.lastE = GetTickCount()
+                    self.canQ = false
+                    self.canW = false
+                    self.canR = false
+                    gsoAIO.Orb.aaReset = true
+                    return true
+                end
+            end
+        end
+        local canQ = (isCombo and gsoAIO.Menu.menu.gsolucian.qset.combo:Value()) or (isHarass and gsoAIO.Menu.menu.gsolucian.qset.harass:Value())
+        if canQ and (not isTarget or (isTarget and self.canQ)) then
+            if isTarget and not gsoAIO.Utils:_nearUnit(target.pos, target.networkID) and gsoAIO.Utils:_castSpellTarget(target.pos, _Q, HK_Q, gT, { q = 1000, w = 350, e = 350, r = 3350 }) then
+                self.lastQ = GetTickCount()
+                self.canW = false
+                self.canE = false
+                self.canR = false
+                return true
+            end
+        end
+        local canW = ( isCombo and gsoAIO.Menu.menu.gsolucian.wset.combo:Value() ) or ( isHarass and gsoAIO.Menu.menu.gsolucian.wset.harass:Value() )
+        if canW and gsoAIO.Utils:_isReady(gT, { q = 500, w = 1000, e = 350, r = 3350 }, _W) and (not isTarget or (isTarget and self.canW)) then
+            local wTarget = isTarget and target or gsoAIO.TS:_getTarget(1350, false, false, gsoAIO.OB.enemyHeroes)
+            if wTarget and gsoAIO.Utils:_castSpellSkillshot(mePos, wTarget, { delay = 0.25, range = 1250, width = 75, speed = 1600, sType = "line", col = false }, HK_W) then
+                self.canQ = false
+                self.canE = false
+                self.canR = false
+                return true
+            end
+        end
     end
 end
 
@@ -9247,14 +9297,14 @@ function __gsoLucian:_onAttack(target)
 end
 
 function __gsoLucian:_canMove(target)
-    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 200, w = 200, e = 200, r = 200 }) then
+    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 200, e = 200, r = 1000 }) then
         return true
     end
-    return false
+    return true
 end
 
 function __gsoLucian:_canAttack(target)
-    if gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 300, w = 300, e = 300, r = 300 }) then
+    if not gsoAIO.Utils:_hasBuff(myHero, "lucianr") and gsoAIO.Utils:_checkTimers(gsoAIO.Utils:_getTimers(self.lastQ, self.lastW, self.lastE, self.lastR), { q = 0, w = 0, e = 200, r = 0 }) then
         return true
     end
     return false
