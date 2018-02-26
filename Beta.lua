@@ -65,7 +65,7 @@ local supportedChampions = {
     ["leesin"] = false,
     ["leona"] = false,
     ["lissandra"] = false,
-    --["lucian"] = true,
+    ["lucian"] = true,
     ["lulu"] = false,
     ["lux"] = false,
     ["malphite"] = false,
@@ -1660,7 +1660,7 @@ function __gsoMenu:_menuLissandra()
 end
 
 function __gsoMenu:_menuLucian()
-    self.menu:MenuElement({name = "Lucian", id = "gsolucian", type = MENU, leftIcon = self.Icons["lucian"] })
+    self.champ = self.menu:MenuElement({name = "Lucian", id = "gsolucian", type = MENU, leftIcon = self.Icons["lucian"] })
         self.menu.gsolucian:MenuElement({name = "Q settings", id = "qset", type = MENU })
             self.menu.gsolucian.qset:MenuElement({id = "combo", name = "Combo", value = true})
             self.menu.gsolucian.qset:MenuElement({id = "harass", name = "Harass", value = false})
@@ -9217,6 +9217,7 @@ function __gsoLucian:__init()
     self.lastW = 0
     self.lastE = 0
     self.lastR = 0
+    self.wData = { delay = 0.25, range = 1250, width = 75, speed = 1600, sType = "line", col = false, mCol = false, hCol = false, out = true }
     gsoAIO.Callbacks:_setOnMove(function(target) self:_onMove(target) end)
     gsoAIO.Callbacks:_setOnAttack(function(target) return self:_onAttack(target) end)
     gsoAIO.Callbacks:_setCanMove(function(target) return self:_canMove(target) end)
@@ -9227,15 +9228,13 @@ end
 function __gsoLucian:_onMove(target)
     local isTarget = target and target.type == Obj_AI_Hero
     local afterAttack = Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
-    local beforeAttack = Game.Timer() > gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.5 )
-
     local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
     local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
     local mePos = myHero.pos
     if not isTarget or afterAttack then
-        local canE = ( isCombo and gsoAIO.Menu.menu.gsolucian.eset.combo:Value() ) or ( isHarass and gsoAIO.Menu.menu.gsolucian.eset.harass:Value() )
-              canE = canE and gsoAIO.Utils:_isReadyFast(gT, { q = 500, w = 250, e = 1000, r = 3350 }, _E)
-        if canE and (not isTarget or (isTarget and self.canE)) then
+        local canE = ( isCombo and gsoAIO.Menu.champ.eset.combo:Value() ) or ( isHarass and gsoAIO.Menu.champ.eset.harass:Value() )
+              canE = canE and (not isTarget or (isTarget and self.canE)) and gsoAIO.Utils:_isReadyFast(_E, { q = 500, w = 250, e = 1000, r = 3350 })
+        if canE then
             local meRange = myHero.range + myHero.boundingRadius
             for i = 1, #gsoAIO.OB.enemyHeroes do
                 local hero = gsoAIO.OB.enemyHeroes[i]
@@ -9263,24 +9262,21 @@ function __gsoLucian:_onMove(target)
                 end
             end
         end
-        local canQ = (isCombo and gsoAIO.Menu.menu.gsolucian.qset.combo:Value()) or (isHarass and gsoAIO.Menu.menu.gsolucian.qset.harass:Value())
-        if canQ and isTarget and self.canQ then
-            local tPos = target.pos
-            if not gsoAIO.Utils:_isUnitBB(tPos, target.networkID) and gsoAIO.Utils:_getDistance(mePos, tPos) < myHero.range + myHero.boundingRadius + target.boundingRadius and gsoAIO.Utils:_castSpellTarget(tPos, _Q, HK_Q, gT, { q = 1000, w = 350, e = 350, r = 3350 }) then
-                self.lastQ = GetTickCount()
-                self.canW = false
-                self.canE = false
-                self.canR = false
-                return true
-            end
+        local canQ = (isCombo and gsoAIO.Menu.champ.qset.combo:Value()) or (isHarass and gsoAIO.Menu.champ.qset.harass:Value())
+              canQ = canQ and isTarget and self.canQ and gsoAIO.Utils:_isReady(_Q, { q = 1000, w = 350, e = 350, r = 3350 })
+        if canQ and gsoAIO.Utils:_castSpellTarget(HK_Q, 500 + myHero.boundingRadius + target.boundingRadius, mePos, target) then
+            self.lastQ = GetTickCount()
+            self.canW = false
+            self.canR = false
+            return true
         end
-        local canW = ( isCombo and gsoAIO.Menu.menu.gsolucian.wset.combo:Value() ) or ( isHarass and gsoAIO.Menu.menu.gsolucian.wset.harass:Value() )
-        if canW and gsoAIO.Utils:_isReady(gT, { q = 500, w = 1000, e = 350, r = 3350 }, _W) and (not isTarget or (isTarget and self.canW)) then
+        local canW = ( isCombo and gsoAIO.Menu.champ.wset.combo:Value() ) or ( isHarass and gsoAIO.Menu.champ.wset.harass:Value() )
+              canW = canW and (not isTarget or (isTarget and self.canW)) and gsoAIO.Utils:_isReady(_W, { q = 500, w = 350, e = 350, r = 3350 })
+        if canW then
             local wTarget = isTarget and target or gsoAIO.TS:_getTarget(1350, false, false, gsoAIO.OB.enemyHeroes)
-            if wTarget and gsoAIO.Utils:_castSpellSkillshot(mePos, wTarget, { delay = 0.25, range = 1250, width = 75, speed = 1600, sType = "line", col = false }, HK_W) then
+            if wTarget and gsoAIO.Utils:_castSpellSkillShot(HK_W, self.wData, mePos, wTarget) then
                 self.lastW = GetTickCount()
                 self.canQ = false
-                self.canE = false
                 self.canR = false
                 return true
             end
@@ -9292,14 +9288,14 @@ function __gsoLucian:_onAttack(target)
 end
 
 function __gsoLucian:_canMove(target)
-    if gsoAIO.Utils:_checkTimers({ q = 300, w = 200, e = 200, r = 1000 }) then
+    if gsoAIO.Utils:_checkTimers({ q = 350, w = 250, e = 250, r = 0 }) then
         return true
     end
     return true
 end
 
 function __gsoLucian:_canAttack(target)
-    if not gsoAIO.Utils:_hasBuff(myHero, "lucianr") and gsoAIO.Utils:_checkTimers({ q = 0, w = 0, e = 200, r = 0 }) then
+    if not gsoAIO.Utils:_hasBuff(myHero, "lucianr") and gsoAIO.Utils:_checkTimers({ q = 300, w = 200, e = 200, r = 0 }) then
         return true
     end
     return false
@@ -12218,8 +12214,8 @@ end
 function __gsoTwitch:_onMove(target)
     
     local stopifQBuff = false
-    local num1 = 1350 - ( GetTickCount() - (gsoAIO.Utils.maxPing*1000) - gsoAIO.WndMsg.lastQ )
-    if num1 > -50 and num1 < 550 then
+    local num = 1150 - (GetTickCount() - (gsoAIO.WndMsg.lastQ + (gsoAIO.Utils.maxPing*1000)))
+    if num > -50 and num < 350 then
         stopifQBuff = true
     end
     
