@@ -404,30 +404,7 @@ function OnLoad()
 end
 
 
---[[
-local gsoLatencies = {}
-local gsoDelayedActions = {}
-local gsoSetCursorPos = nil
-local gsoLastKey = 0
-local gsoBaseAASpeed = 0
-local gsoBaseWindUp = 0
-local gsoServerStart = 0
-local gsoServerWindup = 0
-local gsoServerAnim = 0
-local gsoLastFound = -10000000
-local gsoLastSelTick = 0
-local gsoIsTeemo = false
-local gsoLoadedChamps = false
 
-
-
-
-local gsoMenu = MenuElement({name = "Gamsteron Orbwalker", id = "gamsteronorb", type = MENU })
-local gsoMode = { isCombo = false, isHarass = false, isLastHit = false, isLaneClear = false }
-local gsoTimers = { lastAttackSend = 0, lastMoveSend = 0, millisecondsToAttack = 0, millisecondsToMove = 0, windUpTime = 0, animationTime = 0, endTime = 0, startTime = 0 }
-local gsoState = { isAttacking = false, isMoving = false, isEvading = false, isChangingCursorPos = false, isBlindedByTeemo = false, canAttack = true, canMove = true, enabledAttack = true, enabledMove = true, enabledOrb = true }
-local gsoExtra = { lastMovePos = myHero.pos, maxLatency = gsoGame.Latency() * 0.001, minLatency = gsoGame.Latency() * 0.001, lastTarget = nil, selectedTarget = nil, allyTeam = myHero.team }
-]]
 
 
 function OnDraw()
