@@ -451,7 +451,7 @@ local function championsLoadLogic()
     if not gsoLoadedChamps then
         for i = 1, gsoGameHeroCount() do
             local hero = gsoGameHero(i)
-            if hero.team ~= gsoAllyTeam then
+            if hero.team ~= gsoExtra.allyTeam then
                 local eName = hero.charName
                 if eName and #eName > 0 and not gsoMenu.ts.priority[eName] then
                     gsoLastFound = gsoGameTimer()
@@ -650,7 +650,7 @@ local function activeAttacksLogic()
                 if checkT > v2.startTime + gsoFarm.activeAttacks[k1][k2].pTime - projectileOnEnemy or not v2.to or v2.to.dead then
                     gsoFarm.activeAttacks[k1][k2] = nil
                 elseif ranged == true then
-                    gsoFarm.activeAttacks[k1][k2].pos = v2.fromPos:Extended(v2.to.pos, (checkT-v2.startTime)*v2.speed)
+                    gsoFarm.activeAttacks[k1][k2].pos = v2.fromPos:Extended(v2.to.pos, (checkT-v2.startTime+gsoExtra.minLatency+0.1)*v2.speed)
                 end
             end
         end
@@ -677,7 +677,7 @@ local function minionsLogic()
         sourceRange = gsoMyHero.range + gsoMyHero.boundingRadius
         mLH = gsoMenu.orb.delays.lhDelay:Value() * 0.001
         aaData = gsoMyHero.attackData
-        windUp = aaData.windUpTime + gsoExtra.minLatency + mLH
+        windUp = aaData.windUpTime + gsoExtra.minLatency - mLH
         meDmg = myHero.totalDamage + gsoBonusDmg()
     end
     
@@ -696,7 +696,8 @@ local function minionsLogic()
                 local action = gsoUnkillableMinion[i](args)
             end
             --print("unkillable")
-        elseif hpPred - dmgOnMinion <= 0 then
+        end
+        if hpPred - dmgOnMinion <= 0 then
             lastHitable[#lastHitable+1] = { Minion = minion, Health = hpPred }
         else
             local fastHpPred = gsoMinionHpPredFast(minion, aaData.animationTime * 3)
@@ -815,6 +816,7 @@ local function orbwalkerLogic()
             if canAttack then
                 local cPos = cursorPos
                 local tPos = args.Target.pos
+                tPos = Vector({x=tPos.x,z=tPos.z,y=tPos.y+50})
                 gsoControlSetCursor(tPos)
                 gsoExtraSetCursor = tPos
                 gsoControlKeyDown(HK_TCO)
@@ -907,8 +909,8 @@ function OnLoad()
     gsoMenu:MenuElement({name = "Orbwalker", id = "orb", type = MENU })
         gsoMenu.orb:MenuElement({name = "Farm Mode", id = "farmmode", value = 1, drop = { "accuracy", "fast" }})
         gsoMenu.orb:MenuElement({name = "Delays", id = "delays", type = MENU})
-            gsoMenu.orb.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 0, min = -50, max = 50, step = 1 })
-            gsoMenu.orb.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -200, max = 200, step = 1 })
+            gsoMenu.orb.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 0, min = 0, max = 25, step = 1 })
+            gsoMenu.orb.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = 0, max = 50, step = 1 })
             gsoMenu.orb.delays:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
         gsoMenu.orb:MenuElement({name = "Keys", id = "keys", type = MENU})
             gsoMenu.orb.keys:MenuElement({name = "Combo Key", id = "combo", key = string.byte(" ")})
@@ -983,7 +985,15 @@ function OnDraw()
     for i = 1, #lastHitable do
         local minionData = lastHitable[i]
         local minion = minionData.Minion
-        gsoDrawCircle(minion.pos, gsoMenu.ts.selected.draw.radius:Value(), gsoMenu.ts.selected.draw.width:Value(), gsoMenu.ts.selected.draw.color:Value())
+        gsoDrawCircle(minion.pos, minion.boundingRadius, 3, gsoDrawColor(150, 255, 255, 255))
+    end
+    
+    for k1,v1 in pairs(gsoFarm.activeAttacks) do
+        for k2,v2 in pairs(gsoFarm.activeAttacks[k1]) do
+            if v2.canceled == false then
+                gsoDrawCircle(v2.pos, 15, 3, gsoDrawColor(255, 201, 244, 154))
+            end
+        end
     end
     
 end
