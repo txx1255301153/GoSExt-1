@@ -61,7 +61,7 @@ local gsoMenu = MenuElement({name = "Gamsteron Orbwalker", id = "gamsteronorb", 
 local gsoMode = { isCombo = false, isHarass = false, isLastHit = false, isLaneClear = false }
 local gsoTimers = { lastAttackSend = 0, lastMoveSend = 0, secondsToAttack = 0, secondsToMove = 0, windUpTime = 0, animationTime = 0 }
 local gsoState = { isAttacking = false, isMoving = false, isEvading = false, isChangingCursorPos = false, isBlindedByTeemo = false, canAttack = true, canMove = true, enabledAttack = true, enabledMove = true, enabledOrb = true }
-local gsoExtra = { lastMovePos = myHero.pos, maxLatency = Game.Latency() * 0.001, minLatency = Game.Latency() * 0.001, lastTarget = nil, selectedTarget = nil, allyTeam = myHero.team, attackSpeed = 0 }
+local gsoExtra = { lastMovePos = myHero.pos, maxLatency = Game.Latency() * 0.001, minLatency = Game.Latency() * 0.001, lastTarget = nil, selectedTarget = nil, allyTeam = myHero.team, attackSpeed = 0, baseAttackSpeed = 0, baseWindUp = 0 }
 local gsoFarm = { allyActiveAttacks = {}, lastHitable = {}, almostLastHitable = {}, laneClearable = {} }
 
 
@@ -812,8 +812,14 @@ local function orbwalkerLogic()
     gsoMode = { isCombo = gsoMenu.orb.keys.combo:Value(), isHarass = gsoMenu.orb.keys.harass:Value(), isLastHit = gsoMenu.orb.keys.lastHit:Value(), isLaneClear = gsoMenu.orb.keys.laneClear:Value() }
     local aaTarget = nil
     if gsoMode.isCombo or gsoMode.isHarass or gsoMode.isLastHit or gsoMode.isLaneClear then
-        if gsoBaseAASpeed == 0 then gsoBaseAASpeed  = 1 / gsoMyHero.attackData.animationTime / gsoMyHero.attackSpeed end
-        if gsoBaseWindUp == 0 then gsoBaseWindUp = gsoMyHero.attackData.windUpTime / gsoMyHero.attackData.animationTime end
+        if gsoBaseAASpeed == 0 then
+            gsoBaseAASpeed  = 1 / gsoMyHero.attackData.animationTime / gsoMyHero.attackSpeed
+            gsoExtra.baseAttackSpeed = gsoBaseAASpeed
+        end
+        if gsoBaseWindUp == 0 then
+            gsoBaseWindUp = gsoMyHero.attackData.windUpTime / gsoMyHero.attackData.animationTime
+            gsoExtra.baseWindUp = gsoBaseWindUp
+        end
         if gsoMode.isCombo then
             aaTarget = gsoGetComboTarget()
         elseif gsoMode.isHarass then
@@ -1085,9 +1091,10 @@ class "__gsoOrbwalker"
         self.Extra = gsoExtra
         self.Farm = gsoFarm
     end
-    function __gsoOrbwalker:CursorPositionChanged()
-        gsoSetCursorPos = { endTime = gsoGetTickCount() + 50, action = function() return 0 end, active = true }
+    function __gsoOrbwalker:CursorPositionChanged(action, pos)
+        gsoSetCursorPos = action
         gsoState.isChangingCursorPos = true
+        gsoExtraSetCursor = pos
     end
     function __gsoOrbwalker:OnAttack(func)
         gsoOnAttack[#gsoOnAttack+1] = func
