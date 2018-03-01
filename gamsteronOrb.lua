@@ -4,7 +4,6 @@
 
 
 local gsoVersion = "1.4"
-      gsoSDK = nil
 
 
 
@@ -57,7 +56,7 @@ local gsoShouldWait = false
 
 
 
-local gsoMenu = MenuElement({name = "Gamsteron Orbwalker", id = "gamsteronorb", type = MENU })
+local gsoMenu = MenuElement({name = "Gamsteron Orbwalker", id = "gamsteronorb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orbbb.png" })
 local gsoMode = { isCombo = false, isHarass = false, isLastHit = false, isLaneClear = false }
 local gsoTimers = { lastAttackSend = 0, lastMoveSend = 0, millisecondsToAttack = 0, millisecondsToMove = 0, windUpTime = 0, animationTime = 0, endTime = 0, startTime = 0 }
 local gsoState = { isAttacking = false, isMoving = false, isEvading = false, isChangingCursorPos = false, isBlindedByTeemo = false, canAttack = true, canMove = true, enabledAttack = true, enabledMove = true, enabledOrb = true }
@@ -95,6 +94,10 @@ local gsoAttacks = {
     ["quinnwenhanced"] = true,
     ["viktorqbuff"] = true
 }
+local gsoIcons = {
+    ["orb"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png",
+    ["ts"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ts.png"
+}
 local gsoUndyingBuffs = {
     ["zhonyasringshield"] = true
 }
@@ -115,6 +118,7 @@ local gsoOnMove = {}
 local gsoCanAttack = {}
 local gsoCanMove = {}
 local gsoUnkillableMinion = {}
+local gsoCanChangeAnim = {}
 local function gsoAttackSpeed() return gsoMyHero.attackSpeed end
 local function gsoBonusDmg() return 0 end
 local function gsoBonusDmgUnit(unit) return 0 end
@@ -757,6 +761,12 @@ local function orbwalkerTimersLogic()
     
     gsoTimers.windUpTime = windUpT > gsoServerWindup and windUpT or gsoServerWindup
     gsoTimers.animationTime = animT > gsoServerAnim and animT or gsoServerAnim
+    for i = 1, #gsoCanChangeAnim do
+        if gsoCanChangeAnim[i] then
+            gsoTimers.animationTime = animT
+            break
+        end
+    end
     
     local sToAA = ( ( gsoServerStart - windUpAA ) + ( gsoTimers.animationTime - ( gsoExtra.minLatency - 0.05 ) ) ) - gsoGameTimer()
     local sToMove = ( ( gsoServerStart + extraWindUp ) - ( gsoExtra.minLatency * 0.5 ) ) - gsoGameTimer()
@@ -910,7 +920,7 @@ end
 
 
 function OnLoad()
-    gsoMenu:MenuElement({name = "Target Selector", id = "ts", type = MENU })
+    gsoMenu:MenuElement({name = "Target Selector", id = "ts", type = MENU, leftIcon = gsoIcons["ts"] })
         gsoMenu.ts:MenuElement({ id = "Mode", name = "Mode", value = 1, drop = { "Auto", "Closest", "Least Health", "Least Priority" } })
         gsoMenu.ts:MenuElement({ id = "priority", name = "Priorities", type = MENU })
         gsoMenu.ts:MenuElement({ id = "selected", name = "Selected Target", type = MENU })
@@ -921,7 +931,7 @@ function OnLoad()
                 gsoMenu.ts.selected.draw:MenuElement({name = "Color",  id = "color", color = gsoDrawColor(255, 204, 0, 0)})
                 gsoMenu.ts.selected.draw:MenuElement({name = "Width",  id = "width", value = 3, min = 1, max = 10})
                 gsoMenu.ts.selected.draw:MenuElement({name = "Radius",  id = "radius", value = 150, min = 1, max = 300})
-    gsoMenu:MenuElement({name = "Orbwalker", id = "orb", type = MENU })
+    gsoMenu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = gsoIcons["orb"] })
         gsoMenu.orb:MenuElement({name = "Delays", id = "delays", type = MENU})
             gsoMenu.orb.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 0, min = 0, max = 25, step = 1 })
             gsoMenu.orb.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = 0, max = 50, step = 1 })
@@ -959,7 +969,6 @@ function OnLoad()
         _G.EOW:SetMovements(false)
         _G.EOW:SetAttacks(false)
     end
-    gsoLoaded = true
     print("Gamsteron Orb "..gsoVersion.." | loaded!")
 end
 
@@ -1051,49 +1060,67 @@ end
 
 
 
-class "__gsoSDK"
-    function __gsoSDK:__init()
+class "__gsoOrbwalker"
+    function __gsoOrbwalker:__init()
         self.Menu = gsoMenu
         self.Mode = gsoMode
         self.Timers = gsoTimers
         self.State = gsoState
         self.Extra = gsoExtra
         self.Farm = gsoFarm
+        gsoLoaded = true
+        Callback.Add('Tick', function() self:tick() end)
     end
-    function __gsoSDK:CursorPositionChanged()
+    function __gsoOrbwalker:tick()
+        self.Mode = gsoMode
+        self.Timers = gsoTimers
+        self.State = gsoState
+        self.Extra = gsoExtra
+        self.Farm = gsoFarm
+    end
+    function __gsoOrbwalker:CursorPositionChanged()
         gsoSetCursorPos = { endTime = gsoGetTickCount() + 50, action = function() return 0 end, active = true }
         gsoState.isChangingCursorPos = true
     end
-    function __gsoSDK:OnAttack(func)
+    function __gsoOrbwalker:OnAttack(func)
         gsoOnAttack[#gsoOnAttack+1] = func
     end
-    function __gsoSDK:OnMove(func)
+    function __gsoOrbwalker:OnMove(func)
         gsoOnMove[#gsoOnMove+1] = func
     end
-    function __gsoSDK:OnUnkillableMinion(func)
+    function __gsoOrbwalker:OnUnkillableMinion(func)
         gsoUnkillableMinion[#gsoUnkillableMinion+1] = func
     end
-    function __gsoSDK:CanAttack(func)
+    function __gsoOrbwalker:CanAttack(func)
         gsoCanAttack[#gsoCanAttack+1] = func
     end
-    function __gsoSDK:CanMove(func)
+    function __gsoOrbwalker:CanMove(func)
         gsoCanMove[#gsoCanMove+1] = func
     end
-    function __gsoSDK:EnableAttack(boolean)
+    function __gsoOrbwalker:EnableAttack(boolean)
         gsoState.enabledAttack = boolean
     end
-    function __gsoSDK:EnableMove(boolean)
+    function __gsoOrbwalker:EnableMove(boolean)
         gsoState.enabledMove = boolean
     end
-    function __gsoSDK:EnableOrb(boolean)
+    function __gsoOrbwalker:EnableOrb(boolean)
         gsoState.enabledOrb = boolean
     end
-    function __gsoSDK:ResetAttack()
-        gsoTimers.lastAttackSend = 0
+    function __gsoOrbwalker:ResetAttack()
         gsoServerStart = 0
     end
-    function __gsoSDK:HeroIsValid(unit)
-        if gsoValid(unit) and not gsoIsImmortal(unit) then return true end
-        return false
+    function __gsoOrbwalker:MinionHealthPrediction(unitHealth, unitHandle, time)
+        return gsoMinionHpPredAccuracy(unitHealth, unitHandle, time)
     end
-gsoSDK = __gsoSDK()
+    function __gsoOrbwalker:CanChangeAnimationTime(func)
+        gsoCanChangeAnim[#gsoCanChangeAnim+1] = func
+    end
+    function __gsoOrbwalker:GetTarget(range, sourcePos, dmgType, bb, jaxE)
+        return gsoGetTarget(range, sourcePos, dmgType, bb, jaxE)
+    end
+    function __gsoOrbwalker:CalculateDamage(unit, spellData)
+        return gsoCalculateDmg(unit, spellData)
+    end
+    function __gsoOrbwalker:HeroIsValid(unit)
+        return gsoValid(unit) and not gsoIsImmortal(unit)
+    end
