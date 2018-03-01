@@ -873,7 +873,7 @@ local function orbwalkerLogic()
                 return
             end
             local canMove = true
-            local args = { Process = true }
+            local args = { Process = true, Target = aaTarget }
             for i = 1, #gsoOnMove do
                 local action = gsoOnMove[i](args)
                 if not args.Process then
