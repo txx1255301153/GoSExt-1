@@ -121,6 +121,7 @@ local gsoCanMove = {}
 local gsoUnkillableMinion = {}
 local gsoCanChangeAnim = {}
 local gsoLoadHeroesToMenu = {}
+local gsoOnIssue = {}
 local function gsoAttackSpeed() return gsoMyHero.attackSpeed end
 local function gsoBonusDmg() return 0 end
 local function gsoBonusDmgUnit(unit) return 0 end
@@ -870,6 +871,9 @@ local function orbwalkerLogic()
                 gsoState.isMoving = false
                 gsoState.isAttacking = true
                 gsoResetAttack = false
+                for i = 1, #gsoOnIssue do
+                    gsoOnIssue[i]({move=false,attack=true})
+                end
             end
         elseif gsoState.canMove then
             if ExtLibEvade and ExtLibEvade.Evading then
@@ -896,6 +900,9 @@ local function orbwalkerLogic()
                 gsoTimers.lastMoveSend = gsoGameTimer()
                 gsoState.isMoving = true
                 gsoState.isAttacking = false
+                for i = 1, #gsoOnIssue do
+                    gsoOnIssue[i]({move=true,attack=false})
+                end
             end
         elseif not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and not isChatOpen then
             for i = 1, #gsoOnAttack do
@@ -1095,6 +1102,9 @@ class "__gsoOrbwalker"
         gsoSetCursorPos = action
         gsoState.isChangingCursorPos = true
         gsoExtraSetCursor = pos
+    end
+    function __gsoOrbwalker:OnIssue(func)
+        gsoOnIssue[#gsoOnIssue+1] = func
     end
     function __gsoOrbwalker:OnAttack(func)
         gsoOnAttack[#gsoOnAttack+1] = func
