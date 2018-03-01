@@ -1129,6 +1129,6 @@ class "__gsoOrbwalker"
     function __gsoOrbwalker:CalculateDamage(unit, spellData)
         return gsoCalculateDmg(unit, spellData)
     end
-    function __gsoOrbwalker:HeroIsValid(unit)
-        return gsoValid(unit) and not gsoIsImmortal(unit)
+    function __gsoOrbwalker:HeroIsValid(unit, jaxE)
+        return gsoValid(unit) and not gsoIsImmortal(unit, jaxE)
     end
