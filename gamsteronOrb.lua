@@ -51,6 +51,7 @@ local gsoLoadedChamps = false
 local gsoExtraSetCursor = nil
 local gsoShouldWaitT = 0
 local gsoShouldWait = false
+local gsoResetAttack = false
 
 
 
@@ -774,7 +775,7 @@ local function orbwalkerTimersLogic()
     gsoTimers.secondsToMove = sToMove > 0 and sToMove or 0
     gsoState.isEvading = ExtLibEvade and ExtLibEvade.Evading
     local canMove = gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency + 0.005 + extraWindUp
-    gsoState.canAttack = not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and gsoTimers.secondsToAttack == 0 and not isChatOpen and canMove
+    gsoState.canAttack = not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and (gsoTimers.secondsToAttack == 0 or gsoResetAttack) and not isChatOpen and canMove
     gsoState.canMove = not gsoState.isChangingCursorPos and not gsoState.isEvading and gsoState.enabledMove and gsoTimers.secondsToMove == 0 and not isChatOpen and canMove
     if aaTarget and gsoState.canAttack then
         local args = { Target = aaTarget }
@@ -855,6 +856,7 @@ local function orbwalkerLogic()
                 gsoExtra.lastTarget = args.Target
                 gsoState.isMoving = false
                 gsoState.isAttacking = true
+                gsoResetAttack = false
             end
         elseif gsoState.canMove then
             if ExtLibEvade and ExtLibEvade.Evading then
@@ -1106,7 +1108,7 @@ class "__gsoOrbwalker"
         gsoState.enabledOrb = boolean
     end
     function __gsoOrbwalker:ResetAttack()
-        gsoServerStart = 0
+        gsoResetAttack = true
     end
     function __gsoOrbwalker:BonusDamageOnMinion(func)
         gsoBonusDmg = func
