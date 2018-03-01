@@ -36,6 +36,7 @@ local gsoControlMouseEvent = Control.mouse_event
 
 local gsoLatencies = {}
 local gsoDelayedActions = {}
+local gsoEnemyHeroesNames = {}
 local gsoSetCursorPos = nil
 local gsoLastKey = 0
 local gsoBaseAASpeed = 0
@@ -119,6 +120,7 @@ local gsoCanAttack = {}
 local gsoCanMove = {}
 local gsoUnkillableMinion = {}
 local gsoCanChangeAnim = {}
+local gsoLoadHeroesToMenu = {}
 local function gsoAttackSpeed() return gsoMyHero.attackSpeed end
 local function gsoBonusDmg() return 0 end
 local function gsoBonusDmgUnit(unit) return 0 end
@@ -448,6 +450,7 @@ local function championsLoadLogic()
             if hero.team ~= gsoExtra.allyTeam then
                 local eName = hero.charName
                 if eName and #eName > 0 and not gsoMenu.ts.priority[eName] then
+                    gsoEnemyHeroesNames[#gsoEnemyHeroesNames+1] = eName
                     gsoLastFound = gsoGameTimer()
                     local priority = gsoPriorities[eName] ~= nil and gsoPriorities[eName] or 5
                     gsoMenu.ts.priority:MenuElement({ id = eName, name = eName, value = priority, min = 1, max = 5, step = 1 })
@@ -469,6 +472,11 @@ local function championsLoadLogic()
         end
         if gsoGameTimer() > gsoLastFound + 2.5 and gsoGameTimer() < gsoLastFound + 5 then
             gsoLoadedChamps = true
+            for i = 1, #gsoLoadHeroesToMenu do
+                for j = 1, #gsoEnemyHeroesNames do
+                    gsoLoadHeroesToMenu[i](gsoEnemyHeroesNames[j])
+                end
+            end
         end
     end
     
@@ -1092,6 +1100,9 @@ class "__gsoOrbwalker"
     end
     function __gsoOrbwalker:CanAttack(func)
         gsoCanAttack[#gsoCanAttack+1] = func
+    end
+    function __gsoOrbwalker:OnEnemyHeroLoad(func)
+        gsoLoadHeroesToMenu[#gsoLoadHeroesToMenu+1] = func
     end
     function __gsoOrbwalker:CanMove(func)
         gsoCanMove[#gsoCanMove+1] = func
