@@ -34,7 +34,6 @@ local gsoControlMouseEvent = Control.mouse_event
 
 
 
-local gsoLoaded = false
 local gsoLatencies = {}
 local gsoDelayedActions = {}
 local gsoSetCursorPos = nil
@@ -900,7 +899,7 @@ end
 
 function OnTick()
     
-    if not gsoLoaded or not gsoState.enabledOrb or gsoMyHero.dead then return end
+    if not gsoState.enabledOrb or gsoMyHero.dead then return end
     
     championsLoadLogic()
     cursorPosLogic()
@@ -978,7 +977,7 @@ end
 
 
 function OnDraw()
-    if not gsoLoaded or not gsoMenu.orb.draw.enable:Value() or not gsoState.enabledOrb or gsoMyHero.dead then return end
+    if not gsoMenu.orb.draw.enable:Value() or not gsoState.enabledOrb or gsoMyHero.dead then return end
     
     local mePos = gsoMyHero.pos
     if gsoMenu.orb.draw.me.enable:Value() and mePos:ToScreen().onScreen then
@@ -1031,7 +1030,7 @@ end
 
 function OnWndMsg(msg, wParam)
     
-    if not gsoLoaded or not gsoState.enabledOrb or gsoMyHero.dead then return end
+    if not gsoState.enabledOrb or gsoMyHero.dead then return end
     
     if wParam == HK_TCO then
         gsoTimers.lastAttackSend = gsoGameTimer()
@@ -1069,7 +1068,6 @@ class "__gsoOrbwalker"
         self.State = gsoState
         self.Extra = gsoExtra
         self.Farm = gsoFarm
-        gsoLoaded = true
         Callback.Add('Tick', function() self:tick() end)
     end
     function __gsoOrbwalker:tick()
