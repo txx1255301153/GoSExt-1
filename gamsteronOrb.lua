@@ -58,7 +58,7 @@ local gsoShouldWait = false
 
 local gsoMenu = MenuElement({name = "Gamsteron Orbwalker", id = "gamsteronorb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orbbb.png" })
 local gsoMode = { isCombo = false, isHarass = false, isLastHit = false, isLaneClear = false }
-local gsoTimers = { lastAttackSend = 0, lastMoveSend = 0, millisecondsToAttack = 0, millisecondsToMove = 0, windUpTime = 0, animationTime = 0, endTime = 0, startTime = 0 }
+local gsoTimers = { lastAttackSend = 0, lastMoveSend = 0, secondsToAttack = 0, secondsToMove = 0, windUpTime = 0, animationTime = 0 }
 local gsoState = { isAttacking = false, isMoving = false, isEvading = false, isChangingCursorPos = false, isBlindedByTeemo = false, canAttack = true, canMove = true, enabledAttack = true, enabledMove = true, enabledOrb = true }
 local gsoExtra = { lastMovePos = myHero.pos, maxLatency = Game.Latency() * 0.001, minLatency = Game.Latency() * 0.001, lastTarget = nil, selectedTarget = nil, allyTeam = myHero.team, attackSpeed = 0 }
 local gsoFarm = { allyActiveAttacks = {}, lastHitable = {}, almostLastHitable = {}, laneClearable = {} }
@@ -348,7 +348,7 @@ local function gsoGetLastHitTarget()
         local minion = lastHitable[i]
         if gsoDistance(sourcePos, minion.pos) < meRange + 25 and minion.health < min then
             min = minion.health
-            result = minion
+            result = minion.Minion
         end
     end
     return result
@@ -384,7 +384,7 @@ local function gsoGetLaneClearTarget()
                 local minion = laneClearable[i]
                 if gsoDistance(sourcePos, minion.pos) < meRange + 25 and minion.health < min then
                     min = minion.health
-                    result = minion
+                    result = minion.Minion
                 end
             end
         end
@@ -718,14 +718,14 @@ local function minionsLogic()
         end
         local dmgOnMinion = meDmg + gsoBonusDmgUnit(enemy.Minion)
         if accuracyHpPred - dmgOnMinion <= 0 then
-            lastHitable[#lastHitable+1] = { pos = minionPos, health = accuracyHpPred }
+            lastHitable[#lastHitable+1] = { Minion = enemy.Minion, pos = minionPos, health = accuracyHpPred }
         else
             if gsoMinionHpPredFast(minionHandle, minionPos, minionHealth, anim*3, allyMinionsCache, enemyHandles) - dmgOnMinion < 0 then
                 gsoShouldWait = true
                 gsoShouldWaitT = gsoGameTimer()
-                almostLastHitable[#almostLastHitable+1] = { pos = minionPos, health = accuracyHpPred }
+                almostLastHitable[#almostLastHitable+1] = enemy.Minion
             else
-                laneClearable[#laneClearable+1] = { pos = minionPos, health = accuracyHpPred }
+                laneClearable[#laneClearable+1] = { Minion = enemy.Minion, pos = minionPos, health = accuracyHpPred }
             end
         end
     end
@@ -735,7 +735,6 @@ local function minionsLogic()
     gsoFarm.almostLastHitable = almostLastHitable
     
 end
-
 
 local function orbwalkerTimersLogic()
     
@@ -1108,6 +1107,15 @@ class "__gsoOrbwalker"
     end
     function __gsoOrbwalker:ResetAttack()
         gsoServerStart = 0
+    end
+    function __gsoOrbwalker:BonusDamageOnMinion(func)
+        gsoBonusDmg = func
+    end
+    function __gsoOrbwalker:BonusDamageOnMinion2(func)
+        gsoBonusDmgUnit = func
+    end
+    function __gsoOrbwalker:AttackSpeed(func)
+        gsoAttackSpeed = func
     end
     function __gsoOrbwalker:MinionHealthPrediction(unitHealth, unitHandle, time)
         return gsoMinionHpPredAccuracy(unitHealth, unitHandle, time)
