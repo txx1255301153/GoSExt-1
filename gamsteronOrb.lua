@@ -3,7 +3,7 @@
 
 
 
-local gsoVersion = "1.4"
+local gsoVersion = "1.5"
 
 
 
@@ -183,6 +183,42 @@ local function gsoPredPos(ms, speed, projectilePos, enemyPos, enemyPath)
     return enemyPos
 end
 
+local function gsoHasBuff(unit, bName)
+    for i = 0, unit.buffCount do
+        local buff = unit:GetBuff(i)
+        if buff and buff.count > 0 and buff.name:lower() == bName then
+            return true
+        end
+    end
+    return false
+end
+
+local function gsoGetAttackRange(attacker, defender)
+    if not attacker then return -1 end
+    local name = attacker.charName:lower()
+    if name:find("sruap_turret_") then
+        return 900
+    else
+        local range = 0
+        if name:find("sru_") and name:find("minion") then
+            if name:find("siege") then
+                range = 300
+            elseif name:find("ranged") then
+                range = 550
+            elseif name:find("melee") then
+                range = 110
+            elseif name:find("super") then
+                range = 170
+            end
+        end
+        range = range == 0 and attacker.range or range
+        if name == "caitlyn" then
+            range = range + (gsoHasBuff(attacker, "caitlynyordletrapinternal") and 650 or 0)
+        end
+        return range + attacker.boundingRadius + (defender and defender.boundingRadius or 30)
+    end
+end
+
 
 
 
@@ -295,7 +331,7 @@ end
 
 
 
-local function gsoGetTarget(range, sourcePos, dmgType, bb, jaxE)
+local function gsoGetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE)
     local selected = gsoExtra.selectedTarget
     local menuSelected = gsoMenu.ts.selected.enable:Value()
     local menuSelectedOnly = gsoMenu.ts.selected.only:Value()
@@ -310,7 +346,7 @@ local function gsoGetTarget(range, sourcePos, dmgType, bb, jaxE)
     local result  = nil
     local num     = 10000000
     local mode    = gsoMenu.ts.Mode:Value()
-    local enemyHeroes = gsoGetEnemyHeroes(range, sourcePos, bb, jaxE)
+    local enemyHeroes = customEnemyHeroes and customEnemyHeroes or gsoGetEnemyHeroes(range, sourcePos, bb, jaxE)
     for i = 1, #enemyHeroes do
         local x
         local unit = enemyHeroes[i]
@@ -367,7 +403,7 @@ local function gsoGetTurretTarget()
 end
 
 local function gsoGetComboTarget()
-    return gsoGetTarget(gsoMyHero.range + gsoMyHero.boundingRadius, gsoMyHero.pos, "ad", true, true)
+    return gsoGetTarget(gsoMyHero.range + gsoMyHero.boundingRadius, gsoMyHero.pos, nil, "ad", true, true)
 end
 
 local function gsoGetLaneClearTarget()
@@ -748,11 +784,13 @@ end
 local function orbwalkerTimersLogic()
     
     local aSpell = gsoMyHero.activeSpell
-    local aSpellName = aSpell.name:lower()
-    if not gsoNoAttacks[aSpellName] and (aSpellName:find("attack") or gsoAttacks[aSpellName]) and aSpell.startTime > gsoServerStart then
-        gsoServerStart = aSpell.startTime
-        gsoServerWindup = aSpell.windup
-        gsoServerAnim = aSpell.animation
+    if aSpell and aSpell.valid and aSpell.startTime > gsoServerStart then
+        local aSpellName = aSpell.name:lower()
+        if not gsoNoAttacks[aSpellName] and (aSpellName:find("attack") or gsoAttacks[aSpellName]) then
+            gsoServerStart = aSpell.startTime
+            gsoServerWindup = aSpell.windup
+            gsoServerAnim = aSpell.animation
+        end
     end
     
     local aaSpeed = gsoAttackSpeed() * gsoBaseAASpeed
@@ -1151,12 +1189,18 @@ class "__gsoOrbwalker"
     function __gsoOrbwalker:CanChangeAnimationTime(func)
         gsoCanChangeAnim[#gsoCanChangeAnim+1] = func
     end
-    function __gsoOrbwalker:GetTarget(range, sourcePos, dmgType, bb, jaxE)
-        return gsoGetTarget(range, sourcePos, dmgType, bb, jaxE)
+    function __gsoOrbwalker:GetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE)
+        return gsoGetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE)
     end
     function __gsoOrbwalker:CalculateDamage(unit, spellData)
         return gsoCalculateDmg(unit, spellData)
     end
     function __gsoOrbwalker:HeroIsValid(unit, jaxE)
         return gsoValid(unit) and not gsoIsImmortal(unit, jaxE)
+    end
+    function __gsoOrbwalker:GetEnemyHeroes(range, sourcePos, bb, jaxE)
+        return gsoGetEnemyHeroes(range, sourcePos, bb, jaxE)
+    end
+    function __gsoOrbwalker:GetAutoAttackRange(attacker, defender)
+        return gsoGetAttackRange(attacker, defender)
     end
