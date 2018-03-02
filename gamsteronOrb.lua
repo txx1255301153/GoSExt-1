@@ -3,7 +3,7 @@
 
 
 
-local gsoVersion = "1.5"
+local gsoVersion = "1.6"
 
 
 
@@ -52,13 +52,50 @@ local gsoExtraSetCursor = nil
 local gsoShouldWaitT = 0
 local gsoShouldWait = false
 local gsoResetAttack = false
+local gsoComboKeys = {}
+local gsoHarassKeys = {}
+local gsoLastHitKeys = {}
+local gsoLaneClearKeys = {}
 
 
 
 
 
 local gsoMenu = MenuElement({name = "Gamsteron Orbwalker", id = "gamsteronorb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orbbb.png" })
-local gsoMode = { isCombo = false, isHarass = false, isLastHit = false, isLaneClear = false }
+local gsoMode = {
+    isCombo = function()
+                  for i = 1, #gsoComboKeys do
+                      if gsoComboKeys[i]:Value() then
+                          return true
+                      end
+                  end
+                  return false
+              end,
+    isHarass = function()
+                  for i = 1, #gsoHarassKeys do
+                      if gsoHarassKeys[i]:Value() then
+                          return true
+                      end
+                  end
+                  return false
+              end,
+    isLastHit = function()
+                  for i = 1, #gsoLastHitKeys do
+                      if gsoLastHitKeys[i]:Value() then
+                          return true
+                      end
+                  end
+                  return false
+              end,
+    isLaneClear = function()
+                  for i = 1, #gsoLaneClearKeys do
+                      if gsoLaneClearKeys[i]:Value() then
+                          return true
+                      end
+                  end
+                  return false
+              end
+}
 local gsoTimers = { lastAttackSend = 0, lastMoveSend = 0, secondsToAttack = 0, secondsToMove = 0, windUpTime = 0, animationTime = 0 }
 local gsoState = { isAttacking = false, isMoving = false, isEvading = false, isChangingCursorPos = false, isBlindedByTeemo = false, canAttack = true, canMove = true, enabledAttack = true, enabledMove = true, enabledOrb = true }
 local gsoExtra = { lastMovePos = myHero.pos, maxLatency = Game.Latency() * 0.001, minLatency = Game.Latency() * 0.001, lastTarget = nil, selectedTarget = nil, allyTeam = myHero.team, attackSpeed = 0, baseAttackSpeed = 0, baseWindUp = 0 }
@@ -216,6 +253,19 @@ local function gsoGetAttackRange(attacker, defender)
             range = range + (gsoHasBuff(attacker, "caitlynyordletrapinternal") and 650 or 0)
         end
         return range + attacker.boundingRadius + (defender and defender.boundingRadius or 30)
+    end
+end
+
+local function gsoRegisterMenuKey(mode, key)
+    mode = mode:lower()
+    if mode == "combo" then
+        gsoComboKeys[#gsoComboKeys+1] = key
+    elseif mode == "harass" then
+        gsoHarassKeys[#gsoHarassKeys+1] = key
+    elseif mode == "lasthit" then
+        gsoLastHitKeys[#gsoLastHitKeys+1] = key
+    elseif mode == "laneclear" then
+        gsoLaneClearKeys[#gsoLaneClearKeys+1] = key
     end
 end
 
@@ -848,9 +898,8 @@ end
 
 local function orbwalkerLogic()
     
-    gsoMode = { isCombo = gsoMenu.orb.keys.combo:Value(), isHarass = gsoMenu.orb.keys.harass:Value(), isLastHit = gsoMenu.orb.keys.lastHit:Value(), isLaneClear = gsoMenu.orb.keys.laneClear:Value() }
     local aaTarget = nil
-    if gsoMode.isCombo or gsoMode.isHarass or gsoMode.isLastHit or gsoMode.isLaneClear then
+    if gsoMode.isCombo() or gsoMode.isHarass() or gsoMode.isLastHit() or gsoMode.isLaneClear() then
         if gsoBaseAASpeed == 0 then
             gsoBaseAASpeed  = 1 / gsoMyHero.attackData.animationTime / gsoMyHero.attackSpeed
             gsoExtra.baseAttackSpeed = gsoBaseAASpeed
@@ -859,13 +908,13 @@ local function orbwalkerLogic()
             gsoBaseWindUp = gsoMyHero.attackData.windUpTime / gsoMyHero.attackData.animationTime
             gsoExtra.baseWindUp = gsoBaseWindUp
         end
-        if gsoMode.isCombo then
+        if gsoMode.isCombo() then
             aaTarget = gsoGetComboTarget()
-        elseif gsoMode.isHarass then
+        elseif gsoMode.isHarass() then
             aaTarget = gsoGetHarassTarget()
-        elseif gsoMode.isLastHit then
+        elseif gsoMode.isLastHit() then
             aaTarget = gsoGetLastHitTarget()
-        elseif gsoMode.isLaneClear then
+        elseif gsoMode.isLaneClear() then
             aaTarget = gsoGetLaneClearTarget()
         end
     elseif not gsoState.isChangingCursorPos and gsoGetTickCount() < gsoLastKey + 1000 then
@@ -873,7 +922,7 @@ local function orbwalkerLogic()
         gsoLastKey = 0
     end
     
-    if gsoMode.isCombo or gsoMode.isHarass or gsoMode.isLastHit or gsoMode.isLaneClear then
+    if gsoMode.isCombo() or gsoMode.isHarass() or gsoMode.isLastHit() or gsoMode.isLaneClear() then
         if aaTarget and gsoState.canAttack then
             if ExtLibEvade and ExtLibEvade.Evading then
                 gsoState.isMoving = true
@@ -997,9 +1046,13 @@ function OnLoad()
             gsoMenu.orb.delays:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
         gsoMenu.orb:MenuElement({name = "Keys", id = "keys", type = MENU})
             gsoMenu.orb.keys:MenuElement({name = "Combo Key", id = "combo", key = string.byte(" ")})
+            gsoRegisterMenuKey("combo", gsoMenu.orb.keys.combo)
             gsoMenu.orb.keys:MenuElement({name = "Harass Key", id = "harass", key = string.byte("C")})
-            gsoMenu.orb.keys:MenuElement({name = "LastHit Key", id = "lastHit", key = string.byte("X")})
-            gsoMenu.orb.keys:MenuElement({name = "LaneClear Key", id = "laneClear", key = string.byte("V")})
+            gsoRegisterMenuKey("harass", gsoMenu.orb.keys.harass)
+            gsoMenu.orb.keys:MenuElement({name = "LastHit Key", id = "lasthit", key = string.byte("X")})
+            gsoRegisterMenuKey("lasthit", gsoMenu.orb.keys.lasthit)
+            gsoMenu.orb.keys:MenuElement({name = "LaneClear Key", id = "laneclear", key = string.byte("V")})
+            gsoRegisterMenuKey("laneclear", gsoMenu.orb.keys.laneclear)
         gsoMenu.orb:MenuElement({name = "Drawings", id = "draw", type = MENU})
             gsoMenu.orb.draw:MenuElement({name = "Enable", id = "enable", value = true})
             gsoMenu.orb.draw:MenuElement({name = "gsoMyHero attack range", id = "me", type = MENU})
@@ -1130,49 +1183,13 @@ class "__gsoOrbwalker"
         Callback.Add('Tick', function() self:tick() end)
     end
     function __gsoOrbwalker:tick()
-        self.Mode = gsoMode
         self.Timers = gsoTimers
         self.State = gsoState
         self.Extra = gsoExtra
         self.Farm = gsoFarm
     end
-    function __gsoOrbwalker:CursorPositionChanged(action, pos)
-        gsoSetCursorPos = action
-        gsoState.isChangingCursorPos = true
-        gsoExtraSetCursor = pos
-    end
-    function __gsoOrbwalker:OnIssue(func)
-        gsoOnIssue[#gsoOnIssue+1] = func
-    end
-    function __gsoOrbwalker:OnAttack(func)
-        gsoOnAttack[#gsoOnAttack+1] = func
-    end
-    function __gsoOrbwalker:OnMove(func)
-        gsoOnMove[#gsoOnMove+1] = func
-    end
-    function __gsoOrbwalker:OnUnkillableMinion(func)
-        gsoUnkillableMinion[#gsoUnkillableMinion+1] = func
-    end
-    function __gsoOrbwalker:CanAttack(func)
-        gsoCanAttack[#gsoCanAttack+1] = func
-    end
-    function __gsoOrbwalker:OnEnemyHeroLoad(func)
-        gsoLoadHeroesToMenu[#gsoLoadHeroesToMenu+1] = func
-    end
-    function __gsoOrbwalker:CanMove(func)
-        gsoCanMove[#gsoCanMove+1] = func
-    end
-    function __gsoOrbwalker:EnableAttack(boolean)
-        gsoState.enabledAttack = boolean
-    end
-    function __gsoOrbwalker:EnableMove(boolean)
-        gsoState.enabledMove = boolean
-    end
-    function __gsoOrbwalker:EnableOrb(boolean)
-        gsoState.enabledOrb = boolean
-    end
-    function __gsoOrbwalker:ResetAttack()
-        gsoResetAttack = true
+    function __gsoOrbwalker:CanChangeAnimationTime(func)
+        gsoCanChangeAnim[#gsoCanChangeAnim+1] = func
     end
     function __gsoOrbwalker:BonusDamageOnMinion(func)
         gsoBonusDmg = func
@@ -1183,11 +1200,38 @@ class "__gsoOrbwalker"
     function __gsoOrbwalker:AttackSpeed(func)
         gsoAttackSpeed = func
     end
+    function __gsoOrbwalker:OnMove(func)
+        gsoOnMove[#gsoOnMove+1] = func
+    end
+    function __gsoOrbwalker:OnAttack(func)
+        gsoOnAttack[#gsoOnAttack+1] = func
+    end
+    function __gsoOrbwalker:CanMove(func)
+        gsoCanMove[#gsoCanMove+1] = func
+    end
+    function __gsoOrbwalker:CanAttack(func)
+        gsoCanAttack[#gsoCanAttack+1] = func
+    end
+    function __gsoOrbwalker:OnIssue(func)
+        gsoOnIssue[#gsoOnIssue+1] = func
+    end
+    function __gsoOrbwalker:OnEnemyHeroLoad(func)
+        gsoLoadHeroesToMenu[#gsoLoadHeroesToMenu+1] = func
+    end
+    function __gsoOrbwalker:EnableMove(boolean)
+        gsoState.enabledMove = boolean
+    end
+    function __gsoOrbwalker:EnableAttack(boolean)
+        gsoState.enabledAttack = boolean
+    end
+    function __gsoOrbwalker:EnableOrb(boolean)
+        gsoState.enabledOrb = boolean
+    end
+    function __gsoOrbwalker:ResetAttack()
+        gsoResetAttack = true
+    end
     function __gsoOrbwalker:MinionHealthPrediction(unitHealth, unitHandle, time)
         return gsoMinionHpPredAccuracy(unitHealth, unitHandle, time)
-    end
-    function __gsoOrbwalker:CanChangeAnimationTime(func)
-        gsoCanChangeAnim[#gsoCanChangeAnim+1] = func
     end
     function __gsoOrbwalker:GetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE)
         return gsoGetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE)
@@ -1198,9 +1242,20 @@ class "__gsoOrbwalker"
     function __gsoOrbwalker:HeroIsValid(unit, jaxE)
         return gsoValid(unit) and not gsoIsImmortal(unit, jaxE)
     end
+    function __gsoOrbwalker:CursorPositionChanged(action, pos)
+        gsoSetCursorPos = action
+        gsoState.isChangingCursorPos = true
+        gsoExtraSetCursor = pos
+    end
     function __gsoOrbwalker:GetEnemyHeroes(range, sourcePos, bb, jaxE)
         return gsoGetEnemyHeroes(range, sourcePos, bb, jaxE)
     end
     function __gsoOrbwalker:GetAutoAttackRange(attacker, defender)
         return gsoGetAttackRange(attacker, defender)
+    end
+    function __gsoOrbwalker:RegisterMenuKey(mode, key)
+        gsoRegisterMenuKey(mode, key)
+    end
+    function __gsoOrbwalker:OnUnkillableMinion(func)
+        gsoUnkillableMinion[#gsoUnkillableMinion+1] = func
     end
