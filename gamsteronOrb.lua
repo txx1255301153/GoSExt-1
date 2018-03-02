@@ -6,7 +6,7 @@ local gsoVersion = "1.6"
 A P I
  
 INITIALIZE:
-local gsoOrbwalker = nil
+local gsoOrbwalker
 function OnLoad()
     gsoOrbwalker = __gsoOrbwalker()
 end
