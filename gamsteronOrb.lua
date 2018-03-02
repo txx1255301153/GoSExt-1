@@ -1,12 +1,212 @@
 
-
-
-
-
 local gsoVersion = "1.6"
 
+ --[[
 
+A P I
+ 
+INITIALIZE:
+local gsoOrbwalker = nil
+function OnLoad()
+    gsoOrbwalker = __gsoOrbwalker()
+end
 
+COPY PASTE:
+gsoOrbwalker:CanChangeAnimationTime(function() return canChangeAnimationTime() end)
+gsoOrbwalker:BonusDamageOnMinion(function() return bonusDamageOnMinion() end)
+gsoOrbwalker:BonusDamageOnMinion2(function(args) return bonusDamageOnMinion2(args) end)
+gsoOrbwalker:AttackSpeed(function() return attackSpeed() end)
+gsoOrbwalker:OnMove(function(args) onMove(args) end)
+gsoOrbwalker:OnAttack(function(args) onAttack(args) end)
+gsoOrbwalker:CanMove(function(args) canMove(args) end)
+gsoOrbwalker:CanAttack(function(args) canAttack(args) end)
+gsoOrbwalker:OnIssue(function(issue) print(checkIssue(issue)) end)
+gsoOrbwalker:OnEnemyHeroLoad(function(heroName) localMenu.useon:MenuElement({id = heroName, name = heroName, value = true}) end) 
+gsoOrbwalker:EnableMove(false)
+gsoOrbwalker:EnableAttack(false)
+gsoOrbwalker:EnableOrb(false)
+gsoOrbwalker:ResetAttack()
+gsoOrbwalker:MinionHealthPrediction(minionHealth, minionHandle, time)
+gsoOrbwalker:GetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE)
+gsoOrbwalker:CalculateDamage(unit, spellData)
+gsoOrbwalker:HeroIsValid(unit)
+gsoOrbwalker:CursorPositionChanged(action, pos)
+gsoOrbwalker:GetEnemyHeroes(range, sourcePos, bb, jaxE)
+gsoOrbwalker:GetAutoAttackRange(attacker, defender) ( added support for minions and turrets )
+gsoOrbwalker:RegisterMenuKey(mode, key)
+gsoOrbwalker.Mode.isCombo()
+gsoOrbwalker.Mode.isHarass()
+gsoOrbwalker.Mode.isLastHit()
+gsoOrbwalker.Mode.isLaneClear()
+gsoOrbwalker.Timers.lastAttackSend
+gsoOrbwalker.Timers.lastMoveSend
+gsoOrbwalker.Timers.secondsToAttack
+gsoOrbwalker.Timers.secondsToMove
+gsoOrbwalker.Timers.windUpTime
+gsoOrbwalker.Timers.animationTime
+gsoOrbwalker.State.isAttacking
+gsoOrbwalker.State.isMoving
+gsoOrbwalker.State.isEvading
+gsoOrbwalker.State.isChangingCursorPos
+gsoOrbwalker.State.isBlindedByTeemo
+gsoOrbwalker.State.canAttack
+gsoOrbwalker.State.canMove
+gsoOrbwalker.State.enabledAttack
+gsoOrbwalker.State.enabledMove
+gsoOrbwalker.State.enabledOrb
+gsoOrbwalker.Extra.lastMovePos
+gsoOrbwalker.Extra.maxLatency
+gsoOrbwalker.Extra.minLatency
+gsoOrbwalker.Extra.lastTarget
+gsoOrbwalker.Extra.selectedTarget
+gsoOrbwalker.Extra.allyTeam
+gsoOrbwalker.Extra.attackSpeed
+gsoOrbwalker.Extra.baseAttackSpeed
+gsoOrbwalker.Extra.baseWindUp
+gsoOrbwalker.Farm.allyActiveAttacks
+gsoOrbwalker.Farm.allyActiveAttacks.Canceled
+gsoOrbwalker.Farm.allyActiveAttacks.Ally
+gsoOrbwalker.Farm.allyActiveAttacks.Ally.Handle
+gsoOrbwalker.Farm.allyActiveAttacks.Ally.Minion
+gsoOrbwalker.Farm.allyActiveAttacks.Ally.AAData
+gsoOrbwalker.Farm.allyActiveAttacks.Ally.Dmg
+gsoOrbwalker.Farm.allyActiveAttacks.Ally.Pos
+gsoOrbwalker.Farm.allyActiveAttacks.Ally.Path
+gsoOrbwalker.Farm.allyActiveAttacks.Speed
+gsoOrbwalker.Farm.allyActiveAttacks.StartTime
+gsoOrbwalker.Farm.allyActiveAttacks.FlyTime
+gsoOrbwalker.Farm.allyActiveAttacks.Pos
+gsoOrbwalker.Farm.allyActiveAttacks.Dmg
+gsoOrbwalker.Farm.allyActiveAttacks.Enemy
+gsoOrbwalker.Farm.allyActiveAttacks.Enemy.Handle
+gsoOrbwalker.Farm.allyActiveAttacks.Enemy.Minion
+gsoOrbwalker.Farm.allyActiveAttacks.Enemy.Path
+gsoOrbwalker.Farm.allyActiveAttacks.Enemy.Pos
+gsoOrbwalker.Farm.allyActiveAttacks.Enemy.DmgRed
+gsoOrbwalker.Farm.allyActiveAttacks.Enemy.Health
+gsoOrbwalker.Farm.lastHitable
+gsoOrbwalker.Farm.lastHitable.Minion
+gsoOrbwalker.Farm.lastHitable.pos
+gsoOrbwalker.Farm.lastHitable.health
+gsoOrbwalker.Farm.almostLastHitable
+gsoOrbwalker.Farm.almostLastHitable.Minion
+gsoOrbwalker.Farm.almostLastHitable.pos
+gsoOrbwalker.Farm.almostLastHitable.health
+gsoOrbwalker.Farm.laneClearable
+gsoOrbwalker.Farm.laneClearable.Minion
+gsoOrbwalker.Farm.laneClearable.pos
+gsoOrbwalker.Farm.laneClearable.health
+
+DETAILS:
+local gsoOrbwalker = nil
+function OnLoad()
+        gsoOrbwalker = __gsoOrbwalker()
+        gsoOrbwalker -> class
+            :CanChangeAnimationTime(function() return canChangeAnimationTime() end) -> event ( after spell that increase attack speed. Ashe Q, Tristana Q etc. )
+            :BonusDamageOnMinion(function() return bonusDamageOnMinion() end) -> event
+            :BonusDamageOnMinion2(function(args) return bonusDamageOnMinion2(args) end) -> event
+            :AttackSpeed(function() return attackSpeed() end) -> event ( after buff end time that increase attack speed. Ashe Q, Tristana Q etc. )
+            :OnMove(function(args) onMove(args) end) -> event
+            :OnAttack(function(args) onAttack(args) end) -> event
+            :CanMove(function(args) canMove(args) end) -> event
+            :CanAttack(function(args) canAttack(args) end) -> event
+            :OnIssue(function(issue) print(checkIssue(issue)) end) -> event (on send key: attack | move)
+            :OnEnemyHeroLoad(function(heroName) localMenu.useon:MenuElement({id = heroName, name = heroName, value = true}) end) -> event (don't need 2xF6 works perfect)
+            :EnableMove(false) -> function
+            :EnableAttack(false) -> function
+            :EnableOrb(false) -> function
+            :ResetAttack() -> function
+            :MinionHealthPrediction(minionHealth, minionHandle, time) -> function, return number, predicted enemy minion health - very accurate, for enemy minions only
+            :GetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE) -> function, return unit or nil
+                  ( dmType -> string "ap" or "ad" )
+                  ( bb -> boolean add enemies boundingRadius to range ? )
+                  ( jaxE -> boolean, jaxE isImmortal ? )
+                  ( customEnemyHeroes -> list with enemy heroes or nil )
+            :CalculateDamage(unit, spellData) -> function, return number
+                  ( spellData: { dmgType = "ap" or "ad" or "mixed" or "true", dmgTrue = number, dmgAP = number, dmgAD = number } )
+            :HeroIsValid(unit, jaxE) -> function, return boolean, included custom isImmortal, for enemy heroes only
+                  ( jaxE -> boolean, jaxE isImmortal ? )
+            :CursorPositionChanged(action, pos) -> function, void, use after cursor position changed - for example: botrk, ezreal q
+                  ( action: { endTime = GetTickCount() + 50, action = function() Control.SetCursorPos(cPos.x, cPos.y) end, active = true }(cPos - cursorPos before spell cast) )
+                  ( pos: castpos as Vector )
+            :GetEnemyHeroes(range, sourcePos, bb, jaxE) -> function, return list {...}
+            :GetAutoAttackRange(attacker, defender) -> function, return number, added support for minions and turrets
+            :RegisterMenuKey(mode, key) -> function, void
+                  ( mode: "combo" or "harass" or "lasthit" or "laneclear" )
+                  ( key: menu.keys.combo, ... )
+                  EXAMPLE:
+                        gsoMenu.orb.keys:MenuElement({name = "Combo Key", id = "combo", key = string.byte(" ")})
+                        gsoOrbwalker:RegisterMenuKey("combo", gsoMenu.orb.keys.combo)
+            .Mode -> list
+                    .isCombo() -> function, return boolean
+                    .isHarass() -> function, return boolean
+                    .isLastHit() -> function, return boolean
+                    .isLaneClear() -> function, return boolean
+            .Timers -> list
+                    .lastAttackSend -> seconds
+                    .lastMoveSend -> seconds
+                    .secondsToAttack -> seconds
+                    .secondsToMove -> seconds
+                    .windUpTime -> seconds
+                    .animationTime -> seconds
+            .State -> list
+                    .isAttacking -> boolean
+                    .isMoving -> boolean
+                    .isEvading -> boolean
+                    .isChangingCursorPos -> boolean : check this before casting spell that change cursor position
+                    .isBlindedByTeemo -> boolean
+                    .canAttack -> boolean
+                    .canMove -> boolean
+                    .enabledAttack -> boolean
+                    .enabledMove -> boolean
+                    .enabledOrb -> boolean
+            .Extra -> list
+                    .lastMovePos -> Vector
+                    .maxLatency -> seconds
+                    .minLatency -> seconds
+                    .lastTarget -> unit or nil
+                    .selectedTarget -> unit or nil
+                    .allyTeam -> 100 or 200
+                    .attackSpeed -> 2.5 if maximum attack speed
+                    .baseAttackSpeed
+                    .baseWindUp
+            .Farm -> list
+                    .allyActiveAttacks -> list
+                            .Canceled -> boolean
+                            .Ally -> list,
+                                    .Handle -> number
+                                    .Minion -> unit
+                                    .AAData -> list (unit.attackData)
+                                    .Dmg -> number
+                                    .Pos -> Vector
+                                    .Path -> list (unit.pathing)
+                            Only if Canceled == false:
+                            .Speed -> number
+                            .StartTime -> number
+                            .FlyTime -> seconds
+                            .Pos -> Vector
+                            .Dmg -> number
+                            .Enemy -> list
+                                    .Handle -> number
+                                    .Minion -> unit
+                                    .Path -> list (unit.pathing)
+                                    .Pos -> Vector
+                                    .DmgRed -> number
+                                    .Health -> number
+                    .lastHitable -> list
+                            .Minion -> unit
+                            .pos -> Vector
+                            .health -> predicted health
+                    .almostLastHitable -> list
+                            .Minion -> unit
+                            .pos -> Vector
+                            .health -> predicted health
+                    .laneClearable -> list
+                            .Minion -> unit
+                            .pos -> Vector
+                            .health -> predicted health
+end
+]]
 
 
 local gsoMyHero = myHero
