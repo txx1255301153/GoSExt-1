@@ -1380,13 +1380,6 @@ class "__gsoOrbwalker"
         self.State = gsoState
         self.Extra = gsoExtra
         self.Farm = gsoFarm
-        Callback.Add('Tick', function() self:tick() end)
-    end
-    function __gsoOrbwalker:tick()
-        self.Timers = gsoTimers
-        self.State = gsoState
-        self.Extra = gsoExtra
-        self.Farm = gsoFarm
     end
     function __gsoOrbwalker:CanChangeAnimationTime(func)
         gsoCanChangeAnim[#gsoCanChangeAnim+1] = func
