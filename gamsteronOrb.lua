@@ -1,5 +1,5 @@
 
-local gsoVersion = "1.8"
+local gsoVersion = "1.9"
 
  --[[
 
@@ -843,13 +843,18 @@ function OnTick()
                                             break
                                         end
                                     end
-                                    local sToAA = ( ( gsoServerStart - windUpAA ) + ( gsoTimers.animationTime - ( gsoExtra.minLatency - 0.05 ) ) ) - gsoGameTimer()
-                                    local sToMove = ( ( gsoServerStart + extraWindUp ) - ( gsoExtra.minLatency * 0.5 ) ) - gsoGameTimer()
+                                    local sToAA = gsoServerStart - windUpAA
+                                          sToAA = sToAA + gsoTimers.animationTime
+                                          sToAA = sToAA - gsoExtra.minLatency
+                                          sToAA = sToAA - 0.06
+                                          sToAA = sToAA - gsoGameTimer()
+                                    local sToMove = gsoServerStart + extraWindUp
+                                          sToMove = sToMove - gsoExtra.minLatency
+                                          sToMove = sToMove - gsoGameTimer()
                                     local isChatOpen = gsoGameIsChatOpen()
                                     gsoTimers.secondsToAttack = sToAA > 0 and sToAA or 0
                                     gsoTimers.secondsToMove = sToMove > 0 and sToMove or 0
                                     gsoState.isEvading = ExtLibEvade and ExtLibEvade.Evading
-                                    local canMove = gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency + 0.005 + extraWindUp
                                     gsoState.canAttack = not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and (gsoTimers.secondsToAttack == 0 or gsoExtra.resetAttack) and not isChatOpen and canMove
                                     gsoState.canMove = not gsoState.isChangingCursorPos and not gsoState.isEvading and gsoState.enabledMove and gsoTimers.secondsToMove == 0 and not isChatOpen and canMove
 --orbwalkerLogic
