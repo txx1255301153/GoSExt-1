@@ -377,21 +377,6 @@ local gsoIsImmortal               = function(unit, jaxE)
                                         end
                                         return false
                                     end
-local gsoPredPos                  = function(ms, speed, projectilePos, enemyPos, enemyPath)
-                                        if enemyPath.hasMovePath then
-                                            local pPos    = projectilePos
-                                            local uPos    = enemyPos
-                                            local ePos    = enemyPath.endPos
-                                            local distUP  = gsoDistance(pPos, uPos)
-                                            local distEP  = gsoDistance(pPos, ePos)
-                                            if distEP > distUP then
-                                                return uPos:Extended(ePos, 25+(ms*(distUP / (speed - ms))))
-                                            else
-                                                return uPos:Extended(ePos, 25+(ms*(distUP / (speed + ms))))
-                                            end
-                                        end
-                                        return enemyPos
-                                    end
 local gsoGetAttackRange           = function(attacker, defender)
                                         if not attacker then return -1 end
                                         local name = attacker.charName:lower()
