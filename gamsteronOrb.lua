@@ -1,5 +1,5 @@
 
-local gsoVersion = "1.7"
+local gsoVersion = "1.8"
 
  --[[
 
@@ -547,6 +547,10 @@ local gsoCursorPositionChanged    = function(action, pos)
                                         gsoExtraSetCursor = pos
                                     end
 function OnTick()
+                                    for i = 1, gsoGameHeroCount() do end
+                                    for i = 1, gsoGameMinionCount() do end
+                                    for i = 1, gsoGameTurretCount() do end
+                                    
                                     if not gsoState.enabledOrb or gsoMyHero.dead then return end
 --championsLoadLogic
                                     if not gsoLoadedChamps then
