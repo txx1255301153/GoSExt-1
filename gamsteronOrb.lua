@@ -23,6 +23,7 @@ gsoOrbwalker:BonusDamageOnMinion(function() return bonusDamageOnMinion() end)
 gsoOrbwalker:BonusDamageOnMinion2(function(args) return bonusDamageOnMinion2(args) end)
 gsoOrbwalker:AttackSpeed(function() return attackSpeed() end)
 functions
+gsoOrbwalker.IsImmortal(unit, jaxE)
 gsoOrbwalker.MinionHealthPrediction(minionHealth, minionHandle, time)
 gsoOrbwalker.GetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE)
 gsoOrbwalker.CalculateDamage(unit, spellData)
@@ -115,6 +116,7 @@ function OnLoad()
             :BonusDamageOnMinion2(function(args) return bonusDamageOnMinion2(args) end) -> event
             :AttackSpeed(function() return attackSpeed() end) -> event ( after buff end time that increase attack speed. Ashe Q, Tristana Q etc. )
             .MinionHealthPrediction(minionHealth, minionHandle, time) -> function, return number, predicted enemy minion health - very accurate, for enemy minions only
+            .IsImmortal(unit, jaxE) -> function, return boolean, only heroes
             .GetTarget(range, sourcePos, enemyHeroes, dmgType, bb, jaxE) -> function, return unit or nil
                   ( dmType -> string "ap" or "ad" )
                   ( bb -> boolean add enemies boundingRadius to range ? )
@@ -1303,6 +1305,7 @@ class "__gsoOrbwalker"
         self.MinionHealthPrediction = gsoMinionHpPredAccuracy
         self.GetTarget = gsoGetTarget
         self.CalculateDamage = gsoCalculateDmg
+        self.IsImmortal = gsoIsImmortal
     end
     function __gsoOrbwalker:OnTick(func)
         gsoOnTick[#gsoOnTick+1] = func
