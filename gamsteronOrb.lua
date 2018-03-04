@@ -752,7 +752,22 @@ function OnTick()
                                                         enemyPos = enemyPositions[activeAttack.Enemy.Handle]
                                                         enemyPath = enemyPaths[activeAttack.Enemy.Handle]
                                                         enemyMS = enemyMoveSpeeds[activeAttack.Enemy.Handle]
-                                                        gsoFarm.allyActiveAttacks[allyID][activeAttackID].FlyTime = gsoDistance(activeAttack.Ally.Pos, gsoPredPos(enemyMS, activeAttack.Speed, activeAttack.Pos, enemyPos, enemyPath)) / activeAttack.Speed
+                                                        local predPos
+                                                        if enemyPath.hasMovePath then
+                                                            local pPos    = activeAttack.Pos
+                                                            local uPos    = enemyPos
+                                                            local ePos    = enemyPath.endPos
+                                                            local distUP  = gsoDistance(pPos, uPos)
+                                                            local distEP  = gsoDistance(pPos, ePos)
+                                                            if distEP > distUP then
+                                                                return uPos:Extended(ePos, 25+(enemyMS*(distUP / (activeAttack.Speed - enemyMS))))
+                                                            else
+                                                                return uPos:Extended(ePos, 25+(enemyMS*(distUP / (activeAttack.Speed + enemyMS))))
+                                                            end
+                                                        else
+                                                            predPos = enemyPos
+                                                        end
+                                                        gsoFarm.allyActiveAttacks[allyID][activeAttackID].FlyTime = gsoDistance(activeAttack.Ally.Pos, predPos) / activeAttack.Speed
                                                     end
                                                     local projectileOnEnemy = gsoExtra.maxLatency + 0.02
                                                     local noEnemy = not activeAttack.Enemy.Minion or activeAttack.Enemy.Minion.dead or not enemyHandles[activeAttack.Enemy.Handle]
