@@ -1296,6 +1296,7 @@ class "__gsoOrbwalker"
         self.State = gsoState
         self.Extra = gsoExtra
         self.Farm = gsoFarm
+        self.Objects = gsoObjects
         self.RegisterMenuKey = gsoRegisterMenuKey
         self.GetAutoAttackRange = gsoGetAttackRange
         self.CursorPositionChanged = gsoCursorPositionChanged
