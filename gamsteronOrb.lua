@@ -13,6 +13,7 @@ end
 
 COPY PASTE:
 events
+gsoOrbwalker:OnTick(function() onTick() end)
 gsoOrbwalker:OnMove(function(args) onMove(args) end)
 gsoOrbwalker:OnAttack(function(args) onAttack(args) end)
 gsoOrbwalker:OnIssue(function(issue) print(checkIssue(issue)) end)
@@ -104,6 +105,7 @@ local gsoOrbwalker = nil
 function OnLoad()
         gsoOrbwalker = __gsoOrbwalker()
         gsoOrbwalker -> class
+            :OnTick(function() onTick() end) -> event
             :OnMove(function(args) onMove(args) end) -> event
             :OnAttack(function(args) onAttack(args) end) -> event
             :OnIssue(function(issue) print(checkIssue(issue)) end) -> event (on send key: attack | move)
@@ -113,11 +115,11 @@ function OnLoad()
             :BonusDamageOnMinion2(function(args) return bonusDamageOnMinion2(args) end) -> event
             :AttackSpeed(function() return attackSpeed() end) -> event ( after buff end time that increase attack speed. Ashe Q, Tristana Q etc. )
             .MinionHealthPrediction(minionHealth, minionHandle, time) -> function, return number, predicted enemy minion health - very accurate, for enemy minions only
-            .GetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE) -> function, return unit or nil
+            .GetTarget(range, sourcePos, enemyHeroes, dmgType, bb, jaxE) -> function, return unit or nil
                   ( dmType -> string "ap" or "ad" )
                   ( bb -> boolean add enemies boundingRadius to range ? )
                   ( jaxE -> boolean, jaxE isImmortal ? )
-                  ( customEnemyHeroes -> list with enemy heroes or nil )
+                  ( enemyHeroes -> list with enemy heroes )
             .CalculateDamage(unit, spellData) -> function, return number
                   ( spellData: { dmgType = "ap" or "ad" or "mixed" or "true", dmgTrue = number, dmgAP = number, dmgAD = number } )
             .CursorPositionChanged(action, pos) -> function, void, use after cursor position changed - for example: botrk, ezreal q
@@ -1300,6 +1302,9 @@ class "__gsoOrbwalker"
         self.MinionHealthPrediction = gsoMinionHpPredAccuracy
         self.GetTarget = gsoGetTarget
         self.CalculateDamage = gsoCalculateDmg
+    end
+    function __gsoOrbwalker:OnTick(func)
+        gsoOnTick[#gsoOnTick+1] = func
     end
     function __gsoOrbwalker:OnMove(func)
         gsoOnMove[#gsoOnMove+1] = func
