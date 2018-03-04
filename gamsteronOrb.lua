@@ -1308,7 +1308,7 @@ class "__gsoOrbwalker"
         self.Extra = gsoExtra
         self.Farm = gsoFarm
         self.Objects = gsoObjects
-        self.delayedActions = gsoDelayedActions
+        self.DelayedActions = gsoDelayedActions
         self.RegisterMenuKey = gsoRegisterMenuKey
         self.GetAutoAttackRange = gsoGetAttackRange
         self.CursorPositionChanged = gsoCursorPositionChanged
@@ -1316,6 +1316,8 @@ class "__gsoOrbwalker"
         self.GetTarget = gsoGetTarget
         self.CalculateDamage = gsoCalculateDmg
         self.IsImmortal = gsoIsImmortal
+        self.Distance = gsoDistance
+        self.Extended = gsoExtended
     end
     function __gsoOrbwalker:OnTick(func)
         gsoOnTick[#gsoOnTick+1] = func
