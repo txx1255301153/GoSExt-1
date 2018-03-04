@@ -855,8 +855,8 @@ function OnTick()
                                     gsoTimers.secondsToAttack = sToAA > 0 and sToAA or 0
                                     gsoTimers.secondsToMove = sToMove > 0 and sToMove or 0
                                     gsoState.isEvading = ExtLibEvade and ExtLibEvade.Evading
-                                    gsoState.canAttack = not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and (gsoTimers.secondsToAttack == 0 or gsoExtra.resetAttack) and not isChatOpen and canMove
-                                    gsoState.canMove = not gsoState.isChangingCursorPos and not gsoState.isEvading and gsoState.enabledMove and gsoTimers.secondsToMove == 0 and not isChatOpen and canMove
+                                    gsoState.canAttack = not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and (gsoTimers.secondsToAttack == 0 or gsoExtra.resetAttack) and not isChatOpen
+                                    gsoState.canMove = not gsoState.isChangingCursorPos and not gsoState.isEvading and gsoState.enabledMove and gsoTimers.secondsToMove == 0 and not isChatOpen
 --orbwalkerLogic
                                     local canGetTurrets = true
                                     local canGetHeroes = true
