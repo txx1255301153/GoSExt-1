@@ -843,10 +843,12 @@ function OnTick()
                                             break
                                         end
                                     end
+                                    local animExtra = gsoMenu.orb.delays.anim:Value() * 0.001
                                     local sToAA = gsoServerStart - windUpAA
                                           sToAA = sToAA + gsoTimers.animationTime
                                           sToAA = sToAA - gsoExtra.minLatency
-                                          sToAA = sToAA - 0.06
+                                          sToAA = sToAA - 0.05
+                                          sToAA = sToAA + animExtra
                                           sToAA = sToAA - gsoGameTimer()
                                     local sToMove = gsoServerStart + extraWindUp
                                           sToMove = sToMove - gsoExtra.minLatency
@@ -1199,8 +1201,9 @@ function OnLoad()
                 gsoMenu.ts.selected.draw:MenuElement({name = "Radius",  id = "radius", value = 150, min = 1, max = 300})
     gsoMenu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = gsoIcons["orb"] })
         gsoMenu.orb:MenuElement({name = "Delays", id = "delays", type = MENU})
-            gsoMenu.orb.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 0, min = -25, max = 25, step = 1 })
-            gsoMenu.orb.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -25, max = 25, step = 1 })
+            gsoMenu.orb.delays:MenuElement({name = "Extra Animation Delay", id = "anim", value = 0, min = 0, max = 25, step = 1 })
+            gsoMenu.orb.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 0, min = 0, max = 25, step = 1 })
+            gsoMenu.orb.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = 0, max = 25, step = 1 })
             gsoMenu.orb.delays:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
         gsoMenu.orb:MenuElement({name = "Keys", id = "keys", type = MENU})
             gsoMenu.orb.keys:MenuElement({name = "Combo Key", id = "combo", key = string.byte(" ")})
