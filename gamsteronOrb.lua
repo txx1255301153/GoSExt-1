@@ -1,5 +1,5 @@
 
-local gsoVersion = "1.6"
+local gsoVersion = "1.7"
 
  --[[
 
@@ -12,32 +12,27 @@ function OnLoad()
 end
 
 COPY PASTE:
+events
+gsoOrbwalker:OnMove(function(args) onMove(args) end)
+gsoOrbwalker:OnAttack(function(args) onAttack(args) end)
+gsoOrbwalker:OnIssue(function(issue) print(checkIssue(issue)) end)
+gsoOrbwalker:OnEnemyHeroLoad(function(heroName) localMenu.useon:MenuElement({id = heroName, name = heroName, value = true}) end)
 gsoOrbwalker:CanChangeAnimationTime(function() return canChangeAnimationTime() end)
 gsoOrbwalker:BonusDamageOnMinion(function() return bonusDamageOnMinion() end)
 gsoOrbwalker:BonusDamageOnMinion2(function(args) return bonusDamageOnMinion2(args) end)
 gsoOrbwalker:AttackSpeed(function() return attackSpeed() end)
-gsoOrbwalker:OnMove(function(args) onMove(args) end)
-gsoOrbwalker:OnAttack(function(args) onAttack(args) end)
-gsoOrbwalker:CanMove(function(args) canMove(args) end)
-gsoOrbwalker:CanAttack(function(args) canAttack(args) end)
-gsoOrbwalker:OnIssue(function(issue) print(checkIssue(issue)) end)
-gsoOrbwalker:OnEnemyHeroLoad(function(heroName) localMenu.useon:MenuElement({id = heroName, name = heroName, value = true}) end) 
-gsoOrbwalker:EnableMove(false)
-gsoOrbwalker:EnableAttack(false)
-gsoOrbwalker:EnableOrb(false)
-gsoOrbwalker:ResetAttack()
-gsoOrbwalker:MinionHealthPrediction(minionHealth, minionHandle, time)
-gsoOrbwalker:GetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE)
-gsoOrbwalker:CalculateDamage(unit, spellData)
-gsoOrbwalker:HeroIsValid(unit)
-gsoOrbwalker:CursorPositionChanged(action, pos)
-gsoOrbwalker:GetEnemyHeroes(range, sourcePos, bb, jaxE)
-gsoOrbwalker:GetAutoAttackRange(attacker, defender) ( added support for minions and turrets )
-gsoOrbwalker:RegisterMenuKey(mode, key)
+functions
+gsoOrbwalker.MinionHealthPrediction(minionHealth, minionHandle, time)
+gsoOrbwalker.GetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE)
+gsoOrbwalker.CalculateDamage(unit, spellData)
+gsoOrbwalker.CursorPositionChanged(action, pos)
+gsoOrbwalker.GetAutoAttackRange(attacker, defender) ( added support for minions and turrets )
+gsoOrbwalker.RegisterMenuKey(mode, key)
 gsoOrbwalker.Mode.isCombo()
 gsoOrbwalker.Mode.isHarass()
 gsoOrbwalker.Mode.isLastHit()
 gsoOrbwalker.Mode.isLaneClear()
+variables
 gsoOrbwalker.Timers.lastAttackSend
 gsoOrbwalker.Timers.lastMoveSend
 gsoOrbwalker.Timers.secondsToAttack
@@ -54,6 +49,7 @@ gsoOrbwalker.State.canMove
 gsoOrbwalker.State.enabledAttack
 gsoOrbwalker.State.enabledMove
 gsoOrbwalker.State.enabledOrb
+gsoOrbwalker.Extra.resetAttack
 gsoOrbwalker.Extra.lastMovePos
 gsoOrbwalker.Extra.maxLatency
 gsoOrbwalker.Extra.minLatency
@@ -96,42 +92,39 @@ gsoOrbwalker.Farm.laneClearable
 gsoOrbwalker.Farm.laneClearable.Minion
 gsoOrbwalker.Farm.laneClearable.pos
 gsoOrbwalker.Farm.laneClearable.health
+gsoOrbwalker.Objects.allyHeroes
+gsoOrbwalker.Objects.enemyHeroes
+gsoOrbwalker.Objects.allyMinions
+gsoOrbwalker.Objects.enemyMinions
+gsoOrbwalker.Objects.allyTurrets
+gsoOrbwalker.Objects.enemyTurrets
 
 DETAILS:
 local gsoOrbwalker = nil
 function OnLoad()
         gsoOrbwalker = __gsoOrbwalker()
         gsoOrbwalker -> class
+            :OnMove(function(args) onMove(args) end) -> event
+            :OnAttack(function(args) onAttack(args) end) -> event
+            :OnIssue(function(issue) print(checkIssue(issue)) end) -> event (on send key: attack | move)
+            :OnEnemyHeroLoad(function(heroName) localMenu.useon:MenuElement({id = heroName, name = heroName, value = true}) end) -> event (don't need 2xF6 works perfect)
             :CanChangeAnimationTime(function() return canChangeAnimationTime() end) -> event ( after spell that increase attack speed. Ashe Q, Tristana Q etc. )
             :BonusDamageOnMinion(function() return bonusDamageOnMinion() end) -> event
             :BonusDamageOnMinion2(function(args) return bonusDamageOnMinion2(args) end) -> event
             :AttackSpeed(function() return attackSpeed() end) -> event ( after buff end time that increase attack speed. Ashe Q, Tristana Q etc. )
-            :OnMove(function(args) onMove(args) end) -> event
-            :OnAttack(function(args) onAttack(args) end) -> event
-            :CanMove(function(args) canMove(args) end) -> event
-            :CanAttack(function(args) canAttack(args) end) -> event
-            :OnIssue(function(issue) print(checkIssue(issue)) end) -> event (on send key: attack | move)
-            :OnEnemyHeroLoad(function(heroName) localMenu.useon:MenuElement({id = heroName, name = heroName, value = true}) end) -> event (don't need 2xF6 works perfect)
-            :EnableMove(false) -> function
-            :EnableAttack(false) -> function
-            :EnableOrb(false) -> function
-            :ResetAttack() -> function
-            :MinionHealthPrediction(minionHealth, minionHandle, time) -> function, return number, predicted enemy minion health - very accurate, for enemy minions only
-            :GetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE) -> function, return unit or nil
+            .MinionHealthPrediction(minionHealth, minionHandle, time) -> function, return number, predicted enemy minion health - very accurate, for enemy minions only
+            .GetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE) -> function, return unit or nil
                   ( dmType -> string "ap" or "ad" )
                   ( bb -> boolean add enemies boundingRadius to range ? )
                   ( jaxE -> boolean, jaxE isImmortal ? )
                   ( customEnemyHeroes -> list with enemy heroes or nil )
-            :CalculateDamage(unit, spellData) -> function, return number
+            .CalculateDamage(unit, spellData) -> function, return number
                   ( spellData: { dmgType = "ap" or "ad" or "mixed" or "true", dmgTrue = number, dmgAP = number, dmgAD = number } )
-            :HeroIsValid(unit, jaxE) -> function, return boolean, included custom isImmortal, for enemy heroes only
-                  ( jaxE -> boolean, jaxE isImmortal ? )
-            :CursorPositionChanged(action, pos) -> function, void, use after cursor position changed - for example: botrk, ezreal q
+            .CursorPositionChanged(action, pos) -> function, void, use after cursor position changed - for example: botrk, ezreal q
                   ( action: { endTime = GetTickCount() + 50, action = function() Control.SetCursorPos(cPos.x, cPos.y) end, active = true }(cPos - cursorPos before spell cast) )
                   ( pos: castpos as Vector )
-            :GetEnemyHeroes(range, sourcePos, bb, jaxE) -> function, return list {...}
-            :GetAutoAttackRange(attacker, defender) -> function, return number, added support for minions and turrets
-            :RegisterMenuKey(mode, key) -> function, void
+            .GetAutoAttackRange(attacker, defender) -> function, return number, added support for minions and turrets
+            .RegisterMenuKey(mode, key) -> function, void
                   ( mode: "combo" or "harass" or "lasthit" or "laneclear" )
                   ( key: menu.keys.combo, ... )
                   EXAMPLE:
@@ -157,10 +150,11 @@ function OnLoad()
                     .isBlindedByTeemo -> boolean
                     .canAttack -> boolean
                     .canMove -> boolean
-                    .enabledAttack -> boolean
-                    .enabledMove -> boolean
-                    .enabledOrb -> boolean
+                    .enabledAttack -> boolean, { get | set }
+                    .enabledMove -> boolean, { get | set }
+                    .enabledOrb -> boolean, { get | set }
             .Extra -> list
+                    .resetAttack -> boolean, { get | set }
                     .lastMovePos -> Vector
                     .maxLatency -> seconds
                     .minLatency -> seconds
@@ -205,9 +199,15 @@ function OnLoad()
                             .Minion -> unit
                             .pos -> Vector
                             .health -> predicted health
+            .Objects -> list
+                    .allyHeroes -> list with valid heroes (need check if hero is visible)
+                    .enemyHeroes -> list with valid heroes (need check if hero is visible and if is not immortal)
+                    .allyMinions -> list with valid turrets in 1500 range
+                    .enemyMinions -> list with valid turrets in 1500 range
+                    .allyTurrets -> list with valid turrets in 2000 range
+                    .enemyTurrets -> list with valid turrets in 2000 range
 end
 ]]
-
 
 local gsoMyHero = myHero
 local gsoGameHero = Game.Hero
@@ -229,11 +229,6 @@ local gsoControlIsKeyDown = Control.IsKeyDown
 local gsoControlSetCursor = Control.SetCursorPos
 local gsoControlMouseEvent = Control.mouse_event
 
-
-
-
-
-
 local gsoLatencies = {}
 local gsoDelayedActions = {}
 local gsoEnemyHeroesNames = {}
@@ -251,15 +246,10 @@ local gsoLoadedChamps = false
 local gsoExtraSetCursor = nil
 local gsoShouldWaitT = 0
 local gsoShouldWait = false
-local gsoResetAttack = false
 local gsoComboKeys = {}
 local gsoHarassKeys = {}
 local gsoLastHitKeys = {}
 local gsoLaneClearKeys = {}
-
-
-
-
 
 local gsoMenu = MenuElement({name = "Gamsteron Orbwalker", id = "gamsteronorb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orbbb.png" })
 local gsoMode = {
@@ -298,12 +288,9 @@ local gsoMode = {
 }
 local gsoTimers = { lastAttackSend = 0, lastMoveSend = 0, secondsToAttack = 0, secondsToMove = 0, windUpTime = 0, animationTime = 0 }
 local gsoState = { isAttacking = false, isMoving = false, isEvading = false, isChangingCursorPos = false, isBlindedByTeemo = false, canAttack = true, canMove = true, enabledAttack = true, enabledMove = true, enabledOrb = true }
-local gsoExtra = { lastMovePos = myHero.pos, maxLatency = Game.Latency() * 0.001, minLatency = Game.Latency() * 0.001, lastTarget = nil, selectedTarget = nil, allyTeam = myHero.team, attackSpeed = 0, baseAttackSpeed = 0, baseWindUp = 0 }
+local gsoExtra = { resetAttack = false, lastMovePos = myHero.pos, maxLatency = Game.Latency() * 0.001, minLatency = Game.Latency() * 0.001, lastTarget = nil, selectedTarget = nil, allyTeam = myHero.team, attackSpeed = 0, baseAttackSpeed = 0, baseWindUp = 0 }
 local gsoFarm = { allyActiveAttacks = {}, lastHitable = {}, almostLastHitable = {}, laneClearable = {} }
-
-
-
-
+local gsoObjects = { allyHeroes = {}, enemyHeroes = {}, allyMinions = {}, enemyMinions = {}, allyTurrets = {}, enemyTurrets = {} }
 
 local gsoPriorities = {
     ["Aatrox"] = 3, ["Ahri"] = 2, ["Akali"] = 2, ["Alistar"] = 5, ["Amumu"] = 5, ["Anivia"] = 2, ["Annie"] = 2, ["Ashe"] = 1, ["AurelionSol"] = 2, ["Azir"] = 2,
@@ -348,884 +335,842 @@ local gsoPriorityMultiplier = {
     [6] = 1.75
 }
 
-
-
-
 local gsoOnAttack = {}
 local gsoOnMove = {}
-local gsoCanAttack = {}
-local gsoCanMove = {}
 local gsoUnkillableMinion = {}
 local gsoCanChangeAnim = {}
 local gsoLoadHeroesToMenu = {}
 local gsoOnIssue = {}
+local gsoOnTick = {}
 local function gsoAttackSpeed() return gsoMyHero.attackSpeed end
 local function gsoBonusDmg() return 0 end
 local function gsoBonusDmgUnit(unit) return 0 end
 
-
-
-
-local function ___utilitiesFunc() end
-
-local function gsoDistance(a, b)
-    local x = a.x - b.x
-    local z = a.z - b.z
-    return gsoMathSqrt(x * x + z * z)
-end
-
-local function gsoExtended(p, from, to, s)
-    local px, pz = p.x, p.z
-    local axbx = to.x - from.x
-    local azbz = to.z - from.z
-    local num = 1 / gsoMathSqrt(axbx * axbx + azbz * azbz)
-    return { x = px + (axbx * num * s), z = pz + (azbz * num * s) }
-end
-
-local function gsoIsImmortal(unit, jaxE)
-    local hp = 100 * ( unit.health / unit.maxHealth )
-    if gsoUndyingBuffs["JaxCounterStrike"] ~= nil then    gsoUndyingBuffs["JaxCounterStrike"] = jaxE end
-    if gsoUndyingBuffs["kindredrnodeathbuff"] ~= nil then gsoUndyingBuffs["kindredrnodeathbuff"] = hp < 10 end
-    if gsoUndyingBuffs["UndyingRage"] ~= nil then         gsoUndyingBuffs["UndyingRage"] = hp < 15 end
-    if gsoUndyingBuffs["ChronoShift"] ~= nil then         gsoUndyingBuffs["ChronoShift"] = hp < 15; gsoUndyingBuffs["chronorevive"] = hp < 15 end
-    for i = 0, unit.buffCount do
-        local buff = unit:GetBuff(i)
-        if buff and buff.count > 0 and gsoUndyingBuffs[buff.name] then
-            return true
-        end
-    end
-    return false
-end
-
-local function gsoValid(unit)
-    if unit and not unit.dead and unit.isTargetable and unit.visible and unit.valid then
-        return true
-    end
-    return false
-end
-
-local function gsoPredPos(ms, speed, projectilePos, enemyPos, enemyPath)
-    if enemyPath.hasMovePath then
-        local pPos    = projectilePos
-        local uPos    = enemyPos
-        local ePos    = enemyPath.endPos
-        local distUP  = gsoDistance(pPos, uPos)
-        local distEP  = gsoDistance(pPos, ePos)
-        if distEP > distUP then
-            return uPos:Extended(ePos, 25+(ms*(distUP / (speed - ms))))
-        else
-            return uPos:Extended(ePos, 25+(ms*(distUP / (speed + ms))))
-        end
-    end
-    return enemyPos
-end
-
-local function gsoHasBuff(unit, bName)
-    for i = 0, unit.buffCount do
-        local buff = unit:GetBuff(i)
-        if buff and buff.count > 0 and buff.name:lower() == bName then
-            return true
-        end
-    end
-    return false
-end
-
-local function gsoGetAttackRange(attacker, defender)
-    if not attacker then return -1 end
-    local name = attacker.charName:lower()
-    if name:find("sruap_turret_") then
-        return 900
-    else
-        local range = 0
-        if name:find("sru_") and name:find("minion") then
-            if name:find("siege") then
-                range = 300
-            elseif name:find("ranged") then
-                range = 550
-            elseif name:find("melee") then
-                range = 110
-            elseif name:find("super") then
-                range = 170
-            end
-        end
-        range = range == 0 and attacker.range or range
-        if name == "caitlyn" then
-            range = range + (gsoHasBuff(attacker, "caitlynyordletrapinternal") and 650 or 0)
-        end
-        return range + attacker.boundingRadius + (defender and defender.boundingRadius or 30)
-    end
-end
-
-local function gsoRegisterMenuKey(mode, key)
-    mode = mode:lower()
-    if mode == "combo" then
-        gsoComboKeys[#gsoComboKeys+1] = key
-    elseif mode == "harass" then
-        gsoHarassKeys[#gsoHarassKeys+1] = key
-    elseif mode == "lasthit" then
-        gsoLastHitKeys[#gsoLastHitKeys+1] = key
-    elseif mode == "laneclear" then
-        gsoLaneClearKeys[#gsoLaneClearKeys+1] = key
-    end
-end
-
-
-
-
-
-local function gsoGetEnemyMinions(range, sourcePos, bb)
-    local result = {}
-    for i = 1, gsoGameMinionCount() do
-        local minion = gsoGameMinion(i)
-        if minion and minion.team ~= gsoExtra.allyTeam and gsoDistance(minion.pos, sourcePos) < range + ( bb and minion.boundingRadius or 0 ) and gsoValid(minion) and not minion.isImmortal then
-            result[#result+1] = minion
-        end
-    end
-    return result
-end
-
-local function gsoGetAllyMinions(range, sourcePos, bb)
-    local result = {}
-    for i = 1, gsoGameMinionCount() do
-        local minion = gsoGameMinion(i)
-        if minion and minion.team == gsoExtra.allyTeam and gsoDistance(minion.pos, sourcePos) < range + ( bb and minion.boundingRadius or 0 ) and gsoValid(minion) then
-            result[#result+1] = minion
-        end
-    end
-    return result
-end
-
-local function gsoGetEnemyTurrets(range, sourcePos, bb)
-    local result = {}
-    for i = 1, gsoGameTurretCount() do
-        local turret = gsoGameTurret(i)
-        if turret and turret.team ~= gsoExtra.allyTeam and gsoDistance(turret.pos, sourcePos) < range + ( bb and turret.boundingRadius or 0 ) and gsoValid(turret) and not turret.isImmortal then
-            result[#result+1] = turret
-        end
-    end
-    return result
-end
-
-local function gsoGetAllyTurret(range, sourcePos, bb)
-    local result = {}
-    for i = 1, gsoGameTurretCount() do
-        local turret = gsoGameTurret(i)
-        if turret and turret.team == gsoExtra.allyTeam and gsoDistance(turret.pos, sourcePos) < range + ( bb and turret.boundingRadius or 0 ) and gsoValid(turret) then
-            result[#result+1] = turret
-        end
-    end
-    return result
-end
-
-local function gsoGetEnemyHeroes(range, sourcePos, bb, jaxE)
-    local result = {}
-    local moveLenght = gsoMyHero.ms * 1.5 * gsoExtra.maxLatency
-    for i = 1, gsoGameHeroCount() do
-        local hero = gsoGameHero(i)
-        local heroBB = (bb and hero) and hero.boundingRadius or 0
-        local heroPos = hero and hero.pos or nil
-        local isEnemy = heroPos and hero.team ~= gsoExtra.allyTeam and gsoDistance(heroPos, sourcePos) < range + heroBB
-              isEnemy = isEnemy and gsoDistance(heroPos, gsoExtended(sourcePos, sourcePos, gsoExtra.lastMovePos, moveLenght)) < range + heroBB
-              isEnemy = isEnemy and gsoValid(hero) and not gsoIsImmortal(hero, jaxE)
-        if isEnemy then
-            result[#result+1] = hero
-        end
-    end
-    return result
-end
-
-local function gsoGetAllyHeroes(range, sourcePos, bb)
-    local result = {}
-    for i = 1, gsoGameHeroCount() do
-        local hero = gsoGameHero(i)
-        if hero and hero.team == gsoExtra.allyTeam and gsoDistance(hero.pos, sourcePos) < range + ( bb and hero.boundingRadius or 0 ) and gsoValid(hero) then
-            result[#result+1] = hero
-        end
-    end
-    return result
-end
-
-
-
-
-
-local function gsoReducedDmg(unit, dmg, isAP)
-    local def = isAP and unit.magicResist - gsoMyHero.magicPen or unit.armor - gsoMyHero.armorPen
-    if def > 0 then def = isAP and gsoMyHero.magicPenPercent * def or gsoMyHero.bonusArmorPenPercent * def end
-    return def > 0 and dmg * ( 100 / ( 100 + def ) ) or dmg * ( 2 - ( 100 / ( 100 - def ) ) )
-end
-
-local function gsoCalculateDmg(unit, spellData)
-    local dmgType = spellData.dmgType and spellData.dmgType or ""
-    if not unit then assert(false, "[234] CalculateDmg: unit is nil !") end
-    if dmgType == "ad" and spellData.dmgAD then
-        local dmgAD = spellData.dmgAD - unit.shieldAD
-        return dmgAD < 0 and 0 or gsoReducedDmg(unit, dmgAD, false) 
-    elseif dmgType == "ap" and spellData.dmgAP then
-        local dmgAP = spellData.dmgAP - unit.shieldAD - unit.shieldAP
-        return dmgAP < 0 and 0 or gsoReducedDmg(unit, dmgAP, true) 
-    elseif dmgType == "true" and spellData.dmgTrue then
-        return spellData.dmgTrue - unit.shieldAD
-    elseif dmgType == "mixed" and spellData.dmgAD and spellData.dmgAP then
-        local dmgAD = spellData.dmgAD - unit.shieldAD
-        local shieldAD = dmgAD < 0 and (-1) * dmgAD or 0
-              dmgAD = dmgAD < 0 and 0 or gsoReducedDmg(unit, dmgAD, false)
-        local dmgAP = spellData.dmgAP - shieldAD - unit.shieldAP
-              dmgAP = dmgAP < 0 and 0 or gsoReducedDmg(unit, dmgAP, true)
-        return dmgAD + dmgAP
-    end
-    assert(false, "[234] CalculateDmg: spellData - expected array { dmgType = string(ap or ad or mixed or true), dmgAP = number or dmgAD = number or ( dmgAP = number and dmgAD = number ) or dmgTrue = number } !")
-end
-
-
-
-
-
-local function gsoGetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE)
-    local selected = gsoExtra.selectedTarget
-    local menuSelected = gsoMenu.ts.selected.enable:Value()
-    local menuSelectedOnly = gsoMenu.ts.selected.only:Value()
-    local selectedID = ( menuSelected and selected ) and selected.networkID or nil
-    if menuSelected and menuSelectedOnly and gsoValid(selected) then
-        if gsoDistance(selected.pos, sourcePos) < range + ( bb and selected.boundingRadius or 0 ) and not gsoIsImmortal(selected, jaxE) then
-            return selected
-        else
-            return nil
-        end
-    end
-    local result  = nil
-    local num     = 10000000
-    local mode    = gsoMenu.ts.Mode:Value()
-    local enemyHeroes = customEnemyHeroes and customEnemyHeroes or gsoGetEnemyHeroes(range, sourcePos, bb, jaxE)
-    for i = 1, #enemyHeroes do
-        local x
-        local unit = enemyHeroes[i]
-        if selectedID and gsoValid(selected) and not gsoIsImmortal(selected, jaxE) and unit.networkID == selectedID then
-            return selected
-        elseif mode == 1 then
-            local unitName = unit.charName
-            local multiplier = gsoPriorityMultiplier[gsoMenu.ts.priority[unitName] and gsoMenu.ts.priority[unitName]:Value() or 6]
-            local def = dmgType == "ap" and multiplier * (unit.magicResist - gsoMyHero.magicPen) or multiplier * (unit.armor - gsoMyHero.armorPen)
-            if def > 0 then def = dmgType == "ap" and gsoMyHero.magicPenPercent * def or gsoMyHero.bonusArmorPenPercent * def end
-                  x = ( ( unit.health * multiplier * ( ( 100 + def ) / 100 ) ) - ( unit.totalDamage * unit.attackSpeed * 2 ) ) - unit.ap
-        elseif mode == 2 then
-            x = gsoDistance(unit.pos, sourcePos)
-        elseif mode == 3 then
-            x = unit.health
-        elseif mode == 4 then
-            local unitName = unit.charName
-                  x = gsoMenu.ts.priority[unitName] and gsoMenu.ts.priority[unitName]:Value() or 6
-        end
-        if x < num then
-            num = x
-            result = unit
-        end
-    end
-    return result
-end
-
-
-local function gsoGetLastHitTarget()
-    local result, min, sourcePos, meRange
-    local lastHitable = gsoFarm.lastHitable
-    if #lastHitable > 0 then
-        min = 10000000
-        sourcePos = gsoMyHero.pos
-        meRange = gsoMyHero.range + gsoMyHero.boundingRadius
-    end
-    for i = 1, #lastHitable do
-        local minion = lastHitable[i]
-        if gsoDistance(sourcePos, minion.pos) < meRange + 25 and minion.health < min then
-            min = minion.health
-            result = minion.Minion
-        end
-    end
-    return result
-end
-
-local function gsoGetTurretTarget()
-    local result = nil
-    local turrets = gsoGetEnemyTurrets(gsoMyHero.range + gsoMyHero.boundingRadius, gsoMyHero.pos, true)
-    for i = 1, #turrets do
-        return turrets[i]
-    end
-    return result
-end
-
-local function gsoGetComboTarget()
-    return gsoGetTarget(gsoMyHero.range + gsoMyHero.boundingRadius, gsoMyHero.pos, nil, "ad", true, true)
-end
-
-local function gsoGetLaneClearTarget()
-    local result = gsoGetLastHitTarget()
-    if not result and #gsoFarm.almostLastHitable == 0 and not gsoShouldWait then
-        result = gsoGetComboTarget()
-        result = not result and gsoGetTurretTarget() or result
-        if not result then
-            local min = 10000000
-            local sourcePos, meRange
-            local laneClearable = gsoFarm.laneClearable
-            if #laneClearable > 0 then
-                sourcePos = gsoMyHero.pos
-                meRange = gsoMyHero.range + gsoMyHero.boundingRadius
-            end
-            for i = 1, #laneClearable do
-                local minion = laneClearable[i]
-                if gsoDistance(sourcePos, minion.pos) < meRange + 25 and minion.health < min then
-                    min = minion.health
-                    result = minion.Minion
-                end
-            end
-        end
-    end
-    return result
-end
-
-local function gsoGetHarassTarget()
-    local result = gsoGetLastHitTarget()
-    return not result and gsoGetComboTarget() or result
-end
-
-
-
-
-local function gsoMinionHpPredFast(unitHandle, unitPos, unitHealth, time, allyMinions, enemyHandles)
-    for i = 1, #allyMinions do
-        local aMin = allyMinions[i]
-        local aaData = aMin.AAData
-        if aaData.target == unitHandle then
-            local allyDmg = aMin.Dmg
-            local endT    = aaData.endTime
-            local animT   = aaData.animationTime
-            local windUpT = aaData.windUpTime
-            local pSpeed  = aaData.projectileSpeed
-            local pFlyT   = pSpeed > 0 and gsoDistance(aMin.Pos, unitPos) / pSpeed or 0
-            local pEndT   = (endT - animT) + pFlyT + windUpT
-                  pEndT   = pEndT > gsoGameTimer() and pEndT or pEndT + animT + pFlyT
-            while pEndT - gsoGameTimer() < time do
-                unitHealth = unitHealth - allyDmg
-                pEndT = pEndT + animT + pFlyT
-            end
-        end
-    end
-    return unitHealth
-end
-
-local function gsoMinionHpPredAccuracy(unitHealth, unitHandle, time)
-    for allyID, allyActiveAttacks in pairs(gsoFarm.allyActiveAttacks) do
-        for activeAttackID, activeAttack in pairs(gsoFarm.allyActiveAttacks[allyID]) do
-            if not activeAttack.Canceled and unitHandle == activeAttack.Enemy.Handle then
-                local endTime = activeAttack.StartTime + activeAttack.FlyTime
-                if endTime > gsoGameTimer() and endTime - gsoGameTimer() < time then
-                    unitHealth = unitHealth - activeAttack.Dmg
-                end
-            end
-        end
-    end
-    return unitHealth
-end
-
-
-
-local function ___tickFunc() end
-
-local function championsLoadLogic()
-    
-    if not gsoLoadedChamps then
-        for i = 1, gsoGameHeroCount() do
-            local hero = gsoGameHero(i)
-            if hero.team ~= gsoExtra.allyTeam then
-                local eName = hero.charName
-                if eName and #eName > 0 and not gsoMenu.ts.priority[eName] then
-                    gsoEnemyHeroesNames[#gsoEnemyHeroesNames+1] = eName
-                    gsoLastFound = gsoGameTimer()
-                    local priority = gsoPriorities[eName] ~= nil and gsoPriorities[eName] or 5
-                    gsoMenu.ts.priority:MenuElement({ id = eName, name = eName, value = priority, min = 1, max = 5, step = 1 })
-                    if eName == "Teemo" then          gsoIsTeemo = true
-                    elseif eName == "Kayle" then      gsoUndyingBuffs["JudicatorIntervention"] = true
-                    elseif eName == "Taric" then      gsoUndyingBuffs["TaricR"] = true
-                    elseif eName == "Kindred" then    gsoUndyingBuffs["kindredrnodeathbuff"] = true
-                    elseif eName == "Zilean" then     gsoUndyingBuffs["ChronoShift"] = true; gsoUndyingBuffs["chronorevive"] = true
-                    elseif eName == "Tryndamere" then gsoUndyingBuffs["UndyingRage"] = true
-                    elseif eName == "Jax" then        gsoUndyingBuffs["JaxCounterStrike"] = true; gsoIsJax = true
-                    elseif eName == "Fiora" then      gsoUndyingBuffs["FioraW"] = true
-                    elseif eName == "Aatrox" then     gsoUndyingBuffs["aatroxpassivedeath"] = true
-                    elseif eName == "Vladimir" then   gsoUndyingBuffs["VladimirSanguinePool"] = true
-                    elseif eName == "KogMaw" then     gsoUndyingBuffs["KogMawIcathianSurprise"] = true
-                    elseif eName == "Karthus" then    gsoUndyingBuffs["KarthusDeathDefiedBuff"] = true
-                    end
-                end
-            end
-        end
-        if gsoGameTimer() > gsoLastFound + 2.5 and gsoGameTimer() < gsoLastFound + 5 then
-            gsoLoadedChamps = true
-            for i = 1, #gsoLoadHeroesToMenu do
-                for j = 1, #gsoEnemyHeroesNames do
-                    gsoLoadHeroesToMenu[i](gsoEnemyHeroesNames[j])
-                end
-            end
-        end
-    end
-    
-end
-
-
-
-local function cursorPosLogic()
-    
-    if gsoSetCursorPos then
-        if gsoSetCursorPos.active and gsoGetTickCount() > gsoSetCursorPos.endTime then
-            gsoSetCursorPos.action()
-            gsoSetCursorPos.active = false
-            gsoExtraSetCursor = nil
-        elseif not gsoSetCursorPos.active and gsoGetTickCount() > gsoSetCursorPos.endTime + 25 then
-            gsoState.isChangingCursorPos = false
-            gsoSetCursorPos = nil
-        end
-    end
-    
-    if gsoExtraSetCursor then
-        gsoControlSetCursor(gsoExtraSetCursor)
-    end
-    
-end
-
-
-
-local function delayedActionsLogic()
-    
-    local cacheDelayedActions = {}
-    for i = 1, #gsoDelayedActions do
-        local t = gsoDelayedActions[i]
-        if gsoGameTimer() > t.endTime then
-            t.func()
-        else
-            cacheDelayedActions[#cacheDelayedActions+1] = t
-        end
-    end
-    gsoDelayedActions = cacheDelayedActions
-    
-end
-
-
-
-local function latencyLogic()
-    
-    local lat1 = 0
-    local lat2 = 50
-    gsoLatencies[#gsoLatencies+1] = { endTime = gsoGetTickCount() + 2500, Latency = gsoGameLatency() * 0.001 }
-    local cacheLatencies = {}
-    for i = 1, #gsoLatencies do
-        local t = gsoLatencies[i]
-        if gsoGetTickCount() < t.endTime then
-            cacheLatencies[#cacheLatencies+1] = t
-            if t.Latency > lat1 then
-                lat1 = t.Latency
-                gsoExtra.maxLatency = lat1
-            end
-            if t.Latency < lat2 then
-                lat2 = t.Latency
-                gsoExtra.minLatency = lat2
-            end
-        end
-    end
-    gsoLatencies = cacheLatencies
-    
-end
-
-
-
-local function teemoBlindLogic()
-    
-    if gsoIsTeemo == true then
-        local isBlinded = false
-        for i = 0, gsoMyHero.buffCount do
-            local buff = gsoMyHero:GetBuff(i)
-            if buff and buff.count > 0 and buff.name:lower() == "blindingdart" and buff.duration > 0 then
-                isBlinded = true
-                break
-            end
-        end
-        gsoState.isBlindedByTeemo = isBlinded
-    end
-    
-end
-
-
-local function minionsLogic()
-    
-    local allyHandles = {}
-    local enemyHandles = {}
-    local enemyPaths = {}
-    local allyMinionsCache = {}
-    local enemyMinionsCache = {}
-    local enemyPositions = {}
-    local enemyMoveSpeeds = {}
-    local allyMinions = gsoGetAllyMinions(2000, gsoMyHero.pos, false)
-    local enemyMinions = gsoGetEnemyMinions(2000, gsoMyHero.pos, false)
-    
-    for i = 1, #allyMinions do
-        local minion  = allyMinions[i]
-        local handle	= minion.handle
-        local aaData	= minion.attackData
-        local dmg     = minion.totalDamage * ( 1 + minion.bonusDamagePercent )
-        local pos     = minion.pos
-        local path    = minion.pathing
-        allyHandles[handle] = true
-        allyMinionsCache[#allyMinionsCache+1] = { Handle = handle, Minion = minion, AAData = aaData, Dmg = dmg, Pos = pos, Path = path }
-    end
-    
-    for i = 1, #enemyMinions do
-        local minion  = enemyMinions[i]
-        local handle	= minion.handle
-        local path    = minion.pathing
-        local pos     = minion.pos
-        local dmgRed  = minion.flatDamageReduction
-        local ms      = minion.ms
-        local health  = minion.health
-        enemyHandles[handle] = true
-        enemyPaths[handle] = path
-        enemyPositions[handle] = pos
-        enemyMoveSpeeds[handle] = ms
-        enemyMinionsCache[#enemyMinionsCache+1] = { Handle = handle, Minion = minion, Path = path, Pos = pos, DmgRed = dmgRed, Health = health }
-    end
-    
-    for i = 1, #allyMinionsCache do
-        local ally = allyMinionsCache[i]
-        if ally.AAData.endTime > gsoGameTimer() then
-            for j = 1, #enemyMinionsCache do
-                local enemy = enemyMinionsCache[j]
-                if enemy.Handle == ally.AAData.target then
-                    local flyTime = ally.AAData.projectileSpeed > 0 and gsoDistance(ally.Pos, enemy.Pos) / ally.AAData.projectileSpeed or 0
-                    if not gsoFarm.allyActiveAttacks[ally.Handle] then gsoFarm.allyActiveAttacks[ally.Handle] = {} end
-                    if gsoGameTimer() < (ally.AAData.endTime - ally.AAData.windDownTime) + flyTime then
-                        if ally.AAData.projectileSpeed > 0 then
-                            if gsoGameTimer() > (ally.AAData.endTime - ally.AAData.windDownTime) then
-                                if not gsoFarm.allyActiveAttacks[ally.Handle][ally.AAData.endTime] then
-                                    gsoFarm.allyActiveAttacks[ally.Handle][ally.AAData.endTime] = {
-                                        Canceled  = false,
-                                        Speed     = ally.AAData.projectileSpeed,
-                                        StartTime = ally.AAData.endTime - ally.AAData.windDownTime,
-                                        FlyTime   = ally.AAData.projectileSpeed > 0 and gsoDistance(ally.Pos, enemy.Pos) / ally.AAData.projectileSpeed or 0,
-                                        Pos       = ally.Pos:Extended( enemy.Pos, ally.AAData.projectileSpeed * ( gsoGameTimer() - ( ally.AAData.endTime - ally.AAData.windDownTime ) ) ),
-                                        Ally      = ally,
-                                        Enemy     = enemy,
-                                        Dmg       = ally.Dmg - enemy.DmgRed
-                                    }
-                                end
-                            elseif ally.Path.hasMovePath then
-                              gsoFarm.allyActiveAttacks[ally.Handle][ally.AAData.endTime] = {
-                                  Canceled  = true,
-                                  Ally      = ally
-                              }
-                            end
-                          elseif not gsoFarm.allyActiveAttacks[ally.Handle][ally.AAData.endTime] then
-                              gsoFarm.allyActiveAttacks[ally.Handle][ally.AAData.endTime] = {
-                                  Canceled  = false,
-                                  Speed     = ally.AAData.projectileSpeed,
-                                  StartTime = (ally.AAData.endTime - ally.AAData.windDownTime) - ally.AAData.windUpTime,
-                                  FlyTime   = ally.AAData.windUpTime,
-                                  Pos       = ally.Pos,
-                                  Ally      = ally,
-                                  Enemy     = enemy,
-                                  Dmg       = ally.Dmg - enemy.DmgRed
-                              }
-                          end
-                    end
-                    break
-                end
-            end
-        end
-    end
-    
-    for allyID, allyActiveAttacks in pairs(gsoFarm.allyActiveAttacks) do
-        local count = 0
-        for activeAttackID, activeAttack in pairs(gsoFarm.allyActiveAttacks[allyID]) do
-            count = count + 1
-            local noAlly = not activeAttack.Ally.Minion or activeAttack.Ally.Minion.dead or not allyHandles[activeAttack.Ally.Handle]
-            if activeAttack.Speed == 0 and noAlly then
-                gsoFarm.allyActiveAttacks[allyID] = nil
-                break
-            end
-            if not activeAttack.Canceled then
-                local canContinue = true
-                if not enemyHandles[activeAttack.Enemy.Handle] then
-                    gsoFarm.allyActiveAttacks[allyID][activeAttackID] = nil
-                    canContinue = false
-                end
-                if canContinue then
-                    local enemyPos, enemyPath, enemyMS
-                    local ranged = activeAttack.Speed > 0
-                    if ranged then
-                        enemyPos = enemyPositions[activeAttack.Enemy.Handle]
-                        enemyPath = enemyPaths[activeAttack.Enemy.Handle]
-                        enemyMS = enemyMoveSpeeds[activeAttack.Enemy.Handle]
-                        gsoFarm.allyActiveAttacks[allyID][activeAttackID].FlyTime = gsoDistance(activeAttack.Ally.Pos, gsoPredPos(enemyMS, activeAttack.Speed, activeAttack.Pos, enemyPos, enemyPath)) / activeAttack.Speed
-                    end
-                    local projectileOnEnemy = gsoExtra.maxLatency + 0.02
-                    local noEnemy = not activeAttack.Enemy.Minion or activeAttack.Enemy.Minion.dead or not enemyHandles[activeAttack.Enemy.Handle]
-                    if gsoGameTimer() > activeAttack.StartTime + gsoFarm.allyActiveAttacks[allyID][activeAttackID].FlyTime - projectileOnEnemy or noEnemy then
-                        gsoFarm.allyActiveAttacks[allyID][activeAttackID] = nil
-                    elseif ranged then
-                        local s = ( gsoGameTimer() - activeAttack.StartTime ) * activeAttack.Speed
-                        gsoFarm.allyActiveAttacks[allyID][activeAttackID].Pos = activeAttack.Ally.Pos:Extended(enemyPos, s)
-                    end
-                end
-            end
-        end
-        if count == 0 then
-            gsoFarm.allyActiveAttacks[allyID] = nil
-        end
-    end
-    
-    
-    if gsoShouldWait and gsoGameTimer() > gsoShouldWaitT + 0.5 then
-        gsoShouldWait = false
-    end
-    
-    local sourcePos, sourceRange, mLH, aaData, projSpeed, windUp, anim, meDmg
-    if #enemyMinions > 0 then
-        sourcePos = gsoMyHero.pos
-        sourceRange = gsoMyHero.range + gsoMyHero.boundingRadius
-        mLH = gsoMenu.orb.delays.lhDelay:Value() * 0.001
-        aaData = gsoMyHero.attackData
-        projSpeed = aaData.projectileSpeed
-        windUp = aaData.windUpTime + gsoExtra.minLatency + 0.05 - mLH
-        anim = aaData.animationTime
-        meDmg = myHero.totalDamage + gsoBonusDmg()
-    end
-    
-    local lastHitable = {}
-    local almostLastHitable = {}
-    local laneClearable = {}
-    for i = 1, #enemyMinionsCache do
-        local enemy = enemyMinionsCache[i]
-        local minionHandle = enemy.Handle
-        local minionPos = enemy.Pos
-        local minionHealth = enemy.Health
-        local flyTime = windUp + ( gsoDistance(sourcePos, minionPos) / projSpeed )
-        local accuracyHpPred = gsoMinionHpPredAccuracy(minionHealth, minionHandle, flyTime)
-        if accuracyHpPred < 0 then
-            local args = { Minion = enemy.Minion }
-            for i = 1, #gsoUnkillableMinion do
-                local action = gsoUnkillableMinion[i](args)
-            end
-        end
-        local dmgOnMinion = meDmg + gsoBonusDmgUnit(enemy.Minion)
-        if accuracyHpPred - dmgOnMinion <= 0 then
-            lastHitable[#lastHitable+1] = { Minion = enemy.Minion, pos = minionPos, health = accuracyHpPred }
-        else
-            if gsoMinionHpPredFast(minionHandle, minionPos, minionHealth, anim*3, allyMinionsCache, enemyHandles) - dmgOnMinion < 0 then
-                gsoShouldWait = true
-                gsoShouldWaitT = gsoGameTimer()
-                almostLastHitable[#almostLastHitable+1] = enemy.Minion
-            else
-                laneClearable[#laneClearable+1] = { Minion = enemy.Minion, pos = minionPos, health = accuracyHpPred }
-            end
-        end
-    end
-    
-    gsoFarm.lastHitable = lastHitable
-    gsoFarm.laneClearable = laneClearable
-    gsoFarm.almostLastHitable = almostLastHitable
-    
-end
-
-local function orbwalkerTimersLogic()
-    
-    local aSpell = gsoMyHero.activeSpell
-    if aSpell and aSpell.valid and aSpell.startTime > gsoServerStart then
-        local aSpellName = aSpell.name:lower()
-        if not gsoNoAttacks[aSpellName] and (aSpellName:find("attack") or gsoAttacks[aSpellName]) then
-            gsoServerStart = aSpell.startTime
-            gsoServerWindup = aSpell.windup
-            gsoServerAnim = aSpell.animation
-        end
-    end
-    
-    local aaSpeed = gsoAttackSpeed() * gsoBaseAASpeed
-    local numAS   = aaSpeed >= 2.5 and 2.5 or aaSpeed
-    gsoExtra.attackSpeed = numAS
-    local animT   = 1 / numAS
-    local windUpT = animT * gsoBaseWindUp
-    
-    gsoServerAnim = aaSpeed >= 2.5 and animT or gsoServerAnim
-    gsoServerWindup = aaSpeed >= 2.5 and windUpT or gsoServerWindup
-    
-    local extraWindUp = math.abs(windUpT-gsoServerWindup) + (gsoMenu.orb.delays.windup:Value() * 0.001)
-    local windUpAA = windUpT > gsoServerWindup and gsoServerWindup or windUpT
-    
-    gsoTimers.windUpTime = windUpT > gsoServerWindup and windUpT or gsoServerWindup
-    gsoTimers.animationTime = animT > gsoServerAnim and animT or gsoServerAnim
-    for i = 1, #gsoCanChangeAnim do
-        if gsoCanChangeAnim[i] then
-            gsoTimers.animationTime = animT
-            break
-        end
-    end
-    
-    local sToAA = ( ( gsoServerStart - windUpAA ) + ( gsoTimers.animationTime - ( gsoExtra.minLatency - 0.05 ) ) ) - gsoGameTimer()
-    local sToMove = ( ( gsoServerStart + extraWindUp ) - ( gsoExtra.minLatency * 0.5 ) ) - gsoGameTimer()
-    local isChatOpen = gsoGameIsChatOpen()
-    gsoTimers.secondsToAttack = sToAA > 0 and sToAA or 0
-    gsoTimers.secondsToMove = sToMove > 0 and sToMove or 0
-    gsoState.isEvading = ExtLibEvade and ExtLibEvade.Evading
-    local canMove = gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency + 0.005 + extraWindUp
-    gsoState.canAttack = not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and (gsoTimers.secondsToAttack == 0 or gsoResetAttack) and not isChatOpen and canMove
-    gsoState.canMove = not gsoState.isChangingCursorPos and not gsoState.isEvading and gsoState.enabledMove and gsoTimers.secondsToMove == 0 and not isChatOpen and canMove
-    if aaTarget and gsoState.canAttack then
-        local args = { Target = aaTarget }
-        for i = 1, #gsoCanAttack do
-            local action = gsoCanAttack[i](args)
-            if not args.Target or action == false then
-                gsoState.isAttacking = false
-                gsoState.canAttack = false
-            end
-        end
-    end
-    if gsoState.canMove and (not aaTarget or not gsoState.canAttack) then
-        local args = { Target = aaTarget }
-        for i = 1, #gsoCanMove do
-            local action = gsoCanMove[i](args)
-            if action == false then
-                gsoState.isMoving = false
-                gsoState.canMove = false
-            end
-        end
-    end
-    
-end
-
-local function orbwalkerLogic()
-    
-    local aaTarget = nil
-    if gsoMode.isCombo() or gsoMode.isHarass() or gsoMode.isLastHit() or gsoMode.isLaneClear() then
-        if gsoBaseAASpeed == 0 then
-            gsoBaseAASpeed  = 1 / gsoMyHero.attackData.animationTime / gsoMyHero.attackSpeed
-            gsoExtra.baseAttackSpeed = gsoBaseAASpeed
-        end
-        if gsoBaseWindUp == 0 then
-            gsoBaseWindUp = gsoMyHero.attackData.windUpTime / gsoMyHero.attackData.animationTime
-            gsoExtra.baseWindUp = gsoBaseWindUp
-        end
-        if gsoMode.isCombo() then
-            aaTarget = gsoGetComboTarget()
-        elseif gsoMode.isHarass() then
-            aaTarget = gsoGetHarassTarget()
-        elseif gsoMode.isLastHit() then
-            aaTarget = gsoGetLastHitTarget()
-        elseif gsoMode.isLaneClear() then
-            aaTarget = gsoGetLaneClearTarget()
-        end
-    elseif not gsoState.isChangingCursorPos and gsoGetTickCount() < gsoLastKey + 1000 then
-        gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
-        gsoLastKey = 0
-    end
-    
-    if gsoMode.isCombo() or gsoMode.isHarass() or gsoMode.isLastHit() or gsoMode.isLaneClear() then
-        if aaTarget and gsoState.canAttack then
-            if ExtLibEvade and ExtLibEvade.Evading then
-                gsoState.isMoving = true
-                gsoState.isAttacking = false
-                gsoState.isEvading = true
-                return
-            end
-            local canAttack = true
-            local args = { Process = true, Target = aaTarget }
-            for i = 1, #gsoOnAttack do
-                local action = gsoOnAttack[i](args)
-                if not args.Process or not args.Target then
-                    gsoState.isMoving = false
-                    gsoState.isAttacking = false
-                    canAttack = false
-                end
-            end
-            if canAttack then
-                local cPos = cursorPos
-                local tPos = args.Target.pos
-                tPos = Vector({x=tPos.x,z=tPos.z,y=tPos.y+40})
-                gsoControlSetCursor(tPos)
-                gsoExtraSetCursor = tPos
-                gsoControlKeyDown(HK_TCO)
-                gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
-                gsoControlMouseEvent(MOUSEEVENTF_RIGHTUP)
-                gsoControlKeyUp(HK_TCO)
-                gsoState.isChangingCursorPos = true
-                gsoSetCursorPos = { endTime = gsoGetTickCount() + 50, action = function() gsoControlSetCursor(cPos.x, cPos.y) end, active = true }
-                gsoTimers.lastMoveSend = 0
-                gsoTimers.lastAttackSend = gsoGameTimer()
-                gsoExtra.lastTarget = args.Target
-                gsoState.isMoving = false
-                gsoState.isAttacking = true
-                gsoResetAttack = false
-                for i = 1, #gsoOnIssue do
-                    gsoOnIssue[i]({move=false,attack=true})
-                end
-            end
-        elseif gsoState.canMove then
-            if ExtLibEvade and ExtLibEvade.Evading then
-                gsoState.isMoving = true
-                gsoState.isAttacking = false
-                gsoState.isEvading = true
-                return
-            end
-            local canMove = true
-            local args = { Process = true, Target = aaTarget }
-            for i = 1, #gsoOnMove do
-                local action = gsoOnMove[i](args)
-                if not args.Process then
-                    gsoState.isMoving = false
-                    gsoState.isAttacking = false
-                    canMove = false
-                end
-            end
-            if canMove and gsoGameTimer() > gsoTimers.lastMoveSend + ( gsoMenu.orb.delays.humanizer:Value() * 0.001 ) then
-                if gsoControlIsKeyDown(2) then gsoLastKey = gsoGetTickCount() end
-                gsoExtra.lastMovePos = mousePos
-                gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
-                gsoControlMouseEvent(MOUSEEVENTF_RIGHTUP)
-                gsoTimers.lastMoveSend = gsoGameTimer()
-                gsoState.isMoving = true
-                gsoState.isAttacking = false
-                for i = 1, #gsoOnIssue do
-                    gsoOnIssue[i]({move=true,attack=false})
-                end
-            end
-        elseif not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and not isChatOpen then
-            for i = 1, #gsoOnAttack do
-                gsoOnAttack[i]({ Process = true, Target = gsoExtra.lastTarget })
-            end
-        end
-    else
-        gsoExtra.lastTarget = nil
-        gsoState.isMoving = false
-        gsoState.isAttacking = false
-    end
-    
-end
-
-
+local _Utilities                  = function() end
+local gsoDistance                 = function(a, b)
+                                        local x = a.x - b.x
+                                        local z = a.z - b.z
+                                        return gsoMathSqrt(x * x + z * z)
+                                    end
+local gsoExtended                 = function(p, from, to, s)
+                                        local px, pz = p.x, p.z
+                                        local axbx = to.x - from.x
+                                        local azbz = to.z - from.z
+                                        local num = 1 / gsoMathSqrt(axbx * axbx + azbz * azbz)
+                                        return { x = px + (axbx * num * s), z = pz + (azbz * num * s) }
+                                    end
+local gsoIsImmortal               = function(unit, jaxE)
+                                        local hp = 100 * ( unit.health / unit.maxHealth )
+                                        if gsoUndyingBuffs["JaxCounterStrike"] ~= nil then    gsoUndyingBuffs["JaxCounterStrike"] = jaxE end
+                                        if gsoUndyingBuffs["kindredrnodeathbuff"] ~= nil then gsoUndyingBuffs["kindredrnodeathbuff"] = hp < 10 end
+                                        if gsoUndyingBuffs["UndyingRage"] ~= nil then         gsoUndyingBuffs["UndyingRage"] = hp < 15 end
+                                        if gsoUndyingBuffs["ChronoShift"] ~= nil then         gsoUndyingBuffs["ChronoShift"] = hp < 15; gsoUndyingBuffs["chronorevive"] = hp < 15 end
+                                        for i = 0, unit.buffCount do
+                                            local buff = unit:GetBuff(i)
+                                            if buff and buff.count > 0 and gsoUndyingBuffs[buff.name] then
+                                                return true
+                                            end
+                                        end
+                                        return false
+                                    end
+local gsoPredPos                  = function(ms, speed, projectilePos, enemyPos, enemyPath)
+                                        if enemyPath.hasMovePath then
+                                            local pPos    = projectilePos
+                                            local uPos    = enemyPos
+                                            local ePos    = enemyPath.endPos
+                                            local distUP  = gsoDistance(pPos, uPos)
+                                            local distEP  = gsoDistance(pPos, ePos)
+                                            if distEP > distUP then
+                                                return uPos:Extended(ePos, 25+(ms*(distUP / (speed - ms))))
+                                            else
+                                                return uPos:Extended(ePos, 25+(ms*(distUP / (speed + ms))))
+                                            end
+                                        end
+                                        return enemyPos
+                                    end
+local gsoHasBuff                  = function(unit, bName)
+                                        for i = 0, unit.buffCount do
+                                            local buff = unit:GetBuff(i)
+                                            if buff and buff.count > 0 and buff.name:lower() == bName then
+                                                return true
+                                            end
+                                        end
+                                        return false
+                                    end
+local gsoGetAttackRange           = function(attacker, defender)
+                                        if not attacker then return -1 end
+                                        local name = attacker.charName:lower()
+                                        if name:find("sruap_turret_") then
+                                            return 900
+                                        else
+                                            local range = 0
+                                            if name:find("sru_") and name:find("minion") then
+                                                if name:find("siege") then
+                                                    range = 300
+                                                elseif name:find("ranged") then
+                                                    range = 550
+                                                elseif name:find("melee") then
+                                                    range = 110
+                                                elseif name:find("super") then
+                                                    range = 170
+                                                end
+                                            end
+                                            range = range == 0 and attacker.range or range
+                                            if name == "caitlyn" then
+                                                range = range + (gsoHasBuff(attacker, "caitlynyordletrapinternal") and 650 or 0)
+                                            end
+                                            return range + attacker.boundingRadius + (defender and defender.boundingRadius or 30)
+                                        end
+                                    end
+local gsoRegisterMenuKey          = function(mode, key)
+                                        mode = mode:lower()
+                                        if mode == "combo" then
+                                            gsoComboKeys[#gsoComboKeys+1] = key
+                                        elseif mode == "harass" then
+                                            gsoHarassKeys[#gsoHarassKeys+1] = key
+                                        elseif mode == "lasthit" then
+                                            gsoLastHitKeys[#gsoLastHitKeys+1] = key
+                                        elseif mode == "laneclear" then
+                                            gsoLaneClearKeys[#gsoLaneClearKeys+1] = key
+                                        end
+                                    end
+local gsoReducedDmg               = function(unit, dmg, isAP)
+                                        local def = isAP and unit.magicResist - gsoMyHero.magicPen or unit.armor - gsoMyHero.armorPen
+                                        if def > 0 then def = isAP and gsoMyHero.magicPenPercent * def or gsoMyHero.bonusArmorPenPercent * def end
+                                        return def > 0 and dmg * ( 100 / ( 100 + def ) ) or dmg * ( 2 - ( 100 / ( 100 - def ) ) )
+                                    end
+local gsoCalculateDmg             = function(unit, spellData)
+                                        local dmgType = spellData.dmgType and spellData.dmgType or ""
+                                        if not unit then assert(false, "[234] CalculateDmg: unit is nil !") end
+                                        if dmgType == "ad" and spellData.dmgAD then
+                                            local dmgAD = spellData.dmgAD - unit.shieldAD
+                                            return dmgAD < 0 and 0 or gsoReducedDmg(unit, dmgAD, false) 
+                                        elseif dmgType == "ap" and spellData.dmgAP then
+                                            local dmgAP = spellData.dmgAP - unit.shieldAD - unit.shieldAP
+                                            return dmgAP < 0 and 0 or gsoReducedDmg(unit, dmgAP, true) 
+                                        elseif dmgType == "true" and spellData.dmgTrue then
+                                            return spellData.dmgTrue - unit.shieldAD
+                                        elseif dmgType == "mixed" and spellData.dmgAD and spellData.dmgAP then
+                                            local dmgAD = spellData.dmgAD - unit.shieldAD
+                                            local shieldAD = dmgAD < 0 and (-1) * dmgAD or 0
+                                                  dmgAD = dmgAD < 0 and 0 or gsoReducedDmg(unit, dmgAD, false)
+                                            local dmgAP = spellData.dmgAP - shieldAD - unit.shieldAP
+                                                  dmgAP = dmgAP < 0 and 0 or gsoReducedDmg(unit, dmgAP, true)
+                                            return dmgAD + dmgAP
+                                        end
+                                        assert(false, "[234] CalculateDmg: spellData - expected array { dmgType = string(ap or ad or mixed or true), dmgAP = number or dmgAD = number or ( dmgAP = number and dmgAD = number ) or dmgTrue = number } !")
+                                    end
+local gsoGetTarget                = function(range, sourcePos, enemyHeroes, dmgType, bb, jaxE)
+                                        local selected = gsoExtra.selectedTarget
+                                        local menuSelected = gsoMenu.ts.selected.enable:Value()
+                                        local menuSelectedOnly = gsoMenu.ts.selected.only:Value()
+                                        local selectedID = ( menuSelected and selected ) and selected.networkID or nil
+                                        if menuSelectedOnly and selectedID then
+                                            for i = 1, #gsoObjects.enemyHeroes do
+                                                local hero = gsoObjects.enemyHeroes[i]
+                                                if hero.networkID == selectedID and gsoDistance(hero.pos, sourcePos) < range + ( bb and hero.boundingRadius or 0 ) and hero.visible and not gsoIsImmortal(hero, jaxE) then
+                                                    return selected
+                                                end
+                                            end
+                                            return nil
+                                        end
+                                        local result  = nil
+                                        local num     = 10000000
+                                        local mode    = gsoMenu.ts.Mode:Value()
+                                        for i = 1, #enemyHeroes do
+                                            local x
+                                            local unit = enemyHeroes[i]
+                                            if selectedID and unit.networkID == selectedID then
+                                                return selected
+                                            elseif mode == 1 then
+                                                local unitName = unit.charName
+                                                local multiplier = gsoPriorityMultiplier[gsoMenu.ts.priority[unitName] and gsoMenu.ts.priority[unitName]:Value() or 6]
+                                                local def = dmgType == "ap" and multiplier * (unit.magicResist - gsoMyHero.magicPen) or multiplier * (unit.armor - gsoMyHero.armorPen)
+                                                if def > 0 then def = dmgType == "ap" and gsoMyHero.magicPenPercent * def or gsoMyHero.bonusArmorPenPercent * def end
+                                                      x = ( ( unit.health * multiplier * ( ( 100 + def ) / 100 ) ) - ( unit.totalDamage * unit.attackSpeed * 2 ) ) - unit.ap
+                                            elseif mode == 2 then
+                                                x = gsoDistance(unit.pos, sourcePos)
+                                            elseif mode == 3 then
+                                                x = unit.health
+                                            elseif mode == 4 then
+                                                local unitName = unit.charName
+                                                      x = gsoMenu.ts.priority[unitName] and gsoMenu.ts.priority[unitName]:Value() or 6
+                                            end
+                                            if x < num then
+                                                num = x
+                                                result = unit
+                                            end
+                                        end
+                                        return result
+                                    end
+local gsoMinionHpPredFast         = function(unitHandle, unitPos, unitHealth, time, allyMinions, enemyHandles)
+                                        for i = 1, #allyMinions do
+                                            local aMin = allyMinions[i]
+                                            local aaData = aMin.AAData
+                                            if aaData.target == unitHandle then
+                                                local allyDmg = aMin.Dmg
+                                                local endT    = aaData.endTime
+                                                local animT   = aaData.animationTime
+                                                local windUpT = aaData.windUpTime
+                                                local pSpeed  = aaData.projectileSpeed
+                                                local pFlyT   = pSpeed > 0 and gsoDistance(aMin.Pos, unitPos) / pSpeed or 0
+                                                local pEndT   = (endT - animT) + pFlyT + windUpT
+                                                      pEndT   = pEndT > gsoGameTimer() and pEndT or pEndT + animT + pFlyT
+                                                while pEndT - gsoGameTimer() < time do
+                                                    unitHealth = unitHealth - allyDmg
+                                                    pEndT = pEndT + animT + pFlyT
+                                                end
+                                            end
+                                        end
+                                        return unitHealth
+                                    end
+local gsoMinionHpPredAccuracy     = function(unitHealth, unitHandle, time)
+                                        for allyID, allyActiveAttacks in pairs(gsoFarm.allyActiveAttacks) do
+                                            for activeAttackID, activeAttack in pairs(gsoFarm.allyActiveAttacks[allyID]) do
+                                                if not activeAttack.Canceled and unitHandle == activeAttack.Enemy.Handle then
+                                                    local endTime = activeAttack.StartTime + activeAttack.FlyTime
+                                                    if endTime > gsoGameTimer() and endTime - gsoGameTimer() < time then
+                                                        unitHealth = unitHealth - activeAttack.Dmg
+                                                    end
+                                                end
+                                            end
+                                        end
+                                        return unitHealth
+                                    end
+local gsoCursorPositionChanged    = function(action, pos)
+                                        gsoSetCursorPos = action
+                                        gsoState.isChangingCursorPos = true
+                                        gsoExtraSetCursor = pos
+                                    end
 function OnTick()
-    
-    if not gsoState.enabledOrb or gsoMyHero.dead then return end
-    
-    championsLoadLogic()
-    cursorPosLogic()
-    delayedActionsLogic()
-    latencyLogic()
-    teemoBlindLogic()
-    minionsLogic()
-    orbwalkerTimersLogic()
-    orbwalkerLogic()
-    
+                                    if not gsoState.enabledOrb or gsoMyHero.dead then return end
+--championsLoadLogic
+                                    if not gsoLoadedChamps then
+                                        for i = 1, gsoGameHeroCount() do
+                                            local hero = gsoGameHero(i)
+                                            if hero.team ~= gsoExtra.allyTeam then
+                                                local eName = hero.charName
+                                                if eName and #eName > 0 and not gsoMenu.ts.priority[eName] then
+                                                    gsoEnemyHeroesNames[#gsoEnemyHeroesNames+1] = eName
+                                                    gsoLastFound = gsoGameTimer()
+                                                    local priority = gsoPriorities[eName] ~= nil and gsoPriorities[eName] or 5
+                                                    gsoMenu.ts.priority:MenuElement({ id = eName, name = eName, value = priority, min = 1, max = 5, step = 1 })
+                                                    if eName == "Teemo" then          gsoIsTeemo = true
+                                                    elseif eName == "Kayle" then      gsoUndyingBuffs["JudicatorIntervention"] = true
+                                                    elseif eName == "Taric" then      gsoUndyingBuffs["TaricR"] = true
+                                                    elseif eName == "Kindred" then    gsoUndyingBuffs["kindredrnodeathbuff"] = true
+                                                    elseif eName == "Zilean" then     gsoUndyingBuffs["ChronoShift"] = true; gsoUndyingBuffs["chronorevive"] = true
+                                                    elseif eName == "Tryndamere" then gsoUndyingBuffs["UndyingRage"] = true
+                                                    elseif eName == "Jax" then        gsoUndyingBuffs["JaxCounterStrike"] = true; gsoIsJax = true
+                                                    elseif eName == "Fiora" then      gsoUndyingBuffs["FioraW"] = true
+                                                    elseif eName == "Aatrox" then     gsoUndyingBuffs["aatroxpassivedeath"] = true
+                                                    elseif eName == "Vladimir" then   gsoUndyingBuffs["VladimirSanguinePool"] = true
+                                                    elseif eName == "KogMaw" then     gsoUndyingBuffs["KogMawIcathianSurprise"] = true
+                                                    elseif eName == "Karthus" then    gsoUndyingBuffs["KarthusDeathDefiedBuff"] = true
+                                                    end
+                                                end
+                                            end
+                                        end
+                                        if gsoGameTimer() > gsoLastFound + 2.5 and gsoGameTimer() < gsoLastFound + 5 then
+                                            gsoLoadedChamps = true
+                                            for i = 1, #gsoLoadHeroesToMenu do
+                                                for j = 1, #gsoEnemyHeroesNames do
+                                                    gsoLoadHeroesToMenu[i](gsoEnemyHeroesNames[j])
+                                                end
+                                            end
+                                        end
+                                    end
+--cursorPosLogic
+                                    if gsoSetCursorPos then
+                                        if gsoSetCursorPos.active and gsoGetTickCount() > gsoSetCursorPos.endTime then
+                                            gsoSetCursorPos.action()
+                                            gsoSetCursorPos.active = false
+                                            gsoExtraSetCursor = nil
+                                        elseif not gsoSetCursorPos.active and gsoGetTickCount() > gsoSetCursorPos.endTime + 25 then
+                                            gsoState.isChangingCursorPos = false
+                                            gsoSetCursorPos = nil
+                                        end
+                                    end
+                                    if gsoExtraSetCursor then
+                                        gsoControlSetCursor(gsoExtraSetCursor)
+                                    end
+--delayedActionsLogic
+                                    local cacheDelayedActions = {}
+                                    for i = 1, #gsoDelayedActions do
+                                        local t = gsoDelayedActions[i]
+                                        if gsoGameTimer() > t.endTime then
+                                            t.func()
+                                        else
+                                            cacheDelayedActions[#cacheDelayedActions+1] = t
+                                        end
+                                    end
+                                    gsoDelayedActions = cacheDelayedActions
+--latencyLogic
+                                    local lat1 = 0
+                                    local lat2 = 50
+                                    gsoLatencies[#gsoLatencies+1] = { endTime = gsoGetTickCount() + 2500, Latency = gsoGameLatency() * 0.001 }
+                                    local cacheLatencies = {}
+                                    for i = 1, #gsoLatencies do
+                                        local t = gsoLatencies[i]
+                                        if gsoGetTickCount() < t.endTime then
+                                            cacheLatencies[#cacheLatencies+1] = t
+                                            if t.Latency > lat1 then
+                                                lat1 = t.Latency
+                                                gsoExtra.maxLatency = lat1
+                                            end
+                                            if t.Latency < lat2 then
+                                                lat2 = t.Latency
+                                                gsoExtra.minLatency = lat2
+                                            end
+                                        end
+                                    end
+                                    gsoLatencies = cacheLatencies
+--teemoBlindLogic
+                                    if gsoIsTeemo == true then
+                                        local isBlinded = false
+                                        for i = 0, gsoMyHero.buffCount do
+                                            local buff = gsoMyHero:GetBuff(i)
+                                            if buff and buff.count > 0 and buff.name:lower() == "blindingdart" and buff.duration > 0 then
+                                                isBlinded = true
+                                                break
+                                            end
+                                        end
+                                        gsoState.isBlindedByTeemo = isBlinded
+                                    end
+--minionsLogic
+                                    local mePos = gsoMyHero.pos
+                                    local allyHandles = {}
+                                    local enemyHandles = {}
+                                    local enemyPaths = {}
+                                    local allyMinionsCache = {}
+                                    local enemyMinionsCache = {}
+                                    local enemyPositions = {}
+                                    local enemyMoveSpeeds = {}
+                                    local eMinionList = {}
+                                    local aMinionList = {}
+                                    for i = 1, gsoGameMinionCount() do
+                                        local minion = gsoGameMinion(i)
+                                        if minion and gsoDistance(minion.pos, mePos) < 1500 and not minion.dead and minion.isTargetable and minion.visible and minion.valid then
+                                            if minion.team == gsoExtra.allyTeam then
+                                                local handle	= minion.handle
+                                                local aaData	= minion.attackData
+                                                local dmg     = minion.totalDamage * ( 1 + minion.bonusDamagePercent )
+                                                local pos     = minion.pos
+                                                local path    = minion.pathing
+                                                allyHandles[handle] = true
+                                                allyMinionsCache[#allyMinionsCache+1] = { Handle = handle, Minion = minion, AAData = aaData, Dmg = dmg, Pos = pos, Path = path }
+                                                aMinionList[#aMinionList+1] = minion
+                                            elseif not minion.isImmortal then
+                                                local handle	= minion.handle
+                                                local path    = minion.pathing
+                                                local pos     = minion.pos
+                                                local dmgRed  = minion.flatDamageReduction
+                                                local ms      = minion.ms
+                                                local health  = minion.health
+                                                enemyHandles[handle] = true
+                                                enemyPaths[handle] = path
+                                                enemyPositions[handle] = pos
+                                                enemyMoveSpeeds[handle] = ms
+                                                enemyMinionsCache[#enemyMinionsCache+1] = { Handle = handle, Minion = minion, Path = path, Pos = pos, DmgRed = dmgRed, Health = health }
+                                                eMinionList[#eMinionList+1] = minion
+                                            end
+                                        end
+                                    end
+                                    gsoObjects.allyMinions = aMinionList
+                                    gsoObjects.enemyMinions = eMinionList
+                                    for i = 1, #allyMinionsCache do
+                                        local ally = allyMinionsCache[i]
+                                        if ally.AAData.endTime > gsoGameTimer() then
+                                            for j = 1, #enemyMinionsCache do
+                                                local enemy = enemyMinionsCache[j]
+                                                if enemy.Handle == ally.AAData.target then
+                                                    local flyTime = ally.AAData.projectileSpeed > 0 and gsoDistance(ally.Pos, enemy.Pos) / ally.AAData.projectileSpeed or 0
+                                                    if not gsoFarm.allyActiveAttacks[ally.Handle] then gsoFarm.allyActiveAttacks[ally.Handle] = {} end
+                                                    if gsoGameTimer() < (ally.AAData.endTime - ally.AAData.windDownTime) + flyTime then
+                                                        if ally.AAData.projectileSpeed > 0 then
+                                                            if gsoGameTimer() > (ally.AAData.endTime - ally.AAData.windDownTime) then
+                                                                if not gsoFarm.allyActiveAttacks[ally.Handle][ally.AAData.endTime] then
+                                                                    gsoFarm.allyActiveAttacks[ally.Handle][ally.AAData.endTime] = {
+                                                                        Canceled  = false,
+                                                                        Speed     = ally.AAData.projectileSpeed,
+                                                                        StartTime = ally.AAData.endTime - ally.AAData.windDownTime,
+                                                                        FlyTime   = ally.AAData.projectileSpeed > 0 and gsoDistance(ally.Pos, enemy.Pos) / ally.AAData.projectileSpeed or 0,
+                                                                        Pos       = ally.Pos:Extended( enemy.Pos, ally.AAData.projectileSpeed * ( gsoGameTimer() - ( ally.AAData.endTime - ally.AAData.windDownTime ) ) ),
+                                                                        Ally      = ally,
+                                                                        Enemy     = enemy,
+                                                                        Dmg       = ally.Dmg - enemy.DmgRed
+                                                                    }
+                                                                end
+                                                            elseif ally.Path.hasMovePath then
+                                                              gsoFarm.allyActiveAttacks[ally.Handle][ally.AAData.endTime] = {
+                                                                  Canceled  = true,
+                                                                  Ally      = ally
+                                                              }
+                                                            end
+                                                          elseif not gsoFarm.allyActiveAttacks[ally.Handle][ally.AAData.endTime] then
+                                                              gsoFarm.allyActiveAttacks[ally.Handle][ally.AAData.endTime] = {
+                                                                  Canceled  = false,
+                                                                  Speed     = ally.AAData.projectileSpeed,
+                                                                  StartTime = (ally.AAData.endTime - ally.AAData.windDownTime) - ally.AAData.windUpTime,
+                                                                  FlyTime   = ally.AAData.windUpTime,
+                                                                  Pos       = ally.Pos,
+                                                                  Ally      = ally,
+                                                                  Enemy     = enemy,
+                                                                  Dmg       = ally.Dmg - enemy.DmgRed
+                                                              }
+                                                          end
+                                                    end
+                                                    break
+                                                end
+                                            end
+                                        end
+                                    end
+                                    for allyID, allyActiveAttacks in pairs(gsoFarm.allyActiveAttacks) do
+                                        local count = 0
+                                        for activeAttackID, activeAttack in pairs(gsoFarm.allyActiveAttacks[allyID]) do
+                                            count = count + 1
+                                            local noAlly = not activeAttack.Ally.Minion or activeAttack.Ally.Minion.dead or not allyHandles[activeAttack.Ally.Handle]
+                                            if activeAttack.Speed == 0 and noAlly then
+                                                gsoFarm.allyActiveAttacks[allyID] = nil
+                                                break
+                                            end
+                                            if not activeAttack.Canceled then
+                                                local canContinue = true
+                                                if not enemyHandles[activeAttack.Enemy.Handle] then
+                                                    gsoFarm.allyActiveAttacks[allyID][activeAttackID] = nil
+                                                    canContinue = false
+                                                end
+                                                if canContinue then
+                                                    local enemyPos, enemyPath, enemyMS
+                                                    local ranged = activeAttack.Speed > 0
+                                                    if ranged then
+                                                        enemyPos = enemyPositions[activeAttack.Enemy.Handle]
+                                                        enemyPath = enemyPaths[activeAttack.Enemy.Handle]
+                                                        enemyMS = enemyMoveSpeeds[activeAttack.Enemy.Handle]
+                                                        gsoFarm.allyActiveAttacks[allyID][activeAttackID].FlyTime = gsoDistance(activeAttack.Ally.Pos, gsoPredPos(enemyMS, activeAttack.Speed, activeAttack.Pos, enemyPos, enemyPath)) / activeAttack.Speed
+                                                    end
+                                                    local projectileOnEnemy = gsoExtra.maxLatency + 0.02
+                                                    local noEnemy = not activeAttack.Enemy.Minion or activeAttack.Enemy.Minion.dead or not enemyHandles[activeAttack.Enemy.Handle]
+                                                    if gsoGameTimer() > activeAttack.StartTime + gsoFarm.allyActiveAttacks[allyID][activeAttackID].FlyTime - projectileOnEnemy or noEnemy then
+                                                        gsoFarm.allyActiveAttacks[allyID][activeAttackID] = nil
+                                                    elseif ranged then
+                                                        local s = ( gsoGameTimer() - activeAttack.StartTime ) * activeAttack.Speed
+                                                        gsoFarm.allyActiveAttacks[allyID][activeAttackID].Pos = activeAttack.Ally.Pos:Extended(enemyPos, s)
+                                                    end
+                                                end
+                                            end
+                                        end
+                                        if count == 0 then
+                                            gsoFarm.allyActiveAttacks[allyID] = nil
+                                        end
+                                    end
+                                    if gsoShouldWait and gsoGameTimer() > gsoShouldWaitT + 0.5 then
+                                        gsoShouldWait = false
+                                    end
+                                    local mLH, aaData, projSpeed, windUp, anim, meDmg
+                                    if #enemyMinionsCache > 0 then
+                                        mLH = gsoMenu.orb.delays.lhDelay:Value() * 0.001
+                                        aaData = gsoMyHero.attackData
+                                        projSpeed = aaData.projectileSpeed
+                                        windUp = aaData.windUpTime + gsoExtra.minLatency + 0.05 - mLH
+                                        anim = aaData.animationTime
+                                        meDmg = myHero.totalDamage + gsoBonusDmg()
+                                    end
+                                    local lastHitable = {}
+                                    local almostLastHitable = {}
+                                    local laneClearable = {}
+                                    for i = 1, #enemyMinionsCache do
+                                        local enemy = enemyMinionsCache[i]
+                                        local minionHandle = enemy.Handle
+                                        local minionPos = enemy.Pos
+                                        local minionHealth = enemy.Health
+                                        local flyTime = windUp + ( gsoDistance(mePos, minionPos) / projSpeed )
+                                        local accuracyHpPred = gsoMinionHpPredAccuracy(minionHealth, minionHandle, flyTime)
+                                        if accuracyHpPred < 0 then
+                                            local args = { Minion = enemy.Minion }
+                                            for i = 1, #gsoUnkillableMinion do
+                                                local action = gsoUnkillableMinion[i](args)
+                                            end
+                                        end
+                                        local dmgOnMinion = meDmg + gsoBonusDmgUnit(enemy.Minion)
+                                        if accuracyHpPred - dmgOnMinion <= 0 then
+                                            lastHitable[#lastHitable+1] = { Minion = enemy.Minion, pos = minionPos, health = accuracyHpPred }
+                                        else
+                                            if gsoMinionHpPredFast(minionHandle, minionPos, minionHealth, anim*3, allyMinionsCache, enemyHandles) - dmgOnMinion < 0 then
+                                                gsoShouldWait = true
+                                                gsoShouldWaitT = gsoGameTimer()
+                                                almostLastHitable[#almostLastHitable+1] = enemy.Minion
+                                            else
+                                                laneClearable[#laneClearable+1] = { Minion = enemy.Minion, pos = minionPos, health = accuracyHpPred }
+                                            end
+                                        end
+                                    end
+                                    gsoFarm.lastHitable = lastHitable
+                                    gsoFarm.laneClearable = laneClearable
+                                    gsoFarm.almostLastHitable = almostLastHitable
+--orbwalkerTimersLogic
+                                    local aSpell = gsoMyHero.activeSpell
+                                    if aSpell and aSpell.valid and aSpell.startTime > gsoServerStart then
+                                        local aSpellName = aSpell.name:lower()
+                                        if not gsoNoAttacks[aSpellName] and (aSpellName:find("attack") or gsoAttacks[aSpellName]) then
+                                            gsoServerStart = aSpell.startTime
+                                            gsoServerWindup = aSpell.windup
+                                            gsoServerAnim = aSpell.animation
+                                        end
+                                    end
+                                    local aaSpeed = gsoAttackSpeed() * gsoBaseAASpeed
+                                    local numAS   = aaSpeed >= 2.5 and 2.5 or aaSpeed
+                                    gsoExtra.attackSpeed = numAS
+                                    local animT   = 1 / numAS
+                                    local windUpT = animT * gsoBaseWindUp
+                                    gsoServerAnim = aaSpeed >= 2.5 and animT or gsoServerAnim
+                                    gsoServerWindup = aaSpeed >= 2.5 and windUpT or gsoServerWindup
+                                    local extraWindUp = math.abs(windUpT-gsoServerWindup) + (gsoMenu.orb.delays.windup:Value() * 0.001)
+                                    local windUpAA = windUpT > gsoServerWindup and gsoServerWindup or windUpT
+                                    gsoTimers.windUpTime = windUpT > gsoServerWindup and windUpT or gsoServerWindup
+                                    gsoTimers.animationTime = animT > gsoServerAnim and animT or gsoServerAnim
+                                    for i = 1, #gsoCanChangeAnim do
+                                        if gsoCanChangeAnim[i] then
+                                            gsoTimers.animationTime = animT
+                                            break
+                                        end
+                                    end
+                                    local sToAA = ( ( gsoServerStart - windUpAA ) + ( gsoTimers.animationTime - ( gsoExtra.minLatency - 0.05 ) ) ) - gsoGameTimer()
+                                    local sToMove = ( ( gsoServerStart + extraWindUp ) - ( gsoExtra.minLatency * 0.5 ) ) - gsoGameTimer()
+                                    local isChatOpen = gsoGameIsChatOpen()
+                                    gsoTimers.secondsToAttack = sToAA > 0 and sToAA or 0
+                                    gsoTimers.secondsToMove = sToMove > 0 and sToMove or 0
+                                    gsoState.isEvading = ExtLibEvade and ExtLibEvade.Evading
+                                    local canMove = gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency + 0.005 + extraWindUp
+                                    gsoState.canAttack = not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and (gsoTimers.secondsToAttack == 0 or gsoExtra.resetAttack) and not isChatOpen and canMove
+                                    gsoState.canMove = not gsoState.isChangingCursorPos and not gsoState.isEvading and gsoState.enabledMove and gsoTimers.secondsToMove == 0 and not isChatOpen and canMove
+--orbwalkerLogic
+                                    local canGetTurrets = true
+                                    local canGetHeroes = true
+                                    local aaTarget = nil
+                                    if gsoMode.isCombo() or gsoMode.isHarass() or gsoMode.isLastHit() or gsoMode.isLaneClear() then
+                                        mePos = gsoMyHero.pos
+                                        if gsoBaseAASpeed == 0 then
+                                            gsoBaseAASpeed  = 1 / gsoMyHero.attackData.animationTime / gsoMyHero.attackSpeed
+                                            gsoExtra.baseAttackSpeed = gsoBaseAASpeed
+                                        end
+                                        if gsoBaseWindUp == 0 then
+                                            gsoBaseWindUp = gsoMyHero.attackData.windUpTime / gsoMyHero.attackData.animationTime
+                                            gsoExtra.baseWindUp = gsoBaseWindUp
+                                        end
+                                        if gsoMode.isCombo() then
+                                            local eHeroList = {}
+                                            local aHeroList = {}
+                                            for i = 1, gsoGameHeroCount() do
+                                                local hero = gsoGameHero(i)
+                                                if hero and not hero.dead and hero.isTargetable and hero.valid then
+                                                    if hero.team == gsoExtra.allyTeam then
+                                                        aHeroList[#aHeroList+1] = hero
+                                                    else
+                                                        eHeroList[#eHeroList+1] = hero
+                                                    end
+                                                end
+                                            end
+                                            gsoObjects.allyHeroes = aHeroList
+                                            gsoObjects.enemyHeroes = eHeroList
+                                            canGetHeroes = false
+                                            mePos = gsoMyHero.pos
+                                            local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
+                                            local enemyHeroesList = {}
+                                            for i = 1, #gsoObjects.enemyHeroes do
+                                                local hero = gsoObjects.enemyHeroes[i]
+                                                if hero.visible and gsoDistance(hero.pos, mePos) < meRange + hero.boundingRadius then
+                                                    local isImmortal = false
+                                                    local hhp = 100 * ( hero.health / hero.maxHealth )
+                                                    if gsoUndyingBuffs["JaxCounterStrike"] ~= nil then    gsoUndyingBuffs["JaxCounterStrike"] = true end
+                                                    if gsoUndyingBuffs["kindredrnodeathbuff"] ~= nil then gsoUndyingBuffs["kindredrnodeathbuff"] = hhp < 10 end
+                                                    if gsoUndyingBuffs["UndyingRage"] ~= nil then         gsoUndyingBuffs["UndyingRage"] = hhp < 15 end
+                                                    if gsoUndyingBuffs["ChronoShift"] ~= nil then         gsoUndyingBuffs["ChronoShift"] = hhp < 15; gsoUndyingBuffs["chronorevive"] = hhp < 15 end
+                                                    for i = 0, hero.buffCount do
+                                                        local buff = hero:GetBuff(i)
+                                                        if buff and buff.count > 0 and gsoUndyingBuffs[buff.name] then
+                                                            isImmortal = true
+                                                            break
+                                                        end
+                                                    end
+                                                    if not isImmortal then
+                                                        enemyHeroesList[#enemyHeroesList+1] = hero
+                                                    end
+                                                end
+                                            end
+                                            aaTarget = gsoGetTarget(meRange, mePos, enemyHeroesList, "ad", true, true)
+                                        elseif gsoMode.isHarass() then
+                                            local min = 10000000
+                                            local lastHitable = gsoFarm.lastHitable
+                                            local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
+                                            for i = 1, #lastHitable do
+                                                local minion = lastHitable[i]
+                                                if gsoDistance(mePos, minion.pos) < meRange + 25 and minion.health < min then
+                                                    min = minion.health
+                                                    aaTarget = minion.Minion
+                                                end
+                                            end
+                                            if not aaTarget then
+                                                local eHeroList = {}
+                                                local aHeroList = {}
+                                                for i = 1, gsoGameHeroCount() do
+                                                    local hero = gsoGameHero(i)
+                                                    if hero and not hero.dead and hero.isTargetable and hero.valid then
+                                                        if hero.team == gsoExtra.allyTeam then
+                                                            aHeroList[#aHeroList+1] = hero
+                                                        else
+                                                            eHeroList[#eHeroList+1] = hero
+                                                        end
+                                                    end
+                                                end
+                                                gsoObjects.allyHeroes = aHeroList
+                                                gsoObjects.enemyHeroes = eHeroList
+                                                canGetHeroes = false
+                                                mePos = gsoMyHero.pos
+                                                meRange = gsoMyHero.range + gsoMyHero.boundingRadius
+                                                local enemyHeroesList = {}
+                                                for i = 1, #gsoObjects.enemyHeroes do
+                                                    local hero = gsoObjects.enemyHeroes[i]
+                                                    if hero.visible and gsoDistance(hero.pos, mePos) < meRange + hero.boundingRadius then
+                                                        local isImmortal = false
+                                                        local hhp = 100 * ( hero.health / hero.maxHealth )
+                                                        if gsoUndyingBuffs["JaxCounterStrike"] ~= nil then    gsoUndyingBuffs["JaxCounterStrike"] = true end
+                                                        if gsoUndyingBuffs["kindredrnodeathbuff"] ~= nil then gsoUndyingBuffs["kindredrnodeathbuff"] = hhp < 10 end
+                                                        if gsoUndyingBuffs["UndyingRage"] ~= nil then         gsoUndyingBuffs["UndyingRage"] = hhp < 15 end
+                                                        if gsoUndyingBuffs["ChronoShift"] ~= nil then         gsoUndyingBuffs["ChronoShift"] = hhp < 15; gsoUndyingBuffs["chronorevive"] = hhp < 15 end
+                                                        for i = 0, hero.buffCount do
+                                                            local buff = hero:GetBuff(i)
+                                                            if buff and buff.count > 0 and gsoUndyingBuffs[buff.name] then
+                                                                isImmortal = true
+                                                                break
+                                                            end
+                                                        end
+                                                        if not isImmortal then
+                                                            enemyHeroesList[#enemyHeroesList+1] = hero
+                                                        end
+                                                    end
+                                                end
+                                                aaTarget = gsoGetTarget(meRange, mePos, enemyHeroesList, "ad", true, true)
+                                            end
+                                        elseif gsoMode.isLastHit() then
+                                            local min = 10000000
+                                            local lastHitable = gsoFarm.lastHitable
+                                            local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
+                                            for i = 1, #lastHitable do
+                                                local minion = lastHitable[i]
+                                                if gsoDistance(mePos, minion.pos) < meRange + 25 and minion.health < min then
+                                                    min = minion.health
+                                                    aaTarget = minion.Minion
+                                                end
+                                            end
+                                        elseif gsoMode.isLaneClear() then
+                                            local min = 10000000
+                                            local lastHitable = gsoFarm.lastHitable
+                                            local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
+                                            for i = 1, #lastHitable do
+                                                local minion = lastHitable[i]
+                                                if gsoDistance(mePos, minion.pos) < meRange + 25 and minion.health < min then
+                                                    min = minion.health
+                                                    aaTarget = minion.Minion
+                                                end
+                                            end
+                                            if not aaTarget and #gsoFarm.almostLastHitable == 0 and not gsoShouldWait then
+                                                local eHeroList = {}
+                                                local aHeroList = {}
+                                                for i = 1, gsoGameHeroCount() do
+                                                    local hero = gsoGameHero(i)
+                                                    if hero and not hero.dead and hero.isTargetable and hero.valid then
+                                                        if hero.team == gsoExtra.allyTeam then
+                                                            aHeroList[#aHeroList+1] = hero
+                                                        else
+                                                            eHeroList[#eHeroList+1] = hero
+                                                        end
+                                                    end
+                                                end
+                                                gsoObjects.allyHeroes = aHeroList
+                                                gsoObjects.enemyHeroes = eHeroList
+                                                canGetHeroes = false
+                                                mePos = gsoMyHero.pos
+                                                meRange = gsoMyHero.range + gsoMyHero.boundingRadius
+                                                local enemyHeroesList = {}
+                                                for i = 1, #gsoObjects.enemyHeroes do
+                                                    local hero = gsoObjects.enemyHeroes[i]
+                                                    if hero.visible and gsoDistance(hero.pos, mePos) < meRange + hero.boundingRadius then
+                                                        local isImmortal = false
+                                                        local hhp = 100 * ( hero.health / hero.maxHealth )
+                                                        if gsoUndyingBuffs["JaxCounterStrike"] ~= nil then    gsoUndyingBuffs["JaxCounterStrike"] = true end
+                                                        if gsoUndyingBuffs["kindredrnodeathbuff"] ~= nil then gsoUndyingBuffs["kindredrnodeathbuff"] = hhp < 10 end
+                                                        if gsoUndyingBuffs["UndyingRage"] ~= nil then         gsoUndyingBuffs["UndyingRage"] = hhp < 15 end
+                                                        if gsoUndyingBuffs["ChronoShift"] ~= nil then         gsoUndyingBuffs["ChronoShift"] = hhp < 15; gsoUndyingBuffs["chronorevive"] = hhp < 15 end
+                                                        for i = 0, hero.buffCount do
+                                                            local buff = hero:GetBuff(i)
+                                                            if buff and buff.count > 0 and gsoUndyingBuffs[buff.name] then
+                                                                isImmortal = true
+                                                                break
+                                                            end
+                                                        end
+                                                        if not isImmortal then
+                                                            enemyHeroesList[#enemyHeroesList+1] = hero
+                                                        end
+                                                    end
+                                                end
+                                                aaTarget = gsoGetTarget(meRange, mePos, enemyHeroesList, "ad", true, true)
+                                                if not aaTarget then
+                                                    local eTurretList = {}
+                                                    local aTurretList = {}
+                                                    for i = 1, gsoGameTurretCount() do
+                                                        local turret = gsoGameTurret(i)
+                                                        if turret and gsoDistance(turret.pos, mePos) < 2000 and not turret.dead and turret.isTargetable and turret.visible and turret.valid then
+                                                            if turret.team == gsoExtra.allyTeam then
+                                                                aTurretList[#aTurretList+1] = turret
+                                                            elseif not turret.isImmortal then
+                                                                eTurretList[#eTurretList+1] = turret
+                                                            end
+                                                        end
+                                                    end
+                                                    gsoObjects.allyTurrets = aTurretList
+                                                    gsoObjects.enemyTurrets = eTurretList
+                                                    canGetTurrets = false
+                                                    for i = 1, #gsoObjects.enemyTurrets do
+                                                        local turret = gsoObjects.enemyTurrets[i]
+                                                        if gsoDistance(turret.pos, gsoMyHero.pos) < meRange + turret.boundingRadius then
+                                                            aaTarget = turret
+                                                            break
+                                                        end
+                                                    end
+                                                end
+                                                if not aaTarget then
+                                                    min = 10000000
+                                                    mePos = gsoMyHero.pos
+                                                    local laneClearable = gsoFarm.laneClearable
+                                                    for i = 1, #laneClearable do
+                                                        local minion = laneClearable[i]
+                                                        if gsoDistance(mePos, minion.pos) < meRange + 25 and minion.health < min then
+                                                            min = minion.health
+                                                            aaTarget = minion.Minion
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    elseif not gsoState.isChangingCursorPos and gsoGetTickCount() < gsoLastKey + 1000 then
+                                        gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
+                                        gsoLastKey = 0
+                                    end
+                                    if gsoMode.isCombo() or gsoMode.isHarass() or gsoMode.isLastHit() or gsoMode.isLaneClear() then
+                                        if aaTarget and gsoState.canAttack then
+                                            if ExtLibEvade and ExtLibEvade.Evading then
+                                                gsoState.isMoving = true
+                                                gsoState.isAttacking = false
+                                                gsoState.isEvading = true
+                                                return
+                                            end
+                                            local canAttack = true
+                                            local args = { Process = true, Target = aaTarget }
+                                            for i = 1, #gsoOnAttack do
+                                                local action = gsoOnAttack[i](args)
+                                                if not args.Process or not args.Target then
+                                                    gsoState.isMoving = false
+                                                    gsoState.isAttacking = false
+                                                    canAttack = false
+                                                end
+                                            end
+                                            if canAttack then
+                                                local cPos = cursorPos
+                                                local tPos = args.Target.pos
+                                                tPos = Vector({x=tPos.x,z=tPos.z,y=tPos.y+40})
+                                                gsoControlSetCursor(tPos)
+                                                gsoExtraSetCursor = tPos
+                                                gsoControlKeyDown(HK_TCO)
+                                                gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
+                                                gsoControlMouseEvent(MOUSEEVENTF_RIGHTUP)
+                                                gsoControlKeyUp(HK_TCO)
+                                                gsoState.isChangingCursorPos = true
+                                                gsoSetCursorPos = { endTime = gsoGetTickCount() + 50, action = function() gsoControlSetCursor(cPos.x, cPos.y) end, active = true }
+                                                gsoTimers.lastMoveSend = 0
+                                                gsoTimers.lastAttackSend = gsoGameTimer()
+                                                gsoExtra.lastTarget = args.Target
+                                                gsoState.isMoving = false
+                                                gsoState.isAttacking = true
+                                                gsoExtra.resetAttack = false
+                                                for i = 1, #gsoOnIssue do
+                                                    gsoOnIssue[i]({move=false,attack=true})
+                                                end
+                                            end
+                                        elseif gsoState.canMove then
+                                            if ExtLibEvade and ExtLibEvade.Evading then
+                                                gsoState.isMoving = true
+                                                gsoState.isAttacking = false
+                                                gsoState.isEvading = true
+                                                return
+                                            end
+                                            local canMove = true
+                                            local args = { Process = true, Target = aaTarget }
+                                            for i = 1, #gsoOnMove do
+                                                local action = gsoOnMove[i](args)
+                                                if not args.Process then
+                                                    gsoState.isMoving = false
+                                                    gsoState.isAttacking = false
+                                                    canMove = false
+                                                end
+                                            end
+                                            if canMove and gsoGameTimer() > gsoTimers.lastMoveSend + ( gsoMenu.orb.delays.humanizer:Value() * 0.001 ) then
+                                                if gsoControlIsKeyDown(2) then gsoLastKey = gsoGetTickCount() end
+                                                gsoExtra.lastMovePos = mousePos
+                                                gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
+                                                gsoControlMouseEvent(MOUSEEVENTF_RIGHTUP)
+                                                gsoTimers.lastMoveSend = gsoGameTimer()
+                                                gsoState.isMoving = true
+                                                gsoState.isAttacking = false
+                                                for i = 1, #gsoOnIssue do
+                                                    gsoOnIssue[i]({move=true,attack=false})
+                                                end
+                                            end
+                                        elseif not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and not isChatOpen then
+                                            for i = 1, #gsoOnAttack do
+                                                gsoOnAttack[i]({ Process = true, Target = gsoExtra.lastTarget })
+                                            end
+                                        end
+                                    else
+                                        gsoExtra.lastTarget = nil
+                                        gsoState.isMoving = false
+                                        gsoState.isAttacking = false
+                                    end
+--getUnits
+                                    if canGetTurrets then
+                                        mePos = gsoMyHero.pos
+                                        for i = 1, gsoGameTurretCount() do
+                                            local turret = gsoGameTurret(i)
+                                            if turret and gsoDistance(turret.pos, mePos) < 2000 and not turret.dead and turret.isTargetable and turret.visible and turret.valid then
+                                                if turret.team == gsoExtra.allyTeam then
+                                                    gsoObjects.allyTurrets[#gsoObjects.allyTurrets+1] = turret
+                                                elseif not turret.isImmortal then
+                                                    gsoObjects.enemyTurrets[#gsoObjects.enemyTurrets+1] = turret
+                                                end
+                                            end
+                                        end
+                                    end
+                                    if canGetHeroes then
+                                        mePos = gsoMyHero.pos
+                                        local eHeroList = {}
+                                        local aHeroList = {}
+                                        for i = 1, gsoGameHeroCount() do
+                                            local hero = gsoGameHero(i)
+                                            if hero and not hero.dead and hero.isTargetable and hero.valid then
+                                                if hero.team == gsoExtra.allyTeam then
+                                                    aHeroList[#aHeroList+1] = hero
+                                                else
+                                                    eHeroList[#eHeroList+1] = hero
+                                                end
+                                            end
+                                        end
+                                        gsoObjects.allyHeroes = aHeroList
+                                        gsoObjects.enemyHeroes = eHeroList
+                                    end
+                                    for i = 1, #gsoOnTick do
+                                        gsoOnTick[i]()
+                                    end
 end
-
-
-
-
-
-
-
 
 function OnLoad()
     gsoMenu:MenuElement({name = "Target Selector", id = "ts", type = MENU, leftIcon = gsoIcons["ts"] })
@@ -1241,8 +1186,8 @@ function OnLoad()
                 gsoMenu.ts.selected.draw:MenuElement({name = "Radius",  id = "radius", value = 150, min = 1, max = 300})
     gsoMenu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = gsoIcons["orb"] })
         gsoMenu.orb:MenuElement({name = "Delays", id = "delays", type = MENU})
-            gsoMenu.orb.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 0, min = 0, max = 25, step = 1 })
-            gsoMenu.orb.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = 0, max = 50, step = 1 })
+            gsoMenu.orb.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 0, min = -25, max = 25, step = 1 })
+            gsoMenu.orb.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -25, max = 25, step = 1 })
             gsoMenu.orb.delays:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
         gsoMenu.orb:MenuElement({name = "Keys", id = "keys", type = MENU})
             gsoMenu.orb.keys:MenuElement({name = "Combo Key", id = "combo", key = string.byte(" ")})
@@ -1284,76 +1229,53 @@ function OnLoad()
     print("Gamsteron Orb "..gsoVersion.." | loaded!")
 end
 
-
-
-
-
 function OnDraw()
     if not gsoMenu.orb.draw.enable:Value() or not gsoState.enabledOrb or gsoMyHero.dead then return end
-    
     local mePos = gsoMyHero.pos
     if gsoMenu.orb.draw.me.enable:Value() and mePos:ToScreen().onScreen then
         gsoDrawCircle(mePos, gsoMyHero.range + gsoMyHero.boundingRadius + 35, gsoMenu.orb.draw.me.width:Value(), gsoMenu.orb.draw.me.color:Value())
     end
-    
     if gsoMenu.orb.draw.he.enable:Value() then
-        local enemyHeroes = gsoGetEnemyHeroes(10000, gsoMyHero.pos, false, false)
-        for i = 1, #enemyHeroes do
-            local unit = enemyHeroes[i]
+        for i = 1, #gsoObjects.enemyHeroes do
+            local unit = gsoObjects.enemyHeroes[i]
             local pos = unit.pos
             if pos:ToScreen().onScreen then
                 gsoDrawCircle(pos, unit.range + unit.boundingRadius + gsoMyHero.boundingRadius, gsoMenu.orb.draw.he.width:Value(), gsoMenu.orb.draw.he.color:Value())
             end
         end
     end
-    
     if gsoMenu.orb.draw.cpos.enable:Value() then
         gsoDrawCircle(mousePos, gsoMenu.orb.draw.cpos.radius:Value(), gsoMenu.orb.draw.cpos.width:Value(), gsoMenu.orb.draw.cpos.color:Value())
     end
-    
-    if gsoMenu.ts.selected.draw.enable:Value() and gsoValid(gsoExtra.selectedTarget) then
-        gsoDrawCircle(gsoExtra.selectedTarget.pos, gsoMenu.ts.selected.draw.radius:Value(), gsoMenu.ts.selected.draw.width:Value(), gsoMenu.ts.selected.draw.color:Value())
+    if gsoMenu.ts.selected.draw.enable:Value() then
+        local selected = gsoExtra.selectedTarget
+        if selected and not selected.dead and selected.isTargetable and selected.visible and selected.valid then
+            gsoDrawCircle(selected.pos, gsoMenu.ts.selected.draw.radius:Value(), gsoMenu.ts.selected.draw.width:Value(), gsoMenu.ts.selected.draw.color:Value())
+        end
     end
-    
-    
     local lastHitable = gsoFarm.lastHitable
     for i = 1, #lastHitable do
         local minion = lastHitable[i]
         gsoDrawCircle(minion.pos, 50, 3, gsoDrawColor(150, 255, 255, 255))
     end
-    
     local almostLastHitable = gsoFarm.almostLastHitable
     for i = 1, #almostLastHitable do
         local minion = almostLastHitable[i]
         gsoDrawCircle(minion.pos, 50, 3, gsoDrawColor(150, 239, 159, 55))
     end
-    
 end
 
-
-
-
-
-
-
-
-
-
-
 function OnWndMsg(msg, wParam)
-    
     if not gsoState.enabledOrb or gsoMyHero.dead then return end
-    
     if wParam == HK_TCO then
         gsoTimers.lastAttackSend = gsoGameTimer()
         return
     end
     if msg == WM_LBUTTONDOWN and gsoMenu.ts.selected.enable:Value() and gsoGetTickCount() > gsoLastSelTick + 100 then
+        gsoExtra.selectedTarget = nil
         local num = 10000000
-        local enemyHeroes = gsoGetEnemyHeroes(10000, gsoMyHero.pos, false, false)
-              gsoExtra.selectedTarget = nil
-        for i = 1, #enemyHeroes do
-            local unit = enemyHeroes[i]
+        for i = 1, #gsoObjects.enemyHeroes do
+            local unit = gsoObjects.enemyHeroes[i]
             local distance = gsoDistance(mousePos, unit.pos)
             if distance < 150 and distance < num then
                 gsoExtra.selectedTarget = unit
@@ -1364,14 +1286,6 @@ function OnWndMsg(msg, wParam)
     end
 end
 
-
-
-
-
-
-
-
-
 class "__gsoOrbwalker"
     function __gsoOrbwalker:__init()
         self.Menu = gsoMenu
@@ -1380,6 +1294,27 @@ class "__gsoOrbwalker"
         self.State = gsoState
         self.Extra = gsoExtra
         self.Farm = gsoFarm
+        self.RegisterMenuKey = gsoRegisterMenuKey
+        self.GetAutoAttackRange = gsoGetAttackRange
+        self.CursorPositionChanged = gsoCursorPositionChanged
+        self.MinionHealthPrediction = gsoMinionHpPredAccuracy
+        self.GetTarget = gsoGetTarget
+        self.CalculateDamage = gsoCalculateDmg
+    end
+    function __gsoOrbwalker:OnMove(func)
+        gsoOnMove[#gsoOnMove+1] = func
+    end
+    function __gsoOrbwalker:OnAttack(func)
+        gsoOnAttack[#gsoOnAttack+1] = func
+    end
+    function __gsoOrbwalker:OnIssue(func)
+        gsoOnIssue[#gsoOnIssue+1] = func
+    end
+    function __gsoOrbwalker:OnEnemyHeroLoad(func)
+        gsoLoadHeroesToMenu[#gsoLoadHeroesToMenu+1] = func
+    end
+    function __gsoOrbwalker:OnUnkillableMinion(func)
+        gsoUnkillableMinion[#gsoUnkillableMinion+1] = func
     end
     function __gsoOrbwalker:CanChangeAnimationTime(func)
         gsoCanChangeAnim[#gsoCanChangeAnim+1] = func
@@ -1392,63 +1327,4 @@ class "__gsoOrbwalker"
     end
     function __gsoOrbwalker:AttackSpeed(func)
         gsoAttackSpeed = func
-    end
-    function __gsoOrbwalker:OnMove(func)
-        gsoOnMove[#gsoOnMove+1] = func
-    end
-    function __gsoOrbwalker:OnAttack(func)
-        gsoOnAttack[#gsoOnAttack+1] = func
-    end
-    function __gsoOrbwalker:CanMove(func)
-        gsoCanMove[#gsoCanMove+1] = func
-    end
-    function __gsoOrbwalker:CanAttack(func)
-        gsoCanAttack[#gsoCanAttack+1] = func
-    end
-    function __gsoOrbwalker:OnIssue(func)
-        gsoOnIssue[#gsoOnIssue+1] = func
-    end
-    function __gsoOrbwalker:OnEnemyHeroLoad(func)
-        gsoLoadHeroesToMenu[#gsoLoadHeroesToMenu+1] = func
-    end
-    function __gsoOrbwalker:EnableMove(boolean)
-        gsoState.enabledMove = boolean
-    end
-    function __gsoOrbwalker:EnableAttack(boolean)
-        gsoState.enabledAttack = boolean
-    end
-    function __gsoOrbwalker:EnableOrb(boolean)
-        gsoState.enabledOrb = boolean
-    end
-    function __gsoOrbwalker:ResetAttack()
-        gsoResetAttack = true
-    end
-    function __gsoOrbwalker:MinionHealthPrediction(unitHealth, unitHandle, time)
-        return gsoMinionHpPredAccuracy(unitHealth, unitHandle, time)
-    end
-    function __gsoOrbwalker:GetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE)
-        return gsoGetTarget(range, sourcePos, customEnemyHeroes, dmgType, bb, jaxE)
-    end
-    function __gsoOrbwalker:CalculateDamage(unit, spellData)
-        return gsoCalculateDmg(unit, spellData)
-    end
-    function __gsoOrbwalker:HeroIsValid(unit, jaxE)
-        return gsoValid(unit) and not gsoIsImmortal(unit, jaxE)
-    end
-    function __gsoOrbwalker:CursorPositionChanged(action, pos)
-        gsoSetCursorPos = action
-        gsoState.isChangingCursorPos = true
-        gsoExtraSetCursor = pos
-    end
-    function __gsoOrbwalker:GetEnemyHeroes(range, sourcePos, bb, jaxE)
-        return gsoGetEnemyHeroes(range, sourcePos, bb, jaxE)
-    end
-    function __gsoOrbwalker:GetAutoAttackRange(attacker, defender)
-        return gsoGetAttackRange(attacker, defender)
-    end
-    function __gsoOrbwalker:RegisterMenuKey(mode, key)
-        gsoRegisterMenuKey(mode, key)
-    end
-    function __gsoOrbwalker:OnUnkillableMinion(func)
-        gsoUnkillableMinion[#gsoUnkillableMinion+1] = func
     end
