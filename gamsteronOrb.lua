@@ -392,15 +392,6 @@ local gsoPredPos                  = function(ms, speed, projectilePos, enemyPos,
                                         end
                                         return enemyPos
                                     end
-local gsoHasBuff                  = function(unit, bName)
-                                        for i = 0, unit.buffCount do
-                                            local buff = unit:GetBuff(i)
-                                            if buff and buff.count > 0 and buff.name:lower() == bName then
-                                                return true
-                                            end
-                                        end
-                                        return false
-                                    end
 local gsoGetAttackRange           = function(attacker, defender)
                                         if not attacker then return -1 end
                                         local name = attacker.charName:lower()
@@ -421,7 +412,13 @@ local gsoGetAttackRange           = function(attacker, defender)
                                             end
                                             range = range == 0 and attacker.range or range
                                             if name == "caitlyn" then
-                                                range = range + (gsoHasBuff(attacker, "caitlynyordletrapinternal") and 650 or 0)
+                                                for i = 0, gsoMyHero.buffCount do
+                                                    local buff = gsoMyHero:GetBuff(i)
+                                                    if buff and buff.count > 0 and buff.name:lower() == "caitlynyordletrapinternal" then
+                                                        range = range + 650
+                                                        break
+                                                    end
+                                                end
                                             end
                                             return range + attacker.boundingRadius + (defender and defender.boundingRadius or 30)
                                         end
@@ -1311,6 +1308,7 @@ class "__gsoOrbwalker"
         self.Extra = gsoExtra
         self.Farm = gsoFarm
         self.Objects = gsoObjects
+        self.delayedActions = gsoDelayedActions
         self.RegisterMenuKey = gsoRegisterMenuKey
         self.GetAutoAttackRange = gsoGetAttackRange
         self.CursorPositionChanged = gsoCursorPositionChanged
