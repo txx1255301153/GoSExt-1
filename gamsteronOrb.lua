@@ -25,7 +25,7 @@ gsoOrbwalker:AttackSpeed(function() return attackSpeed() end)
 functions
 gsoOrbwalker.IsImmortal(unit, jaxE)
 gsoOrbwalker.MinionHealthPrediction(minionHealth, minionHandle, time)
-gsoOrbwalker.GetTarget(range, sourcePos enemyHeroes, dmgType, bb, jaxE)
+gsoOrbwalker.GetTarget(range, sourcePos, enemyHeroes, dmgType, bb, jaxE)
 gsoOrbwalker.CalculateDamage(unit, spellData)
 gsoOrbwalker.CursorPositionChanged(action, pos)
 gsoOrbwalker.GetAutoAttackRange(attacker, defender) ( added support for minions and turrets )
