@@ -590,28 +590,31 @@ function OnLoad()
     end
     return count
   end
-  local function gsoPosOnEnemyBoundingRadius(pos, id, from, units)
+  local function gsoPosOnEnemyBoundingRadius(pos, id, to, units)
     if units.minions then
+      local gsoEMinions = gsoObjects.enemyMinions
       for i = 1, #gsoEMinions do
         local unit = gsoEMinions[i]
-        local isOtherUnit = from.minion and id ~= unit.networkID or true
-        if gsoDistance(pos, unit.pos) < unit.boundingRadius then
+        local canCheck = to.minion and id ~= unit.networkID
+        if canCheck and gsoDistance(pos, unit.pos) < unit.boundingRadius then
           return true
         end
       end
     end
     if units.heroes then
+      local gsoEHeroes = gsoObjects.enemyHeroes
       for i = 1, #gsoEHeroes do
         local unit = gsoEHeroes[i]
-        local isOtherUnit = from.hero and id ~= unit.networkID or true
-        if gsoDistance(pos, unit.pos) < unit.boundingRadius then
+        local canCheck = to.hero and id ~= unit.networkID
+        if canCheck and gsoDistance(pos, unit.pos) < unit.boundingRadius then
           return true
         end
       end
     end
     if units.turrets then
-      for i = 1, #gsoEMinions do
-        local unit = gsoEMinions[i]
+      local gsoETurrets = gsoObjects.enemyTurrets
+      for i = 1, #gsoETurrets do
+        local unit = gsoETurrets[i]
         if gsoDistance(pos, unit.pos) < unit.boundingRadius then
           return true
         end
@@ -644,10 +647,10 @@ function OnLoad()
     gsoTimers.lastMoveSend = 0
     return true
   end
-  local function gsoCastSpellTarget(hkSpell, range, sourcePos, target, from, units)
+  local function gsoCastSpellTarget(hkSpell, range, sourcePos, target, to, units)
     local castpos = target and target.pos or nil
     local canCast = castpos and sourcePos and gsoDistance(castpos, sourcePos) < range
-          canCast = canCast and not gsoPosOnEnemyBoundingRadius(castpos, target.networkID, from, units) and castpos:ToScreen().onScreen
+          canCast = canCast and not gsoPosOnEnemyBoundingRadius(castpos, target.networkID, to, units) and castpos:ToScreen().onScreen
     if canCast then
       local cPos = cursorPos
       Control.SetCursorPos(castpos)
@@ -839,7 +842,7 @@ function OnLoad()
           end
           local rrange = gsoMeMenu.rset.semirashe.rrange:Value()
           local rTarget = gsoGetTarget(rrange, gsoMyHero.pos, rTargets, "ad", false, false)
-          if rTarget and gsoCastSpellSkillShot(hkSpell, gsoMyHero.pos, rTarget, { hero = true, minion = false }) then
+          if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget, { hero = true, minion = false }) then
             gsoSpellState.lr = GetTickCount()
             gsoState.enabledAttack = false
           end
@@ -997,6 +1000,23 @@ function OnLoad()
     gsoMenu.gsodraw:MenuElement({name = "Enabled",  id = "enabled", value = true})
   gsoMenu:MenuElement({name = "Items", id = "gsoitem", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/item.png" })
     gsoMenu.gsoitem:MenuElement({id = "botrk", name = "        botrk", value = true, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/botrk.png" })
+  gsoOrbwalker:OnMove(function(args)
+    local botrkMinus = gsoGetTickCount() - gsoItems.lastBotrk
+    if botrkMinus < 100 then
+      args.Process = false
+      return
+    end
+    local botrkTarget = args.Target
+    local canBotrk = botrkTarget and gsoDistance(botrkTarget.pos, gsoMyHero.pos) < 520
+    if canBotrk and gsoMenu.gsoitem.botrk:Value() and botrkMinus > 1000 and gsoGameTimer() > gsoTimers.lastMoveSend + 0.075 and gsoGameTimer() > gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.5 ) and gsoMode.isCombo() then
+      local botrkHK = gsoItems._botrk()
+      if botrkHK and gsoCastSpellTarget(botrkHK, 520, gsoMyHero.pos, botrkTarget, {hero=true}, {heroes=true}) then
+        gsoItems.lastBotrk = gsoGetTickCount()
+        args.Process = false
+        return
+      end
+    end
+  end)
   if myHero.charName == "Aatrox" then gsoLoadMyHero.__Aatrox() elseif myHero.charName == "Ahri" then gsoLoadMyHero.__Ahri() elseif myHero.charName == "Akali" then gsoLoadMyHero.__Akali() elseif myHero.charName == "Alistar" then gsoLoadMyHero.__Alistar() elseif myHero.charName == "Amumu" then gsoLoadMyHero.__Amumu() elseif myHero.charName == "Anivia" then gsoLoadMyHero.__Anivia() elseif myHero.charName == "Annie" then gsoLoadMyHero.__Annie() elseif myHero.charName == "Ashe" then gsoLoadMyHero.__Ashe() elseif myHero.charName == "AurelionSol" then gsoLoadMyHero.__AurelionSol() elseif myHero.charName == "Azir" then gsoLoadMyHero.__Azir() elseif myHero.charName == "Bard" then gsoLoadMyHero.__Bard() elseif myHero.charName == "Blitzcrank" then gsoLoadMyHero.__Blitzcrank() elseif myHero.charName == "Brand" then gsoLoadMyHero.__Brand() elseif myHero.charName == "Braum" then gsoLoadMyHero.__Braum() elseif myHero.charName == "Caitlyn" then gsoLoadMyHero.__Caitlyn() elseif myHero.charName == "Camille" then gsoLoadMyHero.__Camille() elseif myHero.charName == "Cassiopeia" then gsoLoadMyHero.__Cassiopeia() elseif myHero.charName == "Chogath" then gsoLoadMyHero.__Chogath() elseif myHero.charName == "Corki" then gsoLoadMyHero.__Corki() elseif myHero.charName == "Darius" then gsoLoadMyHero.__Darius() elseif myHero.charName == "Diana" then gsoLoadMyHero.__Diana() elseif myHero.charName == "DrMundo" then gsoLoadMyHero.__DrMundo() elseif myHero.charName == "Draven" then gsoLoadMyHero.__Draven() elseif myHero.charName == "Ekko" then gsoLoadMyHero.__Ekko() elseif myHero.charName == "Elise" then gsoLoadMyHero.__Elise() elseif myHero.charName == "Evelynn" then gsoLoadMyHero.__Evelynn() elseif myHero.charName == "Ezreal" then gsoLoadMyHero.__Ezreal() elseif myHero.charName == "Fiddlesticks" then gsoLoadMyHero.__Fiddlesticks() elseif myHero.charName == "Fiora" then gsoLoadMyHero.__Fiora() elseif myHero.charName == "Fizz" then gsoLoadMyHero.__Fizz() elseif myHero.charName == "Galio" then gsoLoadMyHero.__Galio() elseif myHero.charName == "Gangplank" then gsoLoadMyHero.__Gangplank() elseif myHero.charName == "Garen" then gsoLoadMyHero.__Garen() elseif myHero.charName == "Gnar" then gsoLoadMyHero.__Gnar() elseif myHero.charName == "Gragas" then gsoLoadMyHero.__Gragas() elseif myHero.charName == "Graves" then gsoLoadMyHero.__Graves() elseif myHero.charName == "Hecarim" then gsoLoadMyHero.__Hecarim() elseif myHero.charName == "Heimerdinger" then gsoLoadMyHero.__Heimerdinger() elseif myHero.charName == "Illaoi" then gsoLoadMyHero.__Illaoi() elseif myHero.charName == "Irelia" then gsoLoadMyHero.__Irelia() elseif myHero.charName == "Ivern" then gsoLoadMyHero.__Ivern() elseif myHero.charName == "Janna" then gsoLoadMyHero.__Janna() elseif myHero.charName == "JarvanIV" then gsoLoadMyHero.__JarvanIV() elseif myHero.charName == "Jax" then gsoLoadMyHero.__Jax() elseif myHero.charName == "Jayce" then gsoLoadMyHero.__Jayce() elseif myHero.charName == "Jhin" then gsoLoadMyHero.__Jhin() elseif myHero.charName == "Jinx" then gsoLoadMyHero.__Jinx() elseif myHero.charName == "Kalista" then gsoLoadMyHero.__Kalista() elseif myHero.charName == "Karma" then gsoLoadMyHero.__Karma() elseif myHero.charName == "Karthus" then gsoLoadMyHero.__Karthus() elseif myHero.charName == "Kassadin" then gsoLoadMyHero.__Kassadin() elseif myHero.charName == "Katarina" then gsoLoadMyHero.__Katarina() elseif myHero.charName == "Kayle" then gsoLoadMyHero.__Kayle() elseif myHero.charName == "Kayn" then gsoLoadMyHero.__Kayn() elseif myHero.charName == "Kennen" then gsoLoadMyHero.__Kennen() elseif myHero.charName == "Khazix" then gsoLoadMyHero.__Khazix() elseif myHero.charName == "Kindred" then gsoLoadMyHero.__Kindred() elseif myHero.charName == "Kled" then gsoLoadMyHero.__Kled() elseif myHero.charName == "KogMaw" then gsoLoadMyHero.__KogMaw() elseif myHero.charName == "Leblanc" then gsoLoadMyHero.__Leblanc() elseif myHero.charName == "LeeSin" then gsoLoadMyHero.__LeeSin() elseif myHero.charName == "Leona" then gsoLoadMyHero.__Leona() elseif myHero.charName == "Lissandra" then gsoLoadMyHero.__Lissandra() elseif myHero.charName == "Lucian" then gsoLoadMyHero.__Lucian() elseif myHero.charName == "Lulu" then gsoLoadMyHero.__Lulu() elseif myHero.charName == "Lux" then gsoLoadMyHero.__Lux() elseif myHero.charName == "Malphite" then gsoLoadMyHero.__Malphite() elseif myHero.charName == "Malzahar" then gsoLoadMyHero.__Malzahar() elseif myHero.charName == "Maokai" then gsoLoadMyHero.__Maokai() elseif myHero.charName == "MasterYi" then gsoLoadMyHero.__MasterYi() elseif myHero.charName == "MissFortune" then gsoLoadMyHero.__MissFortune() elseif myHero.charName == "MonkeyKing" then gsoLoadMyHero.__MonkeyKing() elseif myHero.charName == "Mordekaiser" then gsoLoadMyHero.__Mordekaiser() elseif myHero.charName == "Morgana" then gsoLoadMyHero.__Morgana() elseif myHero.charName == "Nami" then gsoLoadMyHero.__Nami() elseif myHero.charName == "Nasus" then gsoLoadMyHero.__Nasus() elseif myHero.charName == "Nautilus" then gsoLoadMyHero.__Nautilus() elseif myHero.charName == "Nidalee" then gsoLoadMyHero.__Nidalee() elseif myHero.charName == "Nocturne" then gsoLoadMyHero.__Nocturne() elseif myHero.charName == "Nunu" then gsoLoadMyHero.__Nunu() elseif myHero.charName == "Olaf" then gsoLoadMyHero.__Olaf() elseif myHero.charName == "Orianna" then gsoLoadMyHero.__Orianna() elseif myHero.charName == "Ornn" then gsoLoadMyHero.__Ornn() elseif myHero.charName == "Pantheon" then gsoLoadMyHero.__Pantheon() elseif myHero.charName == "Poppy" then gsoLoadMyHero.__Poppy() elseif myHero.charName == "Quinn" then gsoLoadMyHero.__Quinn() elseif myHero.charName == "Rakan" then gsoLoadMyHero.__Rakan() elseif myHero.charName == "Rammus" then gsoLoadMyHero.__Rammus() elseif myHero.charName == "RekSai" then gsoLoadMyHero.__RekSai() elseif myHero.charName == "Renekton" then gsoLoadMyHero.__Renekton() elseif myHero.charName == "Rengar" then gsoLoadMyHero.__Rengar() elseif myHero.charName == "Riven" then gsoLoadMyHero.__Riven() elseif myHero.charName == "Rumble" then gsoLoadMyHero.__Rumble() elseif myHero.charName == "Ryze" then gsoLoadMyHero.__Ryze() elseif myHero.charName == "Sejuani" then gsoLoadMyHero.__Sejuani() elseif myHero.charName == "Shaco" then gsoLoadMyHero.__Shaco() elseif myHero.charName == "Shen" then gsoLoadMyHero.__Shen() elseif myHero.charName == "Shyvana" then gsoLoadMyHero.__Shyvana() elseif myHero.charName == "Singed" then gsoLoadMyHero.__Singed() elseif myHero.charName == "Sion" then gsoLoadMyHero.__Sion() elseif myHero.charName == "Sivir" then gsoLoadMyHero.__Sivir() elseif myHero.charName == "Skarner" then gsoLoadMyHero.__Skarner() elseif myHero.charName == "Sona" then gsoLoadMyHero.__Sona() elseif myHero.charName == "Soraka" then gsoLoadMyHero.__Soraka() elseif myHero.charName == "Swain" then gsoLoadMyHero.__Swain() elseif myHero.charName == "Syndra" then gsoLoadMyHero.__Syndra() elseif myHero.charName == "TahmKench" then gsoLoadMyHero.__TahmKench() elseif myHero.charName == "Taliyah" then gsoLoadMyHero.__Taliyah() elseif myHero.charName == "Talon" then gsoLoadMyHero.__Talon() elseif myHero.charName == "Taric" then gsoLoadMyHero.__Taric() elseif myHero.charName == "Teemo" then gsoLoadMyHero.__Teemo() elseif myHero.charName == "Thresh" then gsoLoadMyHero.__Thresh() elseif myHero.charName == "Tristana" then gsoLoadMyHero.__Tristana() elseif myHero.charName == "Trundle" then gsoLoadMyHero.__Trundle() elseif myHero.charName == "Tryndamere" then gsoLoadMyHero.__Tryndamere() elseif myHero.charName == "TwistedFate" then gsoLoadMyHero.__TwistedFate() elseif myHero.charName == "Twitch" then gsoLoadMyHero.__Twitch() elseif myHero.charName == "Udyr" then gsoLoadMyHero.__Udyr() elseif myHero.charName == "Urgot" then gsoLoadMyHero.__Urgot() elseif myHero.charName == "Varus" then gsoLoadMyHero.__Varus() elseif myHero.charName == "Vayne" then gsoLoadMyHero.__Vayne() elseif myHero.charName == "Veigar" then gsoLoadMyHero.__Veigar() elseif myHero.charName == "Velkoz" then gsoLoadMyHero.__Velkoz() elseif myHero.charName == "Vi" then gsoLoadMyHero.__Vi() elseif myHero.charName == "Viktor" then gsoLoadMyHero.__Viktor() elseif myHero.charName == "Vladimir" then gsoLoadMyHero.__Vladimir() elseif myHero.charName == "Volibear" then gsoLoadMyHero.__Volibear() elseif myHero.charName == "Warwick" then gsoLoadMyHero.__Warwick() elseif myHero.charName == "Xayah" then gsoLoadMyHero.__Xayah() elseif myHero.charName == "Xerath" then gsoLoadMyHero.__Xerath() elseif myHero.charName == "XinZhao" then gsoLoadMyHero.__XinZhao() elseif myHero.charName == "Yasuo" then gsoLoadMyHero.__Yasuo() elseif myHero.charName == "Yorick" then gsoLoadMyHero.__Yorick() elseif myHero.charName == "Zac" then gsoLoadMyHero.__Zac() elseif myHero.charName == "Zed" then gsoLoadMyHero.__Zed() elseif myHero.charName == "Ziggs" then gsoLoadMyHero.__Ziggs() elseif myHero.charName == "Zilean" then gsoLoadMyHero.__Zilean() elseif myHero.charName == "Zoe" then gsoLoadMyHero.__Zoe() elseif myHero.charName == "Zyra" then gsoLoadMyHero.__Zyra() end
   gsoMenu.gsodraw:MenuElement({name = "Circles", id = "circle1", type = MENU,
     onclick = function()
