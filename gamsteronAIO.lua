@@ -1025,6 +1025,7 @@ function OnLoad()
               end
               if wTarget and gsoCastSpellSkillShot(HK_W, mePos, wTarget, {hero = true}) then
                 gsoSpellState.lw = gsoGetTickCount()
+                gsoState.enabledAttack = false
                 args.Process = false
                 return
               end
