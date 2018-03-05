@@ -1016,7 +1016,7 @@ function OnLoad()
           local wout = gsoMeMenu.wset.wout:Value()
           if not wout or not isTarget then
             local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
-            if canW and gsoAIO.Utils:_isReady(gT, { q = 0, w = 1000, e = 75, r = 550 }, _W) and (not isTarget or gsoSpellState.w) then
+            if canW and gsoIsReady(_W, { q = 0, w = 1000, e = 75, r = 550 }) and (not isTarget or gsoSpellState.w) then
               local wTarget
               if isTarget then
                 wTarget = target
@@ -1056,6 +1056,7 @@ function OnLoad()
           end
           local rrange = gsoMeMenu.rset.semirjinx.rrange:Value()
           local rTarget = gsoGetTarget(rrange, gsoMyHero.pos, rTargets, "ad", false, false)
+          gsoSpellData.r.range = gsoMeMenu.rset.semirjinx.rrange:Value()
           if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget, {hero = true}) then
             gsoSpellState.lr = GetTickCount()
             gsoState.enabledAttack = false
