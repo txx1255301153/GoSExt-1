@@ -1086,7 +1086,30 @@ function OnTick()
                                         gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
                                         gsoLastKey = 0
                                     end
-                                    if gsoMode.isCombo() or gsoMode.isHarass() or gsoMode.isLastHit() or gsoMode.isLaneClear() then
+                                    local isCombo = gsoMode.isCombo()
+                                    if isCombo or gsoMode.isHarass() or gsoMode.isLastHit() or gsoMode.isLaneClear() then
+                                        if not aaTarget and isCombo then
+                                          local t = gsoExtra.lastTarget
+                                          if t and not t.dead and t.isTargetable and t.valid and t.visible and gsoDistance(t.pos, gsoMyHero.pos) < gsoMyHero.range + gsoMyHero.boundingRadius + t.boundingRadius - 35 then
+                                            local isImmortal = false
+                                            local hhp = 100 * ( t.health / t.maxHealth )
+                                            if gsoUndyingBuffs["JaxCounterStrike"] ~= nil then    gsoUndyingBuffs["JaxCounterStrike"] = true end
+                                            if gsoUndyingBuffs["kindredrnodeathbuff"] ~= nil then gsoUndyingBuffs["kindredrnodeathbuff"] = hhp < 10 end
+                                            if gsoUndyingBuffs["UndyingRage"] ~= nil then         gsoUndyingBuffs["UndyingRage"] = hhp < 15 end
+                                            if gsoUndyingBuffs["ChronoShift"] ~= nil then         gsoUndyingBuffs["ChronoShift"] = hhp < 15; gsoUndyingBuffs["chronorevive"] = hhp < 15 end
+                                            for i = 0, t.buffCount do
+                                                local buff = t:GetBuff(i)
+                                                if buff and buff.count > 0 and gsoUndyingBuffs[buff.name] then
+                                                    isImmortal = true
+                                                    break
+                                                end
+                                            end
+                                            if not isImmortal then
+                                              aaTarget = t
+                                            end
+                                          end
+                                        end
+                                      
                                         if aaTarget and gsoState.canAttack then
                                             if ExtLibEvade and ExtLibEvade.Evading then
                                                 gsoState.isMoving = true
