@@ -926,6 +926,7 @@ function OnTick()
                                             end
                                             aaTarget = gsoGetTarget(meRange, mePos, enemyHeroesList, "ad", true, true)
                                         elseif gsoMode.isHarass() then
+                                            gsoState.canMove = gsoState.canMove and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency
                                             local min = 10000000
                                             local lastHitable = gsoFarm.lastHitable
                                             local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
@@ -979,6 +980,7 @@ function OnTick()
                                                 aaTarget = gsoGetTarget(meRange, mePos, enemyHeroesList, "ad", true, true)
                                             end
                                         elseif gsoMode.isLastHit() then
+                                            gsoState.canMove = gsoState.canMove and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency
                                             local min = 10000000
                                             local lastHitable = gsoFarm.lastHitable
                                             local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
@@ -990,6 +992,7 @@ function OnTick()
                                                 end
                                             end
                                         elseif gsoMode.isLaneClear() then
+                                            gsoState.canMove = gsoState.canMove and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency
                                             local min = 10000000
                                             local lastHitable = gsoFarm.lastHitable
                                             local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
