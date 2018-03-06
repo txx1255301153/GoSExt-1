@@ -1,5 +1,5 @@
 
-local gsoVersion = "2.0"
+local gsoVersion = "2.1"
 
  --[[
 
@@ -1355,7 +1355,6 @@ class "__gsoOrbwalker"
         self.Extra = gsoExtra
         self.Farm = gsoFarm
         self.Objects = gsoObjects
-        self.DelayedActions = gsoDelayedActions
         self.RegisterMenuKey = gsoRegisterMenuKey
         self.GetAutoAttackRange = gsoGetAttackRange
         self.CursorPositionChanged = gsoCursorPositionChanged
@@ -1365,6 +1364,9 @@ class "__gsoOrbwalker"
         self.IsImmortal = gsoIsImmortal
         self.Distance = gsoDistance
         self.Extended = gsoExtended
+    end
+    function __gsoOrbwalker:AddAction(action)
+        gsoDelayedActions[#gsoDelayedActions+1] = action
     end
     function __gsoOrbwalker:OnTick(func)
         gsoOnTick[#gsoOnTick+1] = func
