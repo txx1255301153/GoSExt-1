@@ -757,7 +757,7 @@ function OnTick()
                                                         end
                                                         gsoFarm.allyActiveAttacks[k1][k2].FlyTime = gsoDistance(v2.Ally.Pos, predPos) / v2.Speed
                                                     end
-                                                    local projectileOnEnemy = gsoExtra.maxLatency + 0.02
+                                                    local projectileOnEnemy = gsoExtra.maxLatency + 0.025
                                                     local noEnemy = not v2.Enemy.Minion or v2.Enemy.Minion.dead or not enemyHandles[v2.Enemy.Handle]
                                                     if gsoGameTimer() > v2.StartTime + gsoFarm.allyActiveAttacks[k1][k2].FlyTime - projectileOnEnemy or noEnemy then
                                                         gsoFarm.allyActiveAttacks[k1][k2] = nil
@@ -791,7 +791,7 @@ function OnTick()
                                         mLH = gsoMenu.orb.delays.lhDelay:Value() * 0.001
                                         aaData = gsoMyHero.attackData
                                         projSpeed = aaData.projectileSpeed
-                                        windUp = aaData.windUpTime + gsoExtra.minLatency + 0.05 - mLH
+                                        windUp = aaData.windUpTime + gsoExtra.minLatency - mLH
                                         anim = aaData.animationTime
                                         meDmg = myHero.totalDamage + gsoBonusDmg()
                                     end
@@ -816,8 +816,6 @@ function OnTick()
                                             lastHitable[#lastHitable+1] = { Minion = enemy.Minion, pos = minionPos, health = accuracyHpPred }
                                         else
                                             if gsoMinionHpPredFast(minionHandle, minionPos, minionHealth, anim*3, allyMinionsCache, enemyHandles) - dmgOnMinion < 0 then
-                                                gsoShouldWait = true
-                                                gsoShouldWaitT = gsoGameTimer()
                                                 almostLastHitable[#almostLastHitable+1] = enemy.Minion
                                             else
                                                 laneClearable[#laneClearable+1] = { Minion = enemy.Minion, pos = minionPos, health = accuracyHpPred }
@@ -854,12 +852,10 @@ function OnTick()
                                             break
                                         end
                                     end
-                                    local animExtra = gsoMenu.orb.delays.anim:Value() * 0.001
                                     local sToAA = gsoServerStart - windUpAA
                                           sToAA = sToAA + gsoTimers.animationTime
                                           sToAA = sToAA - gsoExtra.minLatency
                                           sToAA = sToAA - 0.05
-                                          sToAA = sToAA + animExtra
                                           sToAA = sToAA - gsoGameTimer()
                                     local sToMove = gsoServerStart + extraWindUp
                                           sToMove = sToMove - gsoExtra.minLatency
@@ -1003,7 +999,19 @@ function OnTick()
                                                     aaTarget = minion.Minion
                                                 end
                                             end
-                                            if not aaTarget and #gsoFarm.almostLastHitable == 0 and not gsoShouldWait then
+                                            
+                                            local almostLastHitable = gsoFarm.almostLastHitable
+                                            local canLaneClear = true
+                                            for i = 1, #almostLastHitable do
+                                              local minion = almostLastHitable[i]
+                                              if gsoDistance(gsoMyHero.pos, minion.pos) < gsoMyHero.range + gsoMyHero.boundingRadius + 50 then
+                                                  gsoShouldWait = true
+                                                  gsoShouldWaitT = gsoGameTimer()
+                                                  canLaneClear = false
+                                                  break
+                                              end
+                                            end
+                                            if not aaTarget and canLaneClear and not gsoShouldWait then
                                                 local eHeroList = {}
                                                 local aHeroList = {}
                                                 for i = 1, gsoGameHeroCount() do
@@ -1238,8 +1246,7 @@ function OnLoad()
                 gsoMenu.ts.selected.draw:MenuElement({name = "Radius",  id = "radius", value = 150, min = 1, max = 300})
     gsoMenu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = gsoIcons["orb"] })
         gsoMenu.orb:MenuElement({name = "Delays", id = "delays", type = MENU})
-            gsoMenu.orb.delays:MenuElement({name = "Extra Animation Delay", id = "anim", value = 0, min = 0, max = 25, step = 1 })
-            gsoMenu.orb.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 0, min = 0, max = 25, step = 1 })
+            gsoMenu.orb.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 5, min = 0, max = 25, step = 1 })
             gsoMenu.orb.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = 0, max = 25, step = 1 })
             gsoMenu.orb.delays:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
         gsoMenu.orb:MenuElement({name = "Keys", id = "keys", type = MENU})
