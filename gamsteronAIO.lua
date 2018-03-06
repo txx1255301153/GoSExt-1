@@ -1655,7 +1655,137 @@ function OnLoad()
     __Shyvana = function() end,
     __Singed = function() end,
     __Sion = function() end,
-    __Sivir = function() end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    __Sivir = function()
+      local champInfo = { lastReset = 0, asNoW = myHero.attackSpeed }
+        local gsoMeMenu = gsoMenu:MenuElement({name = "Sivir", id = "gsosivir", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/sivir.png" })
+          gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+          gsoMeMenu:MenuElement({name = "W settings", id = "wset", type = MENU })
+            gsoMeMenu.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            gsoMeMenu.wset:MenuElement({id = "harass", name = "Harass", value = false})
+      gsoDrawData = { q = true, qr = 1250, r = true, rr = 1000 }
+      gsoSpellData.q = { delay = 0.25, range = 1250, width = 60, speed = 1350, sType = "line", col = false, mCol = false, hCol = false, out = true }
+      gsoOrbwalker:AttackSpeed(function()
+        local wDiff = gsoGetTickCount() - gsoSpellState.lwk - gsoExtra.minLatency
+        if wDiff > 3500 and wDiff < 4500 then
+          return champInfo.asNoW
+        end
+        return gsoMyHero.attackSpeed
+      end)
+      gsoOrbwalker:OnMove(function(args)
+        local target = args.Target
+        local isTarget = target ~= nil
+        local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+        local isCombo = gsoMode.isCombo()
+        local isHarass = gsoMode.isHarass()
+        local mePos = gsoMyHero.pos
+        local enemyList = {}
+        for i = 1, #gsoObjects.enemyHeroes do
+          local hero = gsoObjects.enemyHeroes[i]
+          if hero and hero.visible and not gsoImmortal(hero, false) then
+            enemyList[#enemyList+1] = hero
+          end
+        end
+        
+        if not gsoCheckTimers({ q = 250, w = 0, e = 0, r = 0 }) then
+          args.Process = false
+          return
+        end
+        if not gsoState.enabledAttack and gsoCheckTimers({ q = 350, w = 0, e = 0, r = 0 }) then
+          gsoState.enabledAttack = true
+          return
+        end
+        
+        local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
+              canW = canW and isTarget and gsoGameTimer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.5 )
+              canW = canW and gsoIsReadyFast(_W, { q = 250, w = 1000, e = 0, r = 0 })
+        if canW and gsoCastSpell(HK_W) then
+          gsoSpellState.lw = GetTickCount()
+          gsoSpellState.q = false
+          gsoOrbwalker:AddAction({ func = function() gsoExtra.resetAttack = true end, endTime = gsoGameTimer() + 0.05 })
+          args.Process = false
+          return
+        end
+        
+        if not isTarget or afterAttack then
+          
+          -- USE Q :
+          local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
+                canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 0, e = 0, r = 0 }) and (not isTarget or gsoSpellState.q)
+          if canQ then
+            local qTarget
+            if isTarget then
+              qTarget = target
+            else
+              qTarget = gsoGetTarget(1250, gsoMyHero.pos, enemyList, "ad", false, false)
+            end
+            if qTarget and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qTarget, {hero = true}) then
+              gsoSpellState.lq = GetTickCount()
+              gsoState.enabledAttack = false
+              args.Process = false
+              return
+            end
+          end
+        end
+      end)
+      gsoOrbwalker:OnIssue(function(issue)
+        if issue.attack then
+          gsoSpellState.q = true; gsoSpellState.w = true; gsoSpellState.e = true; gsoSpellState.r = true
+        end
+      end)
+    end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     __Skarner = function() end,
     __Sona = function() end,
     __Soraka = function() end,
