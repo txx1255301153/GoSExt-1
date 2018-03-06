@@ -700,6 +700,7 @@ function OnLoad()
     
     
     
+
     
     
     __Ashe = function()
@@ -1429,7 +1430,195 @@ function OnLoad()
     __LeeSin = function() end,
     __Leona = function() end,
     __Lissandra = function() end,
-    __Lucian = function() end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    __Lucian = function()
+      local champInfo = { hasRBuff = false }
+      local gsoMeMenu = gsoMenu:MenuElement({name = "Lucian", id = "gsolucian", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/lucian.png" })
+        gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+          gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        gsoMeMenu:MenuElement({name = "W settings", id = "wset", type = MENU })
+          gsoMeMenu.wset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        gsoMeMenu:MenuElement({name = "E settings", id = "eset", type = MENU })
+          gsoMeMenu.eset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.eset:MenuElement({id = "harass", name = "Harass", value = false})
+      gsoDrawData = { q = true, qr = 500+120, w = true, wr = 900+350, e = true, er = 425, r = true, rr = 1200 }
+      gsoSpellData.w = { delay = 0.25, range = 1250, width = 75, speed = 1600, sType = "line", col = false, mCol = false, hCol = false, out = true }
+      gsoOrbwalker:OnMove(function(args)
+        local target = args.Target
+        local isTarget = target ~= nil
+        local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+        local isCombo = gsoMode.isCombo()
+        local isHarass = gsoMode.isHarass()
+        local mePos = gsoMyHero.pos
+        local enemyList = {}
+        for i = 1, #gsoObjects.enemyHeroes do
+          local hero = gsoObjects.enemyHeroes[i]
+          if hero and hero.visible and not gsoImmortal(hero, false) then
+            enemyList[#enemyList+1] = hero
+          end
+        end
+        
+        if not gsoCheckTimers({ q = 350, w = 250, e = 450, r = 0 }) then
+          args.Process = false
+          return
+        end
+        if not gsoState.enabledAttack and gsoCheckTimers({ q = 350, w = 200, e = 300, r = 0 }) then
+          gsoState.enabledAttack = true
+          return
+        end
+        
+        if not isTarget or afterAttack then
+          local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
+                canE = canE and (not isTarget or (isTarget and gsoSpellState.e)) and gsoIsReadyFast(_E, { q = 500, w = 250, e = 1000, r = 500 }) and not champInfo.hasRBuff
+          if canE then
+            local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
+            for i = 1, #enemyList do
+              local hero = enemyList[i]
+              local heroPos = hero.pos
+              local distToMouse = gsoDistance(mePos, mousePos)
+              local distToHero = gsoDistance(mePos, heroPos)
+              local distToEndPos = gsoDistance(mePos, hero.pathing.endPos)
+              local extRange
+              if distToEndPos > distToHero then
+                extRange = distToMouse > 325 and 325 or distToMouse
+              else
+                extRange = distToMouse > 425 and 425 or distToMouse
+              end
+              local extPos = mePos + (mousePos-mePos):Normalized() * extRange
+              local distEnemyToExt = gsoDistance(extPos, heroPos)
+              if distEnemyToExt < meRange + hero.boundingRadius and gsoCastSpell(HK_E) then
+                gsoSpellState.le = GetTickCount()
+                gsoSpellState.q = false
+                gsoSpellState.w = false
+                gsoSpellState.r = false
+                gsoExtra.resetAttack = true
+                gsoState.enabledAttack = false
+                args.Process = false
+                return
+              end
+            end
+          end
+          local canQ = (isCombo and gsoMeMenu.qset.combo:Value()) or (isHarass and gsoMeMenu.qset.harass:Value())
+                canQ = canQ and isTarget and gsoSpellState.q and gsoIsReady(_Q, { q = 1000, w = 400, e = 400, r = 500 }) and not champInfo.hasRBuff
+          if canQ and gsoCastSpellTarget(HK_Q, 500 + gsoMyHero.boundingRadius + target.boundingRadius, mePos, target, {hero=true}, {minions=true, heroes=true}) then
+            gsoSpellState.lq = GetTickCount()
+            gsoSpellState.w = false
+            gsoSpellState.r = false
+            gsoState.enabledAttack = false
+            args.Process = false
+            return
+          end
+          local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
+                canW = canW and (not isTarget or gsoSpellState.w) and gsoIsReady(_W, { q = 500, w = 350, e = 350, r = 500 }) and not champInfo.hasRBuff
+          if canW then
+            local wTarget
+            if isTarget then
+              wTarget = target
+            else
+              wTarget = gsoGetTarget(1350, gsoMyHero.pos, enemyList, "ad", false, false)
+            end
+            if wTarget and gsoCastSpellSkillShot(HK_W, mePos, wTarget, {hero = true}) then
+              gsoSpellState.lw = GetTickCount()
+              gsoSpellState.q = false
+              gsoSpellState.r = false
+              gsoState.enabledAttack = false
+              args.Process = false
+              return
+            end
+          end
+        end
+      end)
+      gsoOrbwalker:OnTick(function()
+        if gsoHasBuff(gsoMyHero, "lucianr") then
+          champInfo.hasRBuff = true
+          gsoState.enabledAttack = false
+        else
+          champInfo.hasRBuff = false
+          gsoState.enabledAttack = true
+        end
+      end)
+      gsoOrbwalker:OnIssue(function(issue)
+        if issue.attack then
+          gsoSpellState.q = true; gsoSpellState.w = true; gsoSpellState.e = true; gsoSpellState.r = true
+        end
+      end)
+    end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     __Lulu = function() end,
     __Lux = function() end,
     __Malphite = function() end,
