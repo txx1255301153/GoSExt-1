@@ -46,7 +46,7 @@ function  __gsoTPred:__init()
     end
     return result
   end
-  self.GetCollisionPoint = function(t)
+  self.GetCollisionPoint = function(t, sP1x, sP1y, S, K)
       return t and {x = sP1x+S*t, y = sP1y+K*t} or nil
   end
   self.VectorMovementCollision = function(startPoint1, endPoint1, v1, startPoint2, v2, delay)
@@ -86,7 +86,7 @@ function  __gsoTPred:__init()
     elseif dist==0 then
       t1 = 0
     end
-    return t1, self.GetCollisionPoint(t1), t2, self.GetCollisionPoint(t2), dist
+    return t1, self.GetCollisionPoint(t1, sP1x, sP1y, S, K), t2, self.GetCollisionPoint(t2, sP1x, sP1y, S, K), dist
   end
   self.GetCurrentWayPoints = function(object)
     local result = {}
@@ -187,9 +187,6 @@ function  __gsoTPred:__init()
   end
   self.CheckCol = function(unit, minion, Position, delay, radius, range, speed, from, draw)
     if unit.networkID == minion.networkID then 
-      return false
-    end
-    if from and minion and minion.pos and minion.type ~= myHero.type and _G.SDK.HealthPrediction:GetPrediction(minion, delay + self.GetDistance(from, minion.pos) / speed - Game.Latency()/1000) < 0 then
       return false
     end
     local waypoints = self.GetCurrentWayPoints(minion)
@@ -581,6 +578,7 @@ function OnLoad()
   end
   local function gsoCountEnemyHeroesInRange(sourcePos, range, bb)
     local count = 0
+    local gsoEHeroes = gsoObjects.enemyHeroes
     for i = 1, #gsoEHeroes do
       local unit = gsoEHeroes[i]
       local extraRange = bb and unit.boundingRadius or 0
