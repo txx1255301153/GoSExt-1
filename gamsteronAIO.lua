@@ -1795,7 +1795,187 @@ function OnLoad()
     __Taliyah = function() end,
     __Talon = function() end,
     __Taric = function() end,
-    __Teemo = function() end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    __Teemo = function()
+      local gsoMeMenu = gsoMenu:MenuElement({name = "Teemo", id = "gsoteemo", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/teemo.png" })
+        gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+            gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+            gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        gsoMeMenu:MenuElement({name = "W settings", id = "wset", type = MENU })
+            gsoMeMenu.wset:MenuElement({id = "mindist", name = "Min. distance to enemy", value = 850, min = 680, max = 1250, step = 10 })
+            gsoMeMenu.wset:MenuElement({id = "combo", name = "Combo", value = true})
+            gsoMeMenu.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        gsoMeMenu:MenuElement({name = "R settings", id = "rset", type = MENU })
+            gsoMeMenu.rset:MenuElement({id = "immo", name = "only if enemy isImmobile", value = true})
+            gsoMeMenu.rset:MenuElement({id = "combo", name = "Combo", value = true})
+            gsoMeMenu.rset:MenuElement({id = "harass", name = "Harass", value = false})
+      local function _teemoR()
+        local rLvl = gsoMyHero:GetSpellData(_R).level
+        if rLvl == 0 then rLvl = 1 end
+        return 150 + ( 250 * rLvl )
+      end
+      gsoDrawData = { q = true, qr = 680, r = true, rf = function() return _teemoR() end }
+      gsoSpellData.r = { delay = 0.25, range = 0, width = 200, speed = 1000, sType = "circular", col = false, mCol = false, hCol = false, out = false }
+      gsoOrbwalker:OnMove(function(args)
+        local target = args.Target
+        local isTarget = target ~= nil
+        local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+        local isCombo = gsoMode.isCombo()
+        local isHarass = gsoMode.isHarass()
+        local mePos = gsoMyHero.pos
+        local enemyList = {}
+        for i = 1, #gsoObjects.enemyHeroes do
+          local hero = gsoObjects.enemyHeroes[i]
+          if hero and hero.visible and not gsoImmortal(hero, false) then
+            enemyList[#enemyList+1] = hero
+          end
+        end
+        
+        if not gsoCheckTimers({ q = 250, w = 0, e = 0, r = 250 }) then
+          args.Process = false
+          return
+        end
+        if not gsoState.enabledAttack and gsoCheckTimers({ q = 350, w = 0, e = 0, r = 350 }) then
+          gsoState.enabledAttack = true
+          return
+        end
+        
+        if not isTarget or afterAttack then
+          
+          -- USE Q :
+          local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
+                canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 0, e = 0, r = 750 }) and (not isTarget or gsoSpellState.q)
+          if canQ then
+            local qTarget
+            if isTarget then
+              qTarget = target
+            else
+              qTarget = gsoGetTarget(680, gsoMyHero.pos, enemyList, "ap", false, false)
+            end
+            if qTarget and gsoCastSpellTarget(HK_Q, 680, mePos, qTarget, {hero=true}, {minions=true, heroes=true}) then
+              gsoSpellState.r = false
+              gsoSpellState.lq = gsoGetTickCount()
+              gsoState.enabledAttack = false
+              args.Process = false
+              return
+            end
+          end
+          
+          -- USE R :
+          local canR = ( isCombo and gsoMeMenu.rset.combo:Value() ) or ( isHarass and gsoMeMenu.rset.harass:Value() )
+                canR = canR and gsoIsReady(_R, { q = 350, w = 0, e = 0, r = 1000 }) and (not isTarget or gsoSpellState.r)
+          if canR then
+            local rRange = 150 + ( 250 * gsoMyHero:GetSpellData(_R).level )
+            gsoSpellData.r.range = rRange
+            local onlyImmobile = gsoMeMenu.rset.immo:Value()
+            local rTarget = onlyImmobile and gsoGetImmobileEnemy(mePos, enemyList, rRange) or nil
+            if not rTarget and not onlyImmobile then
+              local isTeemoTarget = isTarget and gsoDistance(mePos, target.pos) < rRange
+              if isTeemoTarget then
+                rTarget = target
+              else
+                rTarget = gsoGetTarget(rRange, gsoMyHero.pos, enemyList, "ap", false, false)
+              end
+            end
+            if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget, {hero = true}) then
+              gsoSpellState.q = false
+              gsoSpellState.lr = gsoGetTickCount()
+              gsoState.enabledAttack = false
+              args.Process = false
+              return
+            end
+          end
+          
+          -- USE W :
+          local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
+                canW = canW and gsoIsReadyFast(_W, { q = 350, w = 1000, e = 0, r = 350 })
+          if canW then
+            for i = 1, #enemyList do
+              local hero = enemyList[i]
+              if gsoDistance(mePos, hero.pos) < gsoMeMenu.wset.mindist:Value() and gsoCastSpell(HK_W) then
+                gsoSpellState.lw = GetTickCount()
+                return
+              end
+            end
+          end
+        end
+      end)
+      gsoOrbwalker:OnIssue(function(issue)
+        if issue.attack then
+          gsoSpellState.q = true; gsoSpellState.w = true; gsoSpellState.e = true; gsoSpellState.r = true
+        end
+      end)
+    end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     __Thresh = function() end,
     __Tristana = function() end,
     __Trundle = function() end,
