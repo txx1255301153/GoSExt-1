@@ -1,5 +1,5 @@
 
-local gsoVersion = "1.9"
+local gsoVersion = "2.0"
 
  --[[
 
@@ -528,6 +528,8 @@ local gsoCursorPositionChanged    = function(action, pos)
                                         gsoState.isChangingCursorPos = true
                                         gsoExtraSetCursor = pos
                                     end
+--local c = 0
+--local t = os.clock()
 function OnTick()
                                     for i = 1, gsoGameHeroCount() do end
                                     for i = 1, gsoGameMinionCount() do end
@@ -668,6 +670,7 @@ function OnTick()
                                     end
                                     gsoObjects.allyMinions = aMinionList
                                     gsoObjects.enemyMinions = eMinionList
+
                                     for i = 1, #allyMinionsCache do
                                         local ally = allyMinionsCache[i]
                                         if ally.AAData.endTime > gsoGameTimer() then
@@ -715,60 +718,71 @@ function OnTick()
                                             end
                                         end
                                     end
-                                    for allyID, allyActiveAttacks in pairs(gsoFarm.allyActiveAttacks) do
+                                    for k1, v1 in pairs(gsoFarm.allyActiveAttacks) do
                                         local count = 0
-                                        for activeAttackID, activeAttack in pairs(gsoFarm.allyActiveAttacks[allyID]) do
+                                        for k2, v2 in pairs(gsoFarm.allyActiveAttacks[k1]) do
                                             count = count + 1
-                                            local noAlly = not activeAttack.Ally.Minion or activeAttack.Ally.Minion.dead or not allyHandles[activeAttack.Ally.Handle]
-                                            if activeAttack.Speed == 0 and noAlly then
-                                                gsoFarm.allyActiveAttacks[allyID] = nil
+                                            local noAlly = not v2.Ally.Minion or v2.Ally.Minion.dead or not allyHandles[v2.Ally.Handle]
+                                            if v2.Speed == 0 and noAlly then
+                                                gsoFarm.allyActiveAttacks[k1] = nil
                                                 break
                                             end
-                                            if not activeAttack.Canceled then
+                                            if not v2.Canceled then
                                                 local canContinue = true
-                                                if not enemyHandles[activeAttack.Enemy.Handle] then
-                                                    gsoFarm.allyActiveAttacks[allyID][activeAttackID] = nil
+                                                if not enemyHandles[v2.Enemy.Handle] then
+                                                    gsoFarm.allyActiveAttacks[k1][k2] = nil
                                                     canContinue = false
                                                 end
                                                 if canContinue then
                                                     local enemyPos, enemyPath, enemyMS
-                                                    local ranged = activeAttack.Speed > 0
+                                                    local ranged = v2.Speed > 0
                                                     if ranged then
-                                                        enemyPos = enemyPositions[activeAttack.Enemy.Handle]
-                                                        enemyPath = enemyPaths[activeAttack.Enemy.Handle]
-                                                        enemyMS = enemyMoveSpeeds[activeAttack.Enemy.Handle]
+                                                        enemyPos = enemyPositions[v2.Enemy.Handle]
+                                                        enemyPath = enemyPaths[v2.Enemy.Handle]
+                                                        enemyMS = enemyMoveSpeeds[v2.Enemy.Handle]
                                                         local predPos
                                                         if enemyPath.hasMovePath then
-                                                            local pPos    = activeAttack.Pos
+                                                            local pPos    = v2.Pos
                                                             local uPos    = enemyPos
                                                             local ePos    = enemyPath.endPos
                                                             local distUP  = gsoDistance(pPos, uPos)
                                                             local distEP  = gsoDistance(pPos, ePos)
                                                             if distEP > distUP then
-                                                                return uPos:Extended(ePos, 25+(enemyMS*(distUP / (activeAttack.Speed - enemyMS))))
+                                                                predPos = uPos:Extended(ePos, 25+(enemyMS*(distUP / (v2.Speed - enemyMS))))
                                                             else
-                                                                return uPos:Extended(ePos, 25+(enemyMS*(distUP / (activeAttack.Speed + enemyMS))))
+                                                                predPos = uPos:Extended(ePos, 25+(enemyMS*(distUP / (v2.Speed + enemyMS))))
                                                             end
                                                         else
                                                             predPos = enemyPos
                                                         end
-                                                        gsoFarm.allyActiveAttacks[allyID][activeAttackID].FlyTime = gsoDistance(activeAttack.Ally.Pos, predPos) / activeAttack.Speed
+                                                        gsoFarm.allyActiveAttacks[k1][k2].FlyTime = gsoDistance(v2.Ally.Pos, predPos) / v2.Speed
                                                     end
                                                     local projectileOnEnemy = gsoExtra.maxLatency + 0.02
-                                                    local noEnemy = not activeAttack.Enemy.Minion or activeAttack.Enemy.Minion.dead or not enemyHandles[activeAttack.Enemy.Handle]
-                                                    if gsoGameTimer() > activeAttack.StartTime + gsoFarm.allyActiveAttacks[allyID][activeAttackID].FlyTime - projectileOnEnemy or noEnemy then
-                                                        gsoFarm.allyActiveAttacks[allyID][activeAttackID] = nil
+                                                    local noEnemy = not v2.Enemy.Minion or v2.Enemy.Minion.dead or not enemyHandles[v2.Enemy.Handle]
+                                                    if gsoGameTimer() > v2.StartTime + gsoFarm.allyActiveAttacks[k1][k2].FlyTime - projectileOnEnemy or noEnemy then
+                                                        gsoFarm.allyActiveAttacks[k1][k2] = nil
                                                     elseif ranged then
-                                                        local s = ( gsoGameTimer() - activeAttack.StartTime ) * activeAttack.Speed
-                                                        gsoFarm.allyActiveAttacks[allyID][activeAttackID].Pos = activeAttack.Ally.Pos:Extended(enemyPos, s)
+                                                        local s = ( gsoGameTimer() - v2.StartTime ) * v2.Speed
+                                                        gsoFarm.allyActiveAttacks[k1][k2].Pos = v2.Ally.Pos:Extended(enemyPos, s)
                                                     end
                                                 end
                                             end
                                         end
                                         if count == 0 then
-                                            gsoFarm.allyActiveAttacks[allyID] = nil
+                                            gsoFarm.allyActiveAttacks[k1] = nil
                                         end
                                     end
+                                    --[[
+                                    local cc = c + 1
+                                    if cc > c then
+                                      c = cc
+                                      local e = os.clock()-t
+                                      if e > 0.07 then
+                                      print(e)
+                                      end
+                                      t = os.clock()
+                                    end
+                                    --]]
                                     if gsoShouldWait and gsoGameTimer() > gsoShouldWaitT + 0.5 then
                                         gsoShouldWait = false
                                     end
