@@ -769,7 +769,8 @@ function OnLoad()
               if t and gsoCastSpellSkillShot(HK_R, mePos, t) then
                 gsoSpellTimers.lr = gsoGetTickCount()
                 gsoSpellCan.w = false
-                return
+                gsoSpellCan.botrk = false
+                return false
               end
             end
             if gsoMeMenu.rset.rci:Value() then
@@ -777,7 +778,8 @@ function OnLoad()
               if t and gsoCastSpellSkillShot(HK_R, mePos, t.pos) then
                 gsoSpellTimers.lr = gsoGetTickCount()
                 gsoSpellCan.w = false
-                return
+                gsoSpellCan.botrk = false
+                return false
               end
             end
           end
@@ -791,7 +793,8 @@ function OnLoad()
               champInfo.asNoQ = myHero.attackSpeed
               gsoSpellTimers.lq = gsoGetTickCount()
               gsoExtra.resetAttack = true
-              return
+              gsoSpellCan.botrk = false
+              return false
             end
           end
           --W
@@ -802,11 +805,13 @@ function OnLoad()
               local t = isTarget == true and target or gsoGetSpellTarget(1200, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, false, false)
               if t and gsoCastSpellSkillShot(HK_W, mePos, t) then
                 gsoSpellTimers.lw = GetTickCount()
-                return
+                gsoSpellCan.botrk = false
+                return false
               end
             end
           end
         end
+        return true
       end)
       
       --[[ on tick ]]
@@ -830,24 +835,18 @@ function OnLoad()
           local rrange = gsoMeMenu.rset.semirashe.rrange:Value()
           local rTarget = gsoGetSpellTarget(rrange, rTargets, gsoMyHero.pos, false, false)
           if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget) then
-            gsoSpellTimers.lrr = GetTickCount()
+            gsoSpellTimers.lr = GetTickCount()
+            gsoSpellCan.botrk = false
           end
         end
       end)
       
+      --[[ can move | attack ]]
+      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 0, w = 200, e = 200, r = 200 }) end)
+      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 0, w = 300, e = 300, r = 300 }) end)
+      
       --[[ on issue ]]
-      gsoOrbwalker:OnIssue(function(args)
-        if args.Move then
-          if not gsoCheckTimers({ q = 0, w = 250, e = 250, r = 250 }) then
-            args.Process = false
-          end
-        else
-          if not gsoCheckTimers({ q = 0, w = 300, e = 300, r = 300 }) then
-            args.Process = false
-          end
-          gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true
-        end
-      end)
+      gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
     end,
     
     
