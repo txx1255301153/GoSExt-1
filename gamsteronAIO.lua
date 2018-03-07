@@ -661,16 +661,6 @@ function OnLoad()
   local function gsoIsReadyFast(spell, sT)
     return gsoCheckTimers(sT) and Game.CanUseSpell(spell) == 0
   end
-  local function gsoGetSpellTarget(range, enemyList, sourcePos, dmgAP, bb)
-    local enemyList_inrange = {}
-    for i = 1, #enemyList do
-      local unit = enemyList[i]
-      if gsoDistance(sourcePos, unit.pos) < range + (bb == true and unit.boundingRadius or 0) then
-        enemyList_inrange[#enemyList_inrange+1] = unit
-      end
-    end
-    return gsoGetTarget(enemyList_inrange, sourcePos, dmgAP)
-  end
   local gsoLoadMyHero = {
     __Aatrox = function() end,
     __Ahri = function() end,
@@ -802,7 +792,7 @@ function OnLoad()
             local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
                   canW = canW and (not isTarget or gsoSpellCan.w) and gsoIsReady(_W, { q = 0, w = 1000, e = 250, r = 250 })
             if canW then
-              local t = isTarget == true and target or gsoGetSpellTarget(1200, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, false, false)
+              local t = isTarget == true and target or gsoGetTarget(1200, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, false, false)
               if t and gsoCastSpellSkillShot(HK_W, mePos, t) then
                 gsoSpellTimers.lw = GetTickCount()
                 gsoSpellCan.botrk = false
@@ -833,7 +823,7 @@ function OnLoad()
             end
           end
           local rrange = gsoMeMenu.rset.semirashe.rrange:Value()
-          local rTarget = gsoGetSpellTarget(rrange, rTargets, gsoMyHero.pos, false, false)
+          local rTarget = gsoGetTarget(rrange, rTargets, gsoMyHero.pos, false, false)
           if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget) then
             gsoSpellTimers.lr = GetTickCount()
             gsoSpellCan.botrk = false
@@ -956,18 +946,19 @@ function OnLoad()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
           local target = gsoExtra.lastTarget
-          local isTarget = lastTarget and lastTarget.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, lastTarget, true, true)
+          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           --E
           local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
           if canE and gsoIsReady(_E, { q = 650, w = 550, e = 1000, r = 550 }) and gsoCastSpellTarget(HK_E, 900, mePos, gsoGetImmobileEnemy(mePos, gsoObjects.enemyHeroes_spell, 900)) then
             gsoSpellTimers.le = gsoGetTickCount()
-            return
+            gsoSpellCan.botrk = false
+            return false
           end
           --Q
           local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-          if canQ and gsoIsReadyFast(_Q, { q = 650, w = 550, e = 75, r = 550 }) then
+          if canQ and afterAttack and gsoIsReadyFast(_Q, { q = 650, w = 550, e = 75, r = 550 }) then
             local canCastQ = false
             local extraQ = 25 * myHero:GetSpellData(_Q).level
             local qRange = 575 + extraQ
@@ -979,7 +970,8 @@ function OnLoad()
             end
             if canCastQ and gsoCastSpell(HK_Q) then
               gsoSpellTimers.lq = gsoGetTickCount()
-              return
+              gsoSpellCan.botrk = false
+              return false
             end
           end
           --W
@@ -988,20 +980,23 @@ function OnLoad()
             if not wout or not isTarget then
               local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
               if canW and gsoIsReady(_W, { q = 0, w = 1000, e = 75, r = 550 }) and (not isTarget or gsoSpellCan.w) then
-                local wTarget = isTarget and target or gsoGetSpellTarget(1450, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, false, false)
+                local wTarget = target
+                if not isTarget then wTarget = gsoGetTarget(1450, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, false, false) end
                 if wTarget and gsoCastSpellSkillShot(HK_W, mePos, wTarget) then
                   gsoSpellTimers.lw = gsoGetTickCount()
-                  return
+                  gsoSpellCan.botrk = false
+                  return false
                 end
               end
             end
           end
         end
+        return true
       end)
       
       --[[ on tick ]]
       gsoOrbwalker:OnTick(function()
-        champInfo.hasQBuff = gsoHasBuff(gsoMyHero, "jinxq")
+        champInfo.hasQBuff = gsoHasBuff(gsoMyHero, "jinxq") == true
         -- semi r
         if gsoMeMenu.rset.semirjinx.enabled:Value() and gsoIsReady(_R, { q = 0, w = 550, e = 75, r = 1000 }) then
           local enemyList = gsoObjects.enemyHeroes_spell
@@ -1017,27 +1012,21 @@ function OnLoad()
             end
           end
           local rrange = gsoMeMenu.rset.semirjinx.rrange:Value()
-          local rTarget = gsoGetSpellTarget(rrange, rTargets, gsoMyHero.pos, false, false)
+          local rTarget = gsoGetTarget(rrange, rTargets, gsoMyHero.pos, false, false)
           gsoSpellData.r.range = rrange
           if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget) then
-            gsoSpellTimers.lrr = GetTickCount()
+            gsoSpellTimers.lr = GetTickCount()
+            gsoSpellCan.botrk = false
           end
         end
       end)
+      gsoOrbwalker:CanChangeAnimationTime(function() return true end)
+      --[[ can move | attack ]]
+      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 0, w = 500, e = 0, r = 500 }) end)
+      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 0, w = 600, e = 0, r = 600 }) end)
       
       --[[ on issue ]]
-      gsoOrbwalker:OnIssue(function(args)
-        if args.Move then
-          if not gsoCheckTimers({ q = 0, w = 500, e = 0, r = 500 }) then
-            args.Process = false
-          end
-        else
-          if not gsoCheckTimers({ q = 0, w = 600, e = 0, r = 600 }) then
-            args.Process = false
-          end
-          gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true
-        end
-      end)
+      gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
     end,
     
     
@@ -1149,7 +1138,7 @@ function OnLoad()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
           local target = gsoExtra.lastTarget
-          local isTarget = lastTarget and lastTarget.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, lastTarget, true, true)
+          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           --W
           local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
@@ -1181,7 +1170,7 @@ function OnLoad()
             local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
                   canQ = canQ and not stopQIfW and meMana > gsoMyHero:GetSpellData(_Q).mana and (not isTarget or gsoSpellCan.q)
             if canQ and gsoIsReady(_Q, { q = 1000, w = 150, e = 350, r = 350 }) then
-              local qTarget = isTarget and target or gsoGetSpellTarget(1175, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false)
+              local qTarget = isTarget and target or gsoGetTarget(1175, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false)
               if qTarget and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qTarget) then
                 gsoSpellTimers.lq = GetTickCount()
                 gsoSpellCan.e = false
@@ -1196,7 +1185,7 @@ function OnLoad()
                   canE = canE and not stopEIfW and meMana > gsoMyHero:GetSpellData(_E).mana and (not isTarget or gsoSpellCan.e)
                   canE = canE and ( myHero.mana * 100 ) / myHero.maxMana > gsoMeMenu.eset.emana:Value() and gsoIsReady(_E, { q = 350, w = 150, e = 1000, r = 350 }) 
             if canE then
-              local eTarget = isTarget and target or gsoGetSpellTarget(1280, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false)
+              local eTarget = isTarget and target or gsoGetTarget(1280, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false)
               if eTarget and gsoCastSpellSkillShot(HK_E, gsoMyHero.pos, eTarget) then
                 gsoSpellTimers.le = GetTickCount()
                 gsoSpellCan.q = false
@@ -1227,7 +1216,7 @@ function OnLoad()
               else
                 rTargets = enemyList
               end
-              local rTarget = isTarget and target or gsoGetSpellTarget(gsoSpellData.r.range + 110, rTargets, gsoMyHero.pos, true, false)
+              local rTarget = isTarget and target or gsoGetTarget(gsoSpellData.r.range + 110, rTargets, gsoMyHero.pos, true, false)
               if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget) then
                 gsoSpellTimers.lr = GetTickCount()
                 gsoSpellCan.q = false
@@ -1273,7 +1262,7 @@ function OnLoad()
                 rTargets[#rTargets+1] = hero
               end
             end
-            if gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, gsoGetSpellTarget(gsoSpellData.r.range + 110, rTargets, gsoMyHero.pos, true, false)) then
+            if gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, gsoGetTarget(gsoSpellData.r.range + 110, rTargets, gsoMyHero.pos, true, false)) then
               gsoSpellTimers.lr = GetTickCount()
               gsoSpellCan.q = false
               gsoSpellCan.e = false
@@ -1296,7 +1285,7 @@ function OnLoad()
             else
               rTargets = enemyList
             end
-            if gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, gsoGetSpellTarget(gsoSpellData.r.range + 110, rTargets, gsoMyHero.pos, true, false)) then
+            if gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, gsoGetTarget(gsoSpellData.r.range + 110, rTargets, gsoMyHero.pos, true, false)) then
               gsoSpellTimers.lr = GetTickCount()
               gsoSpellCan.q = false
               gsoSpellCan.e = false
