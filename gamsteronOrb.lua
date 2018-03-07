@@ -457,7 +457,7 @@ local function gsoIsHeroValid(range, sourcePos, hero, jaxE, bb)
     return false
   end
 end
-local function gsoGetTarget(enemyHeroes, sourcePos, dmgAP)
+local function gsoGetTarget(range, enemyHeroes, sourcePos, dmgAP, bb)
   local selected = gsoExtra.selectedTarget
   local menuSelected = gsoMenu.ts.selected.enable:Value()
   local selectedID
@@ -469,27 +469,37 @@ local function gsoGetTarget(enemyHeroes, sourcePos, dmgAP)
   for i = 1, #enemyHeroes do
     local x
     local unit = enemyHeroes[i]
-    if selectedID and unit.networkID == selectedID then
-      return selected
-    elseif mode == 1 then
-      local unitName = unit.charName
-      local multiplier = gsoPriorityMultiplier[gsoMenu.ts.priority[unitName] and gsoMenu.ts.priority[unitName]:Value() or 6]
-      local def = isAP and multiplier * (unit.magicResist - gsoMyHero.magicPen) or multiplier * (unit.armor - gsoMyHero.armorPen)
-      if def > 0 then
-        def = isAP and gsoMyHero.magicPenPercent * def or gsoMyHero.bonusArmorPenPercent * def
+    local move_lat = 1.5 * gsoExtra.maxLatency
+    local move_t = 0.15 + move_lat
+    local move_s = gsoMyHero.ms * move_t
+    local unitBB = 0
+    if bb == true then unitBB = unit.boundingRadius end
+    local dist1 = gsoDistance(sourcePos, unit.pos)
+    local dist2 = gsoDistance(unit.pos, gsoExtended(sourcePos, sourcePos, gsoExtra.lastMovePos, move_s))
+    local dist3 = dist2 > dist1 and dist2 or dist1
+    if dist3 < range + unitBB then
+      if selectedID and unit.networkID == selectedID then
+        return selected
+      elseif mode == 1 then
+        local unitName = unit.charName
+        local multiplier = gsoPriorityMultiplier[gsoMenu.ts.priority[unitName] and gsoMenu.ts.priority[unitName]:Value() or 6]
+        local def = isAP and multiplier * (unit.magicResist - gsoMyHero.magicPen) or multiplier * (unit.armor - gsoMyHero.armorPen)
+        if def > 0 then
+          def = isAP and gsoMyHero.magicPenPercent * def or gsoMyHero.bonusArmorPenPercent * def
+        end
+        x = ( ( unit.health * multiplier * ( ( 100 + def ) / 100 ) ) - ( unit.totalDamage * unit.attackSpeed * 2 ) ) - unit.ap
+      elseif mode == 2 then
+        x = gsoDistance(unit.pos, sourcePos)
+      elseif mode == 3 then
+        x = unit.health
+      elseif mode == 4 then
+        local unitName = unit.charName
+              x = gsoMenu.ts.priority[unitName] and gsoMenu.ts.priority[unitName]:Value() or 6
       end
-      x = ( ( unit.health * multiplier * ( ( 100 + def ) / 100 ) ) - ( unit.totalDamage * unit.attackSpeed * 2 ) ) - unit.ap
-    elseif mode == 2 then
-      x = gsoDistance(unit.pos, sourcePos)
-    elseif mode == 3 then
-      x = unit.health
-    elseif mode == 4 then
-      local unitName = unit.charName
-            x = gsoMenu.ts.priority[unitName] and gsoMenu.ts.priority[unitName]:Value() or 6
-    end
-    if x < num then
-      num = x
-      result = unit
+      if x < num then
+        num = x
+        result = unit
+      end
     end
   end
   return result
@@ -948,17 +958,7 @@ local function gsoAddUnits()
 end
 
 local function gsoGetComboTarget()
-  local enemyHeroes = gsoObjects.enemyHeroes_attack
-  local mePos = gsoMyHero.pos
-  local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
-  local attackHeroes = {}
-  for i = 1, #enemyHeroes do
-    local hero = enemyHeroes[i]
-    if gsoDistance(mePos, hero.pos) < meRange + hero.boundingRadius then
-      attackHeroes[#attackHeroes+1] = hero
-    end
-  end
-  return gsoGetTarget(attackHeroes, mePos, gsoAPDmg)
+  return gsoGetTarget(gsoMyHero.range + gsoMyHero.boundingRadius, gsoObjects.enemyHeroes_attack, gsoMyHero.pos, gsoAPDmg, true)
 end
 
 local function gsoGetLastHitTarget()
@@ -966,6 +966,7 @@ local function gsoGetLastHitTarget()
   local lastHitable = gsoFarm.lastHitable
   local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
   local lastHitTarget = nil
+  local mePos = gsoMyHero.pos
   for i = 1, #lastHitable do
     local minion = lastHitable[i]
     if gsoDistance(mePos, minion.pos) < meRange + 25 and minion.health < min then
@@ -983,13 +984,14 @@ end
 
 local function gsoGetLaneClearTarget()
   local result = gsoGetHarassTarget()
+  local mePos = gsoMyHero.pos
   if result == nil then
     local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
     local almostLastHitable = gsoFarm.almostLastHitable
     local canLaneClear = true
     for i = 1, #almostLastHitable do
       local minion = almostLastHitable[i]
-      if gsoDistance(gsoMyHero.pos, minion.pos) < meRange + 50 then
+      if gsoDistance(mePos, minion.pos) < meRange + 50 then
           gsoShouldWait = true
           gsoShouldWaitT = gsoGameTimer()
           canLaneClear = false
@@ -1005,7 +1007,6 @@ local function gsoGetLaneClearTarget()
         end
       end
       local min = 10000000
-      local mePos = gsoMyHero.pos
       local laneClearable = gsoFarm.laneClearable
       for i = 1, #laneClearable do
         local minion = laneClearable[i]
