@@ -2100,7 +2100,7 @@ function OnLoad()
     if gsoMode.isCombo() then
       local target = gsoExtra.lastTarget
       local isTarget = target ~= nil and target.type == Obj_AI_Hero and gsoIsHeroValid(520, target, false, false) == true and gsoGetTickCount() - gsoItems.lastBotrk > 1000
-      if isTarget and gsoMenu.gsoitem.botrk:Value() and gsoGameTimer() > gsoTimers.lastMoveSend + 0.075 and gsoGameTimer() > gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 ) then
+      if isTarget and gsoMenu.gsoitem.botrk:Value() and gsoGameTimer() > gsoTimers.lastMoveSend + 0.075 and gsoGameTimer() > gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.5 ) then
         local botrkHK = gsoItems._botrk()
         if botrkHK and gsoSpellCan.botrk == true and gsoCastSpellTarget(botrkHK, 520, gsoMyHero.pos, target) then
           gsoItems.lastBotrk = gsoGetTickCount()
