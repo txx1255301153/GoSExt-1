@@ -1194,13 +1194,14 @@ function OnDraw()
         gsoDrawCircle(mePos, gsoMyHero.range + gsoMyHero.boundingRadius + 35, gsoMenu.orb.draw.me.width:Value(), gsoMenu.orb.draw.me.color:Value())
     end
     if gsoMenu.orb.draw.he.enable:Value() then
-        for i = 1, #gsoObjects.enemyHeroes do
-            local unit = gsoObjects.enemyHeroes[i]
-            local pos = unit.pos
-            if pos:ToScreen().onScreen then
-                gsoDrawCircle(pos, unit.range + unit.boundingRadius + gsoMyHero.boundingRadius, gsoMenu.orb.draw.he.width:Value(), gsoMenu.orb.draw.he.color:Value())
-            end
+      local enemyList = gsoObjects.enemyHeroes_immortal
+      for i = 1, #enemyList do
+        local unit = enemyList[i]
+        local pos = unit.pos
+        if pos:ToScreen().onScreen then
+          gsoDrawCircle(pos, unit.range + unit.boundingRadius + gsoMyHero.boundingRadius, gsoMenu.orb.draw.he.width:Value(), gsoMenu.orb.draw.he.color:Value())
         end
+      end
     end
     if gsoMenu.orb.draw.cpos.enable:Value() then
         gsoDrawCircle(mousePos, gsoMenu.orb.draw.cpos.radius:Value(), gsoMenu.orb.draw.cpos.width:Value(), gsoMenu.orb.draw.cpos.color:Value())
@@ -1232,8 +1233,9 @@ function OnWndMsg(msg, wParam)
     if msg == WM_LBUTTONDOWN and gsoMenu.ts.selected.enable:Value() and gsoGetTickCount() > gsoLastSelTick + 100 then
         gsoExtra.selectedTarget = nil
         local num = 10000000
-        for i = 1, #gsoObjects.enemyHeroes do
-            local unit = gsoObjects.enemyHeroes[i]
+        local enemyList = gsoObjects.enemyHeroes_immortal
+        for i = 1, #enemyList do
+            local unit = enemyList[i]
             local distance = gsoDistance(mousePos, unit.pos)
             if distance < 150 and distance < num then
                 gsoExtra.selectedTarget = unit
