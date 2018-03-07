@@ -234,6 +234,7 @@ local gsoControlIsKeyDown = Control.IsKeyDown
 local gsoControlSetCursor = Control.SetCursorPos
 local gsoControlMouseEvent = Control.mouse_event
 
+local gsoAPDmg = false
 local gsoLatencies = {}
 local gsoDelayedActions = {}
 local gsoEnemyHeroesNames = {}
@@ -340,6 +341,8 @@ local gsoPriorityMultiplier = {
     [6] = 1.75
 }
 
+local gsoCanMove = {}
+local gsoCanAttack = {}
 local gsoOnAttack = {}
 local gsoOnMove = {}
 local gsoUnkillableMinion = {}
@@ -448,7 +451,7 @@ local function gsoCalculateDmg(unit, spellData)
   assert(false, "[234] CalculateDmg: spellData - expected array { dmgType = string(ap or ad or mixed or true), dmgAP = number or dmgAD = number or ( dmgAP = number and dmgAD = number ) or dmgTrue = number } !")
 end
 local function gsoIsHeroValid(range, sourcePos, hero, jaxE, bb)
-  if hero and gsoDistance(hero.pos, sourcePos) < range + (bb == true and hero.boundingRadius or 0) and not hero.dead and  hero.isTargetable and hero.valid and and hero.visible and not gsoIsImmortal(hero, jaxE) then
+  if hero and gsoDistance(hero.pos, sourcePos) < range + (bb == true and hero.boundingRadius or 0) and not hero.dead and hero.isTargetable and hero.valid and hero.visible and not gsoIsImmortal(hero, jaxE) then
     return true
   else
     return false
@@ -945,7 +948,17 @@ local function gsoAddUnits()
 end
 
 local function gsoGetComboTarget()
-  return gsoGetTarget(gsoMyHero.range + gsoMyHero.boundingRadius, mePos, gsoObjects.enemyHeroes_attack, "ad", true, true)
+  local enemyHeroes = gsoObjects.enemyHeroes_attack
+  local mePos = gsoMyHero.pos
+  local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
+  local attackHeroes = {}
+  for i = 1, #enemyHeroes do
+    local hero = enemyHeroes[i]
+    if gsoDistance(mePos, hero.pos) < meRange + hero.boundingRadius then
+      attackHeroes[#attackHeroes+1] = hero
+    end
+  end
+  return gsoGetTarget(attackHeroes, mePos, gsoAPDmg)
 end
 
 local function gsoGetLastHitTarget()
@@ -1009,21 +1022,29 @@ end
 local function gsoAttackMove(unit)
   if ExtLibEvade and ExtLibEvade.Evading then gsoState.isMoving=true;gsoState.isAttacking=false;gsoState.isEvading=true;return;end
   if not unit and gsoMode.isCombo() and gsoIsHeroValid(gsoMyHero.range+gsoMyHero.boundingRadius, gsoMyHero.pos, gsoExtra.lastTarget, true, true) then unit = gsoExtra.lastTarget end
+  for i = 1, #gsoCanMove do
+    if gsoCanMove[i]() == false then
+      gsoState.canMove = false
+    end
+  end
+  for i = 1, #gsoCanAttack do
+    if gsoCanAttack[i]() == false then
+      gsoState.canAttack = false
+    end
+  end
   if unit and gsoState.canAttack then
-    for i = 1, #gsoOnAttack do gsoOnAttack[i]() end
-    local canAttack = true
-    local args = { Process = true, Target = unit, Move = false, Attack = true }
-    for i = 1, #gsoOnIssue do
-      gsoOnIssue[i](args)
-      if not args.Process or not args.Target then
-        gsoState.isMoving = false
-        gsoState.isAttacking = false
-        canAttack = false
-      else
-        unit = args.Target
+    for i = 1, #gsoOnAttack do
+      if gsoOnAttack[i]() == false then
+        gsoState.canAttack = false
       end
     end
-    if canAttack then
+    for i = 1, #gsoOnIssue do
+      local result = gsoOnIssue[i](1)
+      if result == false then
+        gsoState.canAttack = false
+      end
+    end
+    if gsoState.canAttack then
       local cPos = cursorPos
       local tPos = unit.pos
       gsoControlSetCursor(tPos)
@@ -1036,26 +1057,26 @@ local function gsoAttackMove(unit)
       gsoSetCursorPos = { endTime = gsoGetTickCount() + 50, action = function() gsoControlSetCursor(cPos.x, cPos.y) end, active = true }
       gsoTimers.lastMoveSend = 0
       gsoTimers.lastAttackSend = gsoGameTimer()
-      gsoExtra.lastTarget = args.Target
+      gsoExtra.lastTarget = unit
       gsoState.isMoving = false
       gsoState.isAttacking = true
       gsoExtra.resetAttack = false
     end
   elseif gsoState.canMove then
-    for i = 1, #gsoOnMove do gsoOnMove[i]() end
+    for i = 1, #gsoOnMove do
+      if gsoOnMove[i]() == false then
+        gsoState.canMove = false
+      end
+    end
     if gsoGameTimer() > gsoTimers.lastMoveSend + ( gsoMenu.orb.delays.humanizer:Value() * 0.001 ) then
       if ExtLibEvade and ExtLibEvade.Evading then gsoState.isMoving=true;gsoState.isAttacking=false;gsoState.isEvading=true;return;end
-      local args = { Process = true, Target = aaTarget, Move = true, Attack = false }
-      local canMove = true
       for i = 1, #gsoOnIssue do
-        gsoOnIssue[i](args)
-        if not args.Process then
-          gsoState.isMoving = false
-          gsoState.isAttacking = false
-          canMove = false
+        local result = gsoOnIssue[i](0)
+        if result == false then
+          gsoState.canMove = false
         end
       end
-      if canMove then
+      if gsoState.canMove then
         if gsoControlIsKeyDown(2) then gsoLastKey = gsoGetTickCount() end
         gsoExtra.lastMovePos = mousePos
         gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
@@ -1255,6 +1276,13 @@ class "__gsoOrbwalker"
         self.Distance = gsoDistance
         self.Extended = gsoExtended
         self.AddAction = function(action) gsoDelayedActions[#gsoDelayedActions+1] = action end
+        self.IsAP = function() gsoAPDmg = true end
+    end
+    function __gsoOrbwalker:CanMove(func)
+        gsoCanMove[#gsoCanMove+1] = func
+    end
+    function __gsoOrbwalker:CanAttack(func)
+        gsoCanAttack[#gsoCanAttack+1] = func
     end
     function __gsoOrbwalker:OnTick(func)
         gsoOnTick[#gsoOnTick+1] = func
