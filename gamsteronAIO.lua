@@ -958,7 +958,7 @@ function OnLoad()
           end
           --Q
           local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-          if canQ and afterAttack and gsoIsReadyFast(_Q, { q = 650, w = 550, e = 75, r = 550 }) then
+          if canQ and gsoIsReadyFast(_Q, { q = 650, w = 550, e = 75, r = 550 }) then
             local canCastQ = false
             local extraQ = 25 * myHero:GetSpellData(_Q).level
             local qRange = 575 + extraQ
