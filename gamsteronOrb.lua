@@ -1119,77 +1119,75 @@ function OnTick()
                                         end
                                       
                                         if aaTarget and gsoState.canAttack then
-                                            if ExtLibEvade and ExtLibEvade.Evading then
-                                                gsoState.isMoving = true
-                                                gsoState.isAttacking = false
-                                                gsoState.isEvading = true
-                                                return
+                                          if ExtLibEvade and ExtLibEvade.Evading then
+                                            gsoState.isMoving = true
+                                            gsoState.isAttacking = false
+                                            gsoState.isEvading = true
+                                            return
+                                          end
+                                          for i = 1, #gsoOnAttack do gsoOnAttack[i]() end
+                                          local canAttack = true
+                                          local args = { Process = true, Target = aaTarget, Move = false, Attack = true }
+                                          for i = 1, #gsoOnIssue do
+                                            gsoOnIssue[i](args)
+                                            if not args.Process or not args.Target then
+                                              gsoState.isMoving = false
+                                              gsoState.isAttacking = false
+                                              canAttack = false
+                                            else
+                                              aaTarget = args.Target
                                             end
-                                            local canAttack = true
-                                            local args = { Process = true, Target = aaTarget }
-                                            for i = 1, #gsoOnAttack do
-                                                local action = gsoOnAttack[i](args)
-                                                if not args.Process or not args.Target then
-                                                    gsoState.isMoving = false
-                                                    gsoState.isAttacking = false
-                                                    canAttack = false
-                                                end
-                                            end
-                                            if canAttack then
-                                                local cPos = cursorPos
-                                                local tPos = args.Target.pos
-                                                tPos = Vector({x=tPos.x,z=tPos.z,y=tPos.y+40})
-                                                gsoControlSetCursor(tPos)
-                                                gsoExtraSetCursor = tPos
-                                                gsoControlKeyDown(HK_TCO)
-                                                gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
-                                                gsoControlMouseEvent(MOUSEEVENTF_RIGHTUP)
-                                                gsoControlKeyUp(HK_TCO)
-                                                gsoState.isChangingCursorPos = true
-                                                gsoSetCursorPos = { endTime = gsoGetTickCount() + 50, action = function() gsoControlSetCursor(cPos.x, cPos.y) end, active = true }
-                                                gsoTimers.lastMoveSend = 0
-                                                gsoTimers.lastAttackSend = gsoGameTimer()
-                                                gsoExtra.lastTarget = args.Target
-                                                gsoState.isMoving = false
-                                                gsoState.isAttacking = true
-                                                gsoExtra.resetAttack = false
-                                                for i = 1, #gsoOnIssue do
-                                                    gsoOnIssue[i]({move=false,attack=true})
-                                                end
-                                            end
+                                          end
+                                          if canAttack then
+                                            local cPos = cursorPos
+                                            local tPos = aaTarget.pos
+                                            tPos = Vector({x=tPos.x,z=tPos.z,y=tPos.y+40})
+                                            gsoControlSetCursor(tPos)
+                                            gsoExtraSetCursor = tPos
+                                            gsoControlKeyDown(HK_TCO)
+                                            gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
+                                            gsoControlMouseEvent(MOUSEEVENTF_RIGHTUP)
+                                            gsoControlKeyUp(HK_TCO)
+                                            gsoState.isChangingCursorPos = true
+                                            gsoSetCursorPos = { endTime = gsoGetTickCount() + 50, action = function() gsoControlSetCursor(cPos.x, cPos.y) end, active = true }
+                                            gsoTimers.lastMoveSend = 0
+                                            gsoTimers.lastAttackSend = gsoGameTimer()
+                                            gsoExtra.lastTarget = args.Target
+                                            gsoState.isMoving = false
+                                            gsoState.isAttacking = true
+                                            gsoExtra.resetAttack = false
+                                          end
                                         elseif gsoState.canMove then
-                                            if ExtLibEvade and ExtLibEvade.Evading then
-                                                gsoState.isMoving = true
-                                                gsoState.isAttacking = false
-                                                gsoState.isEvading = true
-                                                return
-                                            end
+                                          if ExtLibEvade and ExtLibEvade.Evading then
+                                            gsoState.isMoving = true
+                                            gsoState.isAttacking = false
+                                            gsoState.isEvading = true
+                                            return
+                                          end
+                                          for i = 1, #gsoOnMove do gsoOnMove[i]() end
+                                          if gsoGameTimer() > gsoTimers.lastMoveSend + ( gsoMenu.orb.delays.humanizer:Value() * 0.001 ) then
+                                            local args = { Process = true, Target = aaTarget, Move = true, Attack = false }
                                             local canMove = true
-                                            local args = { Process = true, Target = aaTarget }
-                                            for i = 1, #gsoOnMove do
-                                                local action = gsoOnMove[i](args)
-                                                if not args.Process then
-                                                    gsoState.isMoving = false
-                                                    gsoState.isAttacking = false
-                                                    canMove = false
-                                                end
-                                            end
-                                            if canMove and gsoGameTimer() > gsoTimers.lastMoveSend + ( gsoMenu.orb.delays.humanizer:Value() * 0.001 ) then
-                                                if gsoControlIsKeyDown(2) then gsoLastKey = gsoGetTickCount() end
-                                                gsoExtra.lastMovePos = mousePos
-                                                gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
-                                                gsoControlMouseEvent(MOUSEEVENTF_RIGHTUP)
-                                                gsoTimers.lastMoveSend = gsoGameTimer()
-                                                gsoState.isMoving = true
+                                            for i = 1, #gsoOnIssue do
+                                              gsoOnIssue[i](args)
+                                              if not args.Process then
+                                                gsoState.isMoving = false
                                                 gsoState.isAttacking = false
-                                                for i = 1, #gsoOnIssue do
-                                                    gsoOnIssue[i]({move=true,attack=false})
-                                                end
+                                                canMove = false
+                                              end
                                             end
+                                            if canMove then
+                                              if gsoControlIsKeyDown(2) then gsoLastKey = gsoGetTickCount() end
+                                              gsoExtra.lastMovePos = mousePos
+                                              gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
+                                              gsoControlMouseEvent(MOUSEEVENTF_RIGHTUP)
+                                              gsoTimers.lastMoveSend = gsoGameTimer()
+                                              gsoState.isMoving = true
+                                              gsoState.isAttacking = false
+                                            end
+                                          end
                                         elseif not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and not isChatOpen then
-                                            for i = 1, #gsoOnAttack do
-                                                gsoOnAttack[i]({ Process = true, Target = gsoExtra.lastTarget })
-                                            end
+                                            for i = 1, #gsoOnAttack do gsoOnAttack[i]() end
                                         end
                                     else
                                         gsoExtra.lastTarget = nil
