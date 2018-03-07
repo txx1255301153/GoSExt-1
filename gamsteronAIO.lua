@@ -1062,7 +1062,7 @@ function OnLoad()
       
       --[[ custom attack speed ]]
       gsoOrbwalker:AttackSpeed(function()
-        if gsoGetTickCount() < champInfo.lasQBuff + 350 or champInfo.hasQBuff then
+        if gsoGetTickCount() < champInfo.lasQBuff + 100 then
           return champInfo.asQ
         end
         return gsoMyHero.attackSpeed
