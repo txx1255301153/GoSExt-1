@@ -1,5 +1,5 @@
 
-local gsoVersion = "2.1"
+local gsoVersion = "2.2"
 
  --[[
 
@@ -26,7 +26,7 @@ functions
 gsoOrbwalker.AddAction(action)
 gsoOrbwalker.IsImmortal(unit, jaxE)
 gsoOrbwalker.MinionHealthPrediction(minionHealth, minionHandle, time)
-gsoOrbwalker.GetTarget(range, sourcePos, enemyHeroes, dmgType, bb, jaxE)
+gsoOrbwalker.GetTarget(enemyHeroes, sourcePos, isAP)
 gsoOrbwalker.CalculateDamage(unit, spellData)
 gsoOrbwalker.CursorPositionChanged(action, pos)
 gsoOrbwalker.GetAutoAttackRange(attacker, defender) ( added support for minions and turrets )
@@ -119,11 +119,10 @@ function OnLoad()
             .AddAction(action) -> function, add delayed action. action = { func = function() doWork() end, startTime = Game.Timer() + 0.05 }
             .MinionHealthPrediction(minionHealth, minionHandle, time) -> function, return number, predicted enemy minion health - very accurate, for enemy minions only
             .IsImmortal(unit, jaxE) -> function, return boolean, only heroes
-            .GetTarget(range, sourcePos, enemyHeroes, dmgType, bb, jaxE) -> function, return unit or nil
-                  ( dmType -> string "ap" or "ad" )
-                  ( bb -> boolean add enemies boundingRadius to range ? )
-                  ( jaxE -> boolean, jaxE isImmortal ? )
+            .GetTarget(enemyHeroes, sourcePos, isAP) -> function, return unit or nil
+                  ( isAP -> (false or nothing) or true ) -> gettarget(enemyList, myHero.pos) <- dmgType AD
                   ( enemyHeroes -> list with enemy heroes )
+                  ( sourcePos -> for example orianna ball or myHero.pos )
             .CalculateDamage(unit, spellData) -> function, return number
                   ( spellData: { dmgType = "ap" or "ad" or "mixed" or "true", dmgTrue = number, dmgAP = number, dmgAD = number } )
             .CursorPositionChanged(action, pos) -> function, void, use after cursor position changed - for example: botrk, ezreal q
@@ -455,24 +454,15 @@ local function gsoIsHeroValid(range, sourcePos, hero, jaxE, bb)
     return false
   end
 end
-local function gsoGetTarget(range, sourcePos, enemyHeroes, dmgType, bb, jaxE)
+local function gsoGetTarget(enemyHeroes, sourcePos, dmgAP)
   local selected = gsoExtra.selectedTarget
   local menuSelected = gsoMenu.ts.selected.enable:Value()
-  local menuSelectedOnly = gsoMenu.ts.selected.only:Value()
-  local selectedID = ( menuSelected and selected ) and selected.networkID or nil
-  if menuSelectedOnly and selectedID then
-    local enemyList = gsoObjects.enemyHeroes_immortal
-    for i = 1, #enemyList do
-      local hero = enemyList[i]
-      if hero.networkID == selectedID and gsoIsHeroValid(range, sourcePos, hero, jaxE, bb) then
-        return selected
-      end
-    end
-    return nil
-  end
+  local selectedID
+  if menuSelected and selected then selectedID = selected.networkID end
   local result  = nil
   local num     = 10000000
   local mode    = gsoMenu.ts.Mode:Value()
+  local isAP = dmgAP and dmgAP == true
   for i = 1, #enemyHeroes do
     local x
     local unit = enemyHeroes[i]
@@ -481,9 +471,9 @@ local function gsoGetTarget(range, sourcePos, enemyHeroes, dmgType, bb, jaxE)
     elseif mode == 1 then
       local unitName = unit.charName
       local multiplier = gsoPriorityMultiplier[gsoMenu.ts.priority[unitName] and gsoMenu.ts.priority[unitName]:Value() or 6]
-      local def = dmgType == "ap" and multiplier * (unit.magicResist - gsoMyHero.magicPen) or multiplier * (unit.armor - gsoMyHero.armorPen)
+      local def = isAP and multiplier * (unit.magicResist - gsoMyHero.magicPen) or multiplier * (unit.armor - gsoMyHero.armorPen)
       if def > 0 then
-        def = dmgType == "ap" and gsoMyHero.magicPenPercent * def or gsoMyHero.bonusArmorPenPercent * def
+        def = isAP and gsoMyHero.magicPenPercent * def or gsoMyHero.bonusArmorPenPercent * def
       end
       x = ( ( unit.health * multiplier * ( ( 100 + def ) / 100 ) ) - ( unit.totalDamage * unit.attackSpeed * 2 ) ) - unit.ap
     elseif mode == 2 then
@@ -1136,7 +1126,6 @@ function OnLoad()
         gsoMenu.ts:MenuElement({ id = "priority", name = "Priorities", type = MENU })
         gsoMenu.ts:MenuElement({ id = "selected", name = "Selected Target", type = MENU })
             gsoMenu.ts.selected:MenuElement({ id = "enable", name = "Enable", value = true })
-            gsoMenu.ts.selected:MenuElement({ id = "only", name = "Only Selected Target", value = false })
             gsoMenu.ts.selected:MenuElement({name = "Draw",  id = "draw", type = MENU})
                 gsoMenu.ts.selected.draw:MenuElement({name = "Enable",  id = "enable", value = true})
                 gsoMenu.ts.selected.draw:MenuElement({name = "Color",  id = "color", color = gsoDrawColor(255, 204, 0, 0)})
