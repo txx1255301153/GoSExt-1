@@ -14,15 +14,16 @@ end
 COPY PASTE:
 events
 gsoOrbwalker:OnTick(function() onTick() end)
-gsoOrbwalker:OnMove(function(args) onMove(args) end)
-gsoOrbwalker:OnAttack(function(args) onAttack(args) end)
-gsoOrbwalker:OnIssue(function(issue) print(checkIssue(issue)) end)
+gsoOrbwalker:OnMove(function() onMove() end)
+gsoOrbwalker:OnAttack(function() onAttack() end)
+gsoOrbwalker:OnIssue(function(args) print(checkIssue(args)) end)
 gsoOrbwalker:OnEnemyHeroLoad(function(heroName) localMenu.useon:MenuElement({id = heroName, name = heroName, value = true}) end)
 gsoOrbwalker:CanChangeAnimationTime(function() return canChangeAnimationTime() end)
 gsoOrbwalker:BonusDamageOnMinion(function() return bonusDamageOnMinion() end)
-gsoOrbwalker:BonusDamageOnMinion2(function(args) return bonusDamageOnMinion2(args) end)
+gsoOrbwalker:BonusDamageOnMinion2(function(minion) return bonusDamageOnMinion2(minion) end)
 gsoOrbwalker:AttackSpeed(function() return attackSpeed() end)
 functions
+gsoOrbwalker.AddAction(action)
 gsoOrbwalker.IsImmortal(unit, jaxE)
 gsoOrbwalker.MinionHealthPrediction(minionHealth, minionHandle, time)
 gsoOrbwalker.GetTarget(range, sourcePos, enemyHeroes, dmgType, bb, jaxE)
@@ -107,14 +108,15 @@ function OnLoad()
         gsoOrbwalker = __gsoOrbwalker()
         gsoOrbwalker -> class
             :OnTick(function() onTick() end) -> event
-            :OnMove(function(args) onMove(args) end) -> event
-            :OnAttack(function(args) onAttack(args) end) -> event
-            :OnIssue(function(issue) print(checkIssue(issue)) end) -> event (on send key: attack | move)
+            :OnMove(function() onMove() end) -> event
+            :OnAttack(function() onAttack() end) -> event
+            :OnIssue(function(args) onIssue(args) end) -> event (on send key: attack | move) args = { Process = boolean, Attack = boolean, Move = boolean, Target = unit or nil }
             :OnEnemyHeroLoad(function(heroName) localMenu.useon:MenuElement({id = heroName, name = heroName, value = true}) end) -> event (don't need 2xF6 works perfect)
             :CanChangeAnimationTime(function() return canChangeAnimationTime() end) -> event ( after spell that increase attack speed. Ashe Q, Tristana Q etc. )
             :BonusDamageOnMinion(function() return bonusDamageOnMinion() end) -> event
-            :BonusDamageOnMinion2(function(args) return bonusDamageOnMinion2(args) end) -> event
+            :BonusDamageOnMinion2(function(minion) return bonusDamageOnMinion2(minion) end) -> event
             :AttackSpeed(function() return attackSpeed() end) -> event ( after buff end time that increase attack speed. Ashe Q, Tristana Q etc. )
+            .AddAction(action) -> function, add delayed action. action = { func = function() doWork() end, endTime = Game.Timer() + 0.05 }
             .MinionHealthPrediction(minionHealth, minionHandle, time) -> function, return number, predicted enemy minion health - very accurate, for enemy minions only
             .IsImmortal(unit, jaxE) -> function, return boolean, only heroes
             .GetTarget(range, sourcePos, enemyHeroes, dmgType, bb, jaxE) -> function, return unit or nil
@@ -1190,7 +1192,6 @@ function OnTick()
                                             for i = 1, #gsoOnAttack do gsoOnAttack[i]() end
                                         end
                                     else
-                                        gsoExtra.lastTarget = nil
                                         gsoState.isMoving = false
                                         gsoState.isAttacking = false
                                     end
@@ -1362,9 +1363,7 @@ class "__gsoOrbwalker"
         self.IsImmortal = gsoIsImmortal
         self.Distance = gsoDistance
         self.Extended = gsoExtended
-    end
-    function __gsoOrbwalker:AddAction(action)
-        gsoDelayedActions[#gsoDelayedActions+1] = action
+        self.AddAction = function(action) gsoDelayedActions[#gsoDelayedActions+1] = action end
     end
     function __gsoOrbwalker:OnTick(func)
         gsoOnTick[#gsoOnTick+1] = func
