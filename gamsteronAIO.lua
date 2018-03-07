@@ -394,13 +394,14 @@ local gsoMode
 local gsoLoaded = false
 local gsoDelayedSpell = {}
 local gsoSpellData = { q = {}, w = {}, e = {}, r = {} }
-local gsoDrawData = { q = false, w = false, e = false, r = false }
-local gsoSpellState = { q = true, lq = 0, lqk = 0, w = true, lw = 0, lwk = 0, e = true, le = 0, lek = 0, r = true, lr = 0, lrk = 0 }
+local gsoSpellDraw = { q = false, w = false, e = false, r = false }
+local gsoSpellCan = { q = true, w = true, e = true, r = true, botrk = true }
+local gsoSpellTimers = { lq = 0, lqk = 0, lw = 0, lwk = 0, le = 0, lek = 0, lr = 0, lrk = 0 }
 function OnLoad()
   local gsoOrbwalker = __gsoOrbwalker()
         gsoMenu = gsoOrbwalker.Menu
         gsoMode = gsoOrbwalker.Mode
-  local gsoActions = gsoOrbwalker.DelayedActions
+  local gsoActions = gsoOrbwalker.AddAction
   local gsoTimers = gsoOrbwalker.Timers
   local gsoState = gsoOrbwalker.State
   local gsoExtra = gsoOrbwalker.Extra
@@ -414,6 +415,13 @@ function OnLoad()
   local gsoHPPred = gsoOrbwalker.MinionHealthPrediction
   local gsoGetTarget = gsoOrbwalker.GetTarget
   local gsoCalcDmg = gsoOrbwalker.CalculateDamage
+  local function gsoIsHeroValid(range, hero, jaxE, bb)
+    if hero and gsoDistance(gsoMyHero.pos, hero.pos) < range + (bb and hero.boundingRadius or 0) and not hero.dead and hero.isTargetable and hero.valid and hero.visible and not gsoImmortal(hero, jaxE) then
+      return true
+    else
+      return false
+    end
+  end
   local function gsoClosestPointOnLineSegment(p, p1, p2)
     local px,pz,py = p.x, p.z, p.y
     local ax,az,ay = p1.x, p1.z, p1.y
@@ -441,7 +449,7 @@ function OnLoad()
     return false
   end
   local function gsoCheckHeroesCollision(p1, p2, width, id)
-    local gsoEHeroes = gsoObjects.enemyHeroes
+    local gsoEHeroes = gsoObjects.enemyHeroes_spell
     for i = 1, #gsoEHeroes do
       local hero = gsoEHeroes[i]
       if hero.visible and hero.networkID ~= id then
@@ -480,13 +488,13 @@ function OnLoad()
         return nil
       end
       if sD.hCol then
-        local id = from.hero and target.networkID or 0
+        local id = not from and target.networkID or 0
         if gsoCheckHeroesCollision(sourcePos, castpos, sD.width, id) then
           return nil
         end
       end
       if sD.mCol then
-        local id = from.minion and target.networkID or 0
+        local id = from and target.networkID or 0
         if gsoCheckMinionsCollision(sourcePos, castpos, sD.width, id) then
           return nil
         end
@@ -578,7 +586,7 @@ function OnLoad()
   end
   local function gsoCountEnemyHeroesInRange(sourcePos, range, bb)
     local count = 0
-    local gsoEHeroes = gsoObjects.enemyHeroes
+    local gsoEHeroes = gsoObjects.enemyHeroes_spell
     for i = 1, #gsoEHeroes do
       local unit = gsoEHeroes[i]
       local extraRange = bb and unit.boundingRadius or 0
@@ -588,48 +596,17 @@ function OnLoad()
     end
     return count
   end
-  local function gsoPosOnEnemyBoundingRadius(pos, id, to, units)
-    if units.minions then
-      local gsoEMinions = gsoObjects.enemyMinions
-      for i = 1, #gsoEMinions do
-        local unit = gsoEMinions[i]
-        local canCheck = to.minion and id ~= unit.networkID
-        if canCheck and gsoDistance(pos, unit.pos) < unit.boundingRadius then
-          return true
-        end
-      end
-    end
-    if units.heroes then
-      local gsoEHeroes = gsoObjects.enemyHeroes
-      for i = 1, #gsoEHeroes do
-        local unit = gsoEHeroes[i]
-        local canCheck = to.hero and id ~= unit.networkID
-        if unit.visible and canCheck and gsoDistance(pos, unit.pos) < unit.boundingRadius then
-          return true
-        end
-      end
-    end
-    if units.turrets then
-      local gsoETurrets = gsoObjects.enemyTurrets
-      for i = 1, #gsoETurrets do
-        local unit = gsoETurrets[i]
-        if gsoDistance(pos, unit.pos) < unit.boundingRadius then
-          return true
-        end
-      end
-    end
-    return false
-  end
   local function gsoCheckTimers(sT)
-    local gT = GetTickCount() - ( gsoExtra.minLatency * 1000 )
-    local q = gT - gsoSpellState.lq
-    local qq = gT - gsoSpellState.lqk
-    local w = gT - gsoSpellState.lw
-    local ww = gT - gsoSpellState.lwk
-    local e = gT - gsoSpellState.le
-    local ee = gT - gsoSpellState.lek
-    local r = gT - gsoSpellState.lr
-    local rr = gT - gsoSpellState.lrk
+    local latency = gsoExtra.minLatency * 1000
+    local gT = gsoGetTickCount() - latency
+    local q = gT - gsoSpellTimers.lq
+    local qq = gT - gsoSpellTimers.lqk
+    local w = gT - gsoSpellTimers.lw
+    local ww = gT - gsoSpellTimers.lwk
+    local e = gT - gsoSpellTimers.le
+    local ee = gT - gsoSpellTimers.lek
+    local r = gT - gsoSpellTimers.lr
+    local rr = gT - gsoSpellTimers.lrk
     local sq = sT.q
     local sw = sT.w
     local se = sT.e
@@ -645,10 +622,9 @@ function OnLoad()
     gsoTimers.lastMoveSend = 0
     return true
   end
-  local function gsoCastSpellTarget(hkSpell, range, sourcePos, target, to, units)
+  local function gsoCastSpellTarget(hkSpell, range, sourcePos, target)
     local castpos = target and target.pos or nil
-    local canCast = castpos and sourcePos and gsoDistance(castpos, sourcePos) < range
-          canCast = canCast and not gsoPosOnEnemyBoundingRadius(castpos, target.networkID, to, units) and castpos:ToScreen().onScreen
+    local canCast = castpos and sourcePos and gsoDistance(castpos, sourcePos) < range and castpos:ToScreen().onScreen
     if canCast then
       local cPos = cursorPos
       Control.SetCursorPos(castpos)
@@ -662,6 +638,7 @@ function OnLoad()
   end
   local function gsoCastSpellSkillShot(hkSpell, sourcePos, target, from)
     local spellData
+    if not target then return false end
     if hkSpell == HK_Q then spellData = gsoSpellData.q elseif hkSpell == HK_W then spellData = gsoSpellData.w elseif hkSpell == HK_E then spellData = gsoSpellData.e elseif hkSpell == HK_R then spellData = gsoSpellData.r end
     local castpos = target.x and target or gsoGetCastPos(spellData, sourcePos, target, from)
     if castpos then
@@ -684,6 +661,16 @@ function OnLoad()
   local function gsoIsReadyFast(spell, sT)
     return gsoCheckTimers(sT) and Game.CanUseSpell(spell) == 0
   end
+  local function gsoGetSpellTarget(range, enemyList, sourcePos, dmgAP, bb)
+    local enemyList_inrange = {}
+    for i = 1, #enemyList do
+      local unit = enemyList[i]
+      if gsoDistance(sourcePos, unit.pos) < range + (bb == true and unit.boundingRadius or 0) then
+        enemyList_inrange[#enemyList_inrange+1] = unit
+      end
+    end
+    return gsoGetTarget(enemyList_inrange, sourcePos, dmgAP)
+  end
   local gsoLoadMyHero = {
     __Aatrox = function() end,
     __Ahri = function() end,
@@ -699,12 +686,12 @@ function OnLoad()
     
     
     
-    
-
-    
-    
     __Ashe = function()
+      
+      --[[ vars ]]
       local champInfo = { hasQBuff = false, qEndTime = 0, asNoQ = myHero.attackSpeed, oldWindUp = myHero.attackData.windUpTime }
+      
+      --[[ menu ]]
       local gsoMeMenu = gsoMenu:MenuElement({id = "gsoashe", name = "Ashe", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ashe.png" })
         gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
           gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
@@ -724,12 +711,20 @@ function OnLoad()
             gsoMeMenu.rset.semirashe:MenuElement({name = "X %", id = "semip", value = 100, min = 1, max = 100, step = 1 })
             gsoMeMenu.rset.semirashe:MenuElement({name = "Semi-Manual Max. Range", id = "rrange", value = 2000, min = 1000, max = 15000, step = 100 })
             gsoMeMenu.rset.semirashe:MenuElement({name = "Use on:", id = "useon", type = MENU })
-      gsoDrawData = { w = true, wr = 1200 }
+      
+      --[[ draw ]]
+      gsoSpellDraw = { w = true, wr = 1200 }
+      
+      --[[ spell data ]]
       gsoSpellData.w = { delay = 0.25, range = 1200, width = 50, speed = 2000, sType = "line", col = true, hCol = true, mCol = true, out = true }
       gsoSpellData.r = { delay = 0.25, range = 1500, width = 125, speed = 1600, sType = "line", col = false, hCol = true, mCol = false, out = true }
+      
+      --[[ on enemy hero load ]]
       gsoOrbwalker:OnEnemyHeroLoad(function(heroName)
         gsoMeMenu.rset.semirashe.useon:MenuElement({id = heroName, name = heroName, value = true})
       end)
+      
+      --[[ damage on minion ]]
       gsoOrbwalker:BonusDamageOnMinion2(function(unit)
         local dmg = gsoMyHero.totalDamage
         local crit = 0.1 + gsoMyHero.critChance
@@ -746,6 +741,8 @@ function OnLoad()
         end
         return 0
       end)
+      
+      --[[ custom attack speed ]]
       gsoOrbwalker:AttackSpeed(function()
         local num = gsoGameTimer() - champInfo.qEndTime
         if num > -champInfo.oldWindUp and num < 2 then
@@ -753,95 +750,72 @@ function OnLoad()
         end
         return gsoMyHero.attackSpeed
       end)
-      gsoOrbwalker:OnMove(function(args)
-        local target = args.Target
-        local isTarget = target ~= nil
-        local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+      
+      --[[ on move ]]
+      gsoOrbwalker:OnMove(function()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
-        local mePos = gsoMyHero.pos
-        local enemyList = {}
-        for i = 1, #gsoObjects.enemyHeroes do
-          local hero = gsoObjects.enemyHeroes[i]
-          if hero and hero.visible and not gsoImmortal(hero, false) then
-            enemyList[#enemyList+1] = hero
+        if isCombo or isHarass then
+          local target = gsoExtra.lastTarget
+          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+          local mePos = gsoMyHero.pos
+          --R
+          local canR = ( isCombo and gsoMeMenu.rset.combo:Value() ) or ( isHarass and gsoMeMenu.rset.harass:Value() )
+                canR = canR and gsoIsReady(_R, { q = 0, w = 250, e = 250, r = 1000 })
+          if canR then
+            if gsoMeMenu.rset.rcd:Value() then
+              local t = gsoGetClosestEnemy(mePos, gsoObjects.enemyHeroes_spell, gsoMeMenu.rset.rdist:Value())
+              if t and gsoCastSpellSkillShot(HK_R, mePos, t) then
+                gsoSpellTimers.lr = gsoGetTickCount()
+                gsoSpellCan.w = false
+                return
+              end
+            end
+            if gsoMeMenu.rset.rci:Value() then
+              local t = gsoGetImmobileEnemy(mePos, gsoObjects.enemyHeroes_spell, 1000)
+              if t and gsoCastSpellSkillShot(HK_R, mePos, t.pos) then
+                gsoSpellTimers.lr = gsoGetTickCount()
+                gsoSpellCan.w = false
+                return
+              end
+            end
           end
-        end
-        
-        if not gsoState.enabledAttack and gsoCheckTimers({ q = 0, w = 300, e = 300, r = 300 }) then
-          gsoState.enabledAttack = true
-        end
-        
-        -- USE R :
-        local canR = ( isCombo and gsoMeMenu.rset.combo:Value() ) or ( isHarass and gsoMeMenu.rset.harass:Value() )
-              canR = canR and (not isTarget or gsoSpellState.r) and gsoIsReady(_R, { q = 0, w = 250, e = 250, r = 1000 })
-        if canR then
-          if gsoMeMenu.rset.rcd:Value() then
-            local t = gsoGetClosestEnemy(mePos, enemyList, gsoMeMenu.rset.rdist:Value())
-            if t and gsoCastSpellSkillShot(HK_R, mePos, t, { hero = true, minion = false }) then
-              gsoSpellState.lr = GetTickCount()
-              gsoSpellState.w = false
-              gsoState.enabledAttack = false
-              args.Process = false
+          --Q
+          local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
+          if canQ and isTarget and gsoIsReadyFast(_Q, { q = 1000, w = 250, e = 250, r = 250 }) then
+            local aaSpeed = ( gsoMyHero.attackSpeed + 0.15 + (gsoMyHero:GetSpellData(_Q).level * 0.05) ) * gsoExtra.baseAttackSpeed
+            local numAS   = aaSpeed >= 2.5 and 1 / 2.5 or 1 / aaSpeed
+            if gsoGameTimer() > gsoTimers.lastAttackSend + numAS and gsoCastSpell(HK_Q) then
+              champInfo.oldWindUp = gsoTimers.windUpTime
+              champInfo.asNoQ = myHero.attackSpeed
+              gsoSpellTimers.lq = gsoGetTickCount()
+              gsoExtra.resetAttack = true
               return
             end
           end
-          if gsoMeMenu.rset.rci:Value() then
-            local t = gsoGetImmobileEnemy(mePos, enemyList, 1000)
-            if t and gsoCastSpellSkillShot(HK_R, mePos, t.pos, { hero = true, minion = false }) then
-              gsoSpellState.lr = GetTickCount()
-              gsoSpellState.w = false
-              gsoState.enabledAttack = false
-              args.Process = false
-              return
+          --W
+          if not isTarget or afterAttack then
+            local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
+                  canW = canW and (not isTarget or gsoSpellCan.w) and gsoIsReady(_W, { q = 0, w = 1000, e = 250, r = 250 })
+            if canW then
+              local t = isTarget == true and target or gsoGetSpellTarget(1200, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, false, false)
+              if t and gsoCastSpellSkillShot(HK_W, mePos, t) then
+                gsoSpellTimers.lw = GetTickCount()
+                return
+              end
             end
           end
-        end
-
-        -- USE Q :
-        local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-        if canQ and isTarget and gsoIsReadyFast(_Q, { q = 1000, w = 250, e = 250, r = 250 }) then
-          local aaSpeed = ( gsoMyHero.attackSpeed + 0.15 + (gsoMyHero:GetSpellData(_Q).level * 0.05) ) * gsoExtra.baseAttackSpeed
-          local numAS   = aaSpeed >= 2.5 and 1 / 2.5 or 1 / aaSpeed
-          if gsoGameTimer() > gsoTimers.lastAttackSend + numAS and gsoCastSpell(HK_Q) then
-            champInfo.oldWindUp = gsoTimers.windUpTime
-            champInfo.asNoQ = myHero.attackSpeed
-            gsoSpellState.lq = GetTickCount()
-            gsoExtra.resetAttack = true
-            args.Process = false
-            return
-          end
-        end
-        if not isTarget or afterAttack then
-          -- USE W :
-          local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
-                canW = canW and (not isTarget or gsoSpellState.w) and gsoIsReady(_W, { q = 0, w = 1000, e = 250, r = 250 })
-          if canW then
-            local t = isTarget and target or gsoGetTarget(1200, gsoMyHero.pos, enemyList, "ad", false, false)
-            if t and gsoCastSpellSkillShot(HK_W, mePos, t, { hero = true, minion = false }) then
-              gsoSpellState.lw = GetTickCount()
-              gsoState.enabledAttack = false
-              args.Process = false
-              return
-            end
-          end
-        end
-        if not gsoCheckTimers({ q = 0, w = 250, e = 250, r = 250 }) then
-          args.Process = false
         end
       end)
+      
+      --[[ on tick ]]
       gsoOrbwalker:OnTick(function()
         local qDuration = gsoBuffDuration(gsoMyHero, "asheqattack")
         champInfo.hasQBuff = qDuration > 0
         champInfo.qEndTime = qDuration > 0 and Game.Timer() + qDuration or champInfo.qEndTime
         if gsoMeMenu.rset.semirashe.enabled:Value() and gsoIsReady(_R, { q = 0, w = 250, e = 250, r = 1000 }) then
-          local enemyList = {}
-          for i = 1, #gsoObjects.enemyHeroes do
-            local hero = gsoObjects.enemyHeroes[i]
-            if hero and hero.visible and not gsoImmortal(hero, false) then
-              enemyList[#enemyList+1] = hero
-            end
-          end
+          local enemyList = gsoObjects.enemyHeroes_spell
           local rTargets = {}
           for i = 1, #enemyList do
             local hero = enemyList[i]
@@ -854,16 +828,24 @@ function OnLoad()
             end
           end
           local rrange = gsoMeMenu.rset.semirashe.rrange:Value()
-          local rTarget = gsoGetTarget(rrange, gsoMyHero.pos, rTargets, "ad", false, false)
-          if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget, { hero = true, minion = false }) then
-            gsoSpellState.lr = GetTickCount()
-            gsoState.enabledAttack = false
+          local rTarget = gsoGetSpellTarget(rrange, rTargets, gsoMyHero.pos, false, false)
+          if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget) then
+            gsoSpellTimers.lrr = GetTickCount()
           end
         end
       end)
-      gsoOrbwalker:OnIssue(function(issue)
-        if issue.attack then
-          gsoSpellState.q = true; gsoSpellState.w = true; gsoSpellState.e = true; gsoSpellState.r = true
+      
+      --[[ on issue ]]
+      gsoOrbwalker:OnIssue(function(args)
+        if args.Move then
+          if not gsoCheckTimers({ q = 0, w = 250, e = 250, r = 250 }) then
+            args.Process = false
+          end
+        else
+          if not gsoCheckTimers({ q = 0, w = 300, e = 300, r = 300 }) then
+            args.Process = false
+          end
+          gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true
         end
       end)
     end,
@@ -925,7 +907,11 @@ function OnLoad()
     
     
     __Jinx = function()
+      
+      --[[ vars ]]
       local champInfo = { hasQBuff = false }
+      
+      --[[ menu ]]
       local gsoMeMenu = gsoMenu:MenuElement({id = "gsojinx", name = "Jinx", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/jinx.png" })
         gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
           gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
@@ -944,6 +930,8 @@ function OnLoad()
             gsoMeMenu.rset.semirjinx:MenuElement({name = "X %", id = "semip", value = 35, min = 1, max = 100, step = 1 })
             gsoMeMenu.rset.semirjinx:MenuElement({name = "Semi-Manual Max. Range", id = "rrange", value = 2000, min = 1000, max = 15000, step = 100 })
             gsoMeMenu.rset.semirjinx:MenuElement({name = "Use on:", id = "useon", type = MENU })
+      
+      --[[ draw data ]]
       local _jinxQ = function()
         if champInfo.hasQBuff then
           return 525 + gsoMyHero.boundingRadius + 35
@@ -952,97 +940,72 @@ function OnLoad()
           return 575 + qExtra + myHero.boundingRadius + 35
         end
       end
-      gsoDrawData = { q = true, qf = function() return _jinxQ() end, w = true, wr = 1450, e = true, er = 900 }
+      gsoSpellDraw = { q = true, qf = function() return _jinxQ() end, w = true, wr = 1450, e = true, er = 900 }
+      
+      --[[ spell data ]]
       gsoSpellData.w = { delay = 0.5, range = 1450, width = 70, speed = 3200, sType = "line", col = true, hCol = true, mCol = true, out = true }
       gsoSpellData.r = { delay = 0.5, range = 0, width = 225, speed = 1750, sType = "line", col = false, hCol = true, mCol = false, out = true }
+      
+      --[[ on enemy hero load ]]
       gsoOrbwalker:OnEnemyHeroLoad(function(heroName)
         gsoMeMenu.rset.semirjinx.useon:MenuElement({id = heroName, name = heroName, value = true})
       end)
+      
+      --[[ on move ]]
       gsoOrbwalker:OnMove(function(args)
-        local target = args.Target
-        local isTarget = target ~= nil
-        local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
-        local mePos = gsoMyHero.pos
-        local enemyList = {}
-        for i = 1, #gsoObjects.enemyHeroes do
-          local hero = gsoObjects.enemyHeroes[i]
-          if hero and hero.visible and not gsoImmortal(hero, false) then
-            enemyList[#enemyList+1] = hero
-          end
-        end
-        
-        if not gsoCheckTimers({ q = 0, w = 500, e = 0, r = 500 }) then
-          args.Process = false
-        end
-        if not gsoState.enabledAttack and gsoCheckTimers({ q = 0, w = 600, e = 0, r = 600 }) then
-          gsoState.enabledAttack = true
-        end
-        
-        -- USE E :
-        local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
-        if canE and gsoIsReady(_E, { q = 650, w = 550, e = 1000, r = 550 }) then
-          local t = gsoGetImmobileEnemy(mePos, enemyList, 900)
-          if t and gsoCastSpellTarget(HK_E, 900, mePos, t, {}, {}) then
-            gsoSpellState.le = gsoGetTickCount()
-            args.Process = false
+        if isCombo or isHarass then
+          local target = gsoExtra.lastTarget
+          local isTarget = lastTarget and lastTarget.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, lastTarget, true, true)
+          local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+          local mePos = gsoMyHero.pos
+          --E
+          local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
+          if canE and gsoIsReady(_E, { q = 650, w = 550, e = 1000, r = 550 }) and gsoCastSpellTarget(HK_E, 900, mePos, gsoGetImmobileEnemy(mePos, gsoObjects.enemyHeroes_spell, 900)) then
+            gsoSpellTimers.le = gsoGetTickCount()
             return
           end
-        end
-        
-        -- USE Q :
-        local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-        if canQ and gsoIsReadyFast(_Q, { q = 650, w = 550, e = 75, r = 550 }) then
-          local canCastQ = false
-          local extraQ = 25 * myHero:GetSpellData(_Q).level
-          local qRange = 575 + extraQ
-          if not isTarget and not champInfo.hasQBuff and gsoCountEnemyHeroesInRange(mePos, qRange + 300, false) > 0 then
-            canCastQ = true
+          --Q
+          local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
+          if canQ and gsoIsReadyFast(_Q, { q = 650, w = 550, e = 75, r = 550 }) then
+            local canCastQ = false
+            local extraQ = 25 * myHero:GetSpellData(_Q).level
+            local qRange = 575 + extraQ
+            if not isTarget and not champInfo.hasQBuff and gsoCountEnemyHeroesInRange(mePos, qRange + 300, false) > 0 then
+              canCastQ = true
+            end
+            if isTarget and champInfo.hasQBuff and gsoDistance(mePos, target.pos) < 525 + gsoMyHero.boundingRadius then
+              canCastQ = true
+            end
+            if canCastQ and gsoCastSpell(HK_Q) then
+              gsoSpellTimers.lq = gsoGetTickCount()
+              return
+            end
           end
-          if isTarget and champInfo.hasQBuff and gsoDistance(mePos, target.pos) < 525 + gsoMyHero.boundingRadius then
-            canCastQ = true
-          end
-          if canCastQ and gsoCastSpell(HK_Q) then
-            gsoSpellState.lq = gsoGetTickCount()
-            args.Process = false
-            return
-          end
-        end
-        
-        -- USE W :
-        if not isTarget or afterAttack then
-          local wout = gsoMeMenu.wset.wout:Value()
-          if not wout or not isTarget then
-            local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
-            if canW and gsoIsReady(_W, { q = 0, w = 1000, e = 75, r = 550 }) and (not isTarget or gsoSpellState.w) then
-              local wTarget
-              if isTarget then
-                wTarget = target
-              else
-                wTarget = gsoGetTarget(1450, gsoMyHero.pos, enemyList, "ad", false, false)
-              end
-              if wTarget and gsoCastSpellSkillShot(HK_W, mePos, wTarget, {hero = true}) then
-                gsoSpellState.lw = gsoGetTickCount()
-                gsoState.enabledAttack = false
-                args.Process = false
-                return
+          --W
+          if not isTarget or afterAttack then
+            local wout = gsoMeMenu.wset.wout:Value()
+            if not wout or not isTarget then
+              local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
+              if canW and gsoIsReady(_W, { q = 0, w = 1000, e = 75, r = 550 }) and (not isTarget or gsoSpellCan.w) then
+                local wTarget = isTarget and target or gsoGetSpellTarget(1450, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, false, false)
+                if wTarget and gsoCastSpellSkillShot(HK_W, mePos, wTarget) then
+                  gsoSpellTimers.lw = gsoGetTickCount()
+                  return
+                end
               end
             end
           end
         end
       end)
+      
+      --[[ on tick ]]
       gsoOrbwalker:OnTick(function()
         champInfo.hasQBuff = gsoHasBuff(gsoMyHero, "jinxq")
         -- semi r
         if gsoMeMenu.rset.semirjinx.enabled:Value() and gsoIsReady(_R, { q = 0, w = 550, e = 75, r = 1000 }) then
-          local enemyList = {}
-          for i = 1, #gsoObjects.enemyHeroes do
-            local hero = gsoObjects.enemyHeroes[i]
-            if hero and hero.visible and not gsoImmortal(hero, false) then
-              enemyList[#enemyList+1] = hero
-            end
-          end
+          local enemyList = gsoObjects.enemyHeroes_spell
           local rTargets = {}
           for i = 1, #enemyList do
             local hero = enemyList[i]
@@ -1055,17 +1018,25 @@ function OnLoad()
             end
           end
           local rrange = gsoMeMenu.rset.semirjinx.rrange:Value()
-          local rTarget = gsoGetTarget(rrange, gsoMyHero.pos, rTargets, "ad", false, false)
-          gsoSpellData.r.range = gsoMeMenu.rset.semirjinx.rrange:Value()
-          if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget, {hero = true}) then
-            gsoSpellState.lr = GetTickCount()
-            gsoState.enabledAttack = false
+          local rTarget = gsoGetSpellTarget(rrange, rTargets, gsoMyHero.pos, false, false)
+          gsoSpellData.r.range = rrange
+          if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget) then
+            gsoSpellTimers.lrr = GetTickCount()
           end
         end
       end)
-      gsoOrbwalker:OnIssue(function(issue)
-        if issue.attack then
-          gsoSpellState.q = true; gsoSpellState.w = true; gsoSpellState.e = true; gsoSpellState.r = true
+      
+      --[[ on issue ]]
+      gsoOrbwalker:OnIssue(function(args)
+        if args.Move then
+          if not gsoCheckTimers({ q = 0, w = 500, e = 0, r = 500 }) then
+            args.Process = false
+          end
+        else
+          if not gsoCheckTimers({ q = 0, w = 600, e = 0, r = 600 }) then
+            args.Process = false
+          end
+          gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true
         end
       end)
     end,
@@ -1114,7 +1085,14 @@ function OnLoad()
     
     
     __KogMaw = function()
+      
+      --[[ set ap ]]
+      gsoOrbwalker.IsAP()
+      
+      --[[ vars ]]
       local champInfo = { hasWBuff = false }
+      
+      --[[ menu ]]
       local gsoMeMenu = gsoMenu:MenuElement({id = "gsokog", name = "KogMaw", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/kog.png" })
         gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
             gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
@@ -1143,6 +1121,8 @@ function OnLoad()
                 gsoMeMenu.rset.semirkog:MenuElement({name = "Check R stacks", id = "semistacks", value = false})
                 gsoMeMenu.rset.semirkog:MenuElement({name = "Only 0-40 % HP enemies", id = "semilow",  value = false})
                 gsoMeMenu.rset.semirkog:MenuElement({name = "Use on:", id = "useon", type = MENU })
+      
+      --[[ draw data ]]
       local _kogR = function()
         local rlvl = gsoMyHero:GetSpellData(_R).level
         if rlvl == 0 then
@@ -1152,128 +1132,92 @@ function OnLoad()
           return 900 + extraR
         end
       end
-      gsoDrawData = { q = true, qr = 1175, e = true, er = 1280, r = true, rf = function() return _kogR() end }
+      gsoSpellDraw = { q = true, qr = 1175, e = true, er = 1280, r = true, rf = function() return _kogR() end }
+      
+      --[[ spell data ]]
       gsoSpellData.q = { delay = 0.25, range = 1175, width = 70, speed = 1650, sType = "line", col = true, hCol = true, mCol = true, out = true }
       gsoSpellData.e = { delay = 0.25, range = 1280, width = 120, speed = 1350, sType = "line", col = false, hCol = false, mCol = false, out = true }
       gsoSpellData.r = { delay = 1.2, range = 0, width = 225, speed = math.maxinteger, sType = "circular", col = false, hCol = false, mCol = false, out = false }
+      
+      --[[ on enemy hero load ]]
       gsoOrbwalker:OnEnemyHeroLoad(function(heroName)
         gsoMeMenu.rset.semirkog.useon:MenuElement({id = heroName, name = heroName, value = true})
       end)
-    
-    
-    -- KOG ONMOVE
+      
+      --[[ on move ]]
       gsoOrbwalker:OnMove(function(args)
-        local target = args.Target
-        local isTarget = target ~= nil
-        local afterAttack = gsoGameTimer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
-        local mePos = gsoMyHero.pos
-        local enemyList = {}
-        for i = 1, #gsoObjects.enemyHeroes do
-          local hero = gsoObjects.enemyHeroes[i]
-          if hero and hero.visible and not gsoImmortal(hero, false) then
-            enemyList[#enemyList+1] = hero
+        if isCombo or isHarass then
+          local target = gsoExtra.lastTarget
+          local isTarget = lastTarget and lastTarget.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, lastTarget, true, true)
+          local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+          --W
+          local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
+                canW = canW and gsoIsReadyFast(_W, { q = 250, w = 1000, e = 250, r = 250 })
+                canW = canW and gsoGameTimer() > gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.5 )
+          local enemyList = gsoObjects.enemyHeroes_attack
+          if canW then
+            local mePos = gsoMyHero.pos
+            for i = 1, #enemyList do
+              local hero = enemyList[i]
+              if gsoDistance(mePos, hero.pos) < 610 + ( 20 * gsoMyHero:GetSpellData(_W).level ) + gsoMyHero.boundingRadius + hero.boundingRadius and gsoCastSpell(HK_W) then
+                gsoSpellTimers.lw = GetTickCount()
+                gsoSpellCan.q = false
+                gsoSpellCan.e = false
+                gsoSpellCan.r = false
+                gsoSpellCan.botrk = false
+                return false
+              end
+            end
           end
-        end
-        
-        if not gsoCheckTimers({ q = 250, w = 0, e = 250, r = 250 }) then
-          args.Process = false
-        end
-        if not gsoState.enabledAttack and gsoCheckTimers({ q = 350, w = 0, e = 350, r = 350 }) then
-          gsoState.enabledAttack = true
-        end
-        
-        -- USE W :
-        local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
-              canW = canW and gsoIsReadyFast(_W, { q = 250, w = 1000, e = 250, r = 250 })
-              canW = canW and gsoGameTimer() > gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.5 )
-        if canW then
-          for i = 1, #enemyList do
-            local hero = enemyList[i]
-            if gsoDistance(mePos, hero.pos) < 610 + ( 20 * gsoMyHero:GetSpellData(_W).level ) + gsoMyHero.boundingRadius + hero.boundingRadius and gsoCastSpell(HK_W) then
-              gsoSpellState.lw = GetTickCount()
-              gsoSpellState.q = false
-              gsoSpellState.e = false
-              gsoSpellState.r = false
+          if not isTarget or afterAttack then
+            local wMana = 40 - ( gsoMyHero:GetSpellData(_W).currentCd * gsoMyHero.mpRegen )
+            local meMana = gsoMyHero.mana - wMana
+            if not isTarget and gsoGetTickCount() - gsoSpellTimers.lw < 350 then
               return
             end
-          end
-        end
-        
-        if not isTarget or afterAttack then
-          
-          local wMana = 40 - ( gsoMyHero:GetSpellData(_W).currentCd * gsoMyHero.mpRegen )
-          local meMana = gsoMyHero.mana - wMana
-          
-          if not isTarget and gsoGetTickCount() - gsoSpellState.lw < 350 then
-            return
-          end
-          
-          -- USE Q :
-          local stopQIfW = gsoMeMenu.wset.stopq:Value() and champInfo.hasWBuff
-          local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-                canQ = canQ and not stopQIfW and meMana > gsoMyHero:GetSpellData(_Q).mana and (not isTarget or gsoSpellState.q)
-          if canQ and gsoIsReady(_Q, { q = 1000, w = 150, e = 350, r = 350 }) then
-            local qTarget
-            if isTarget then
-              qTarget = target
-            else
-              qTarget = gsoGetTarget(1175, gsoMyHero.pos, enemyList, "ap", false, false)
+            --Q
+            local stopQIfW = gsoMeMenu.wset.stopq:Value() and champInfo.hasWBuff
+            local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
+                  canQ = canQ and not stopQIfW and meMana > gsoMyHero:GetSpellData(_Q).mana and (not isTarget or gsoSpellCan.q)
+            if canQ and gsoIsReady(_Q, { q = 1000, w = 150, e = 350, r = 350 }) then
+              local qTarget = isTarget and target or gsoGetSpellTarget(1175, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false)
+              if qTarget and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qTarget) then
+                gsoSpellTimers.lq = GetTickCount()
+                gsoSpellCan.e = false
+                gsoSpellCan.r = false
+                gsoSpellCan.botrk = false
+                return false
+              end
             end
-            if qTarget and gsoCastSpellSkillShot(HK_Q, mePos, qTarget, {hero = true}) then
-              gsoSpellState.lq = GetTickCount()
-              gsoSpellState.e = false
-              gsoSpellState.r = false
-              gsoState.enabledAttack = false
-              args.Process = false
-              return
+            --E
+            local stopEIfW = gsoMeMenu.wset.stope:Value() and champInfo.hasWBuff
+            local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
+                  canE = canE and not stopEIfW and meMana > gsoMyHero:GetSpellData(_E).mana and (not isTarget or gsoSpellCan.e)
+                  canE = canE and ( myHero.mana * 100 ) / myHero.maxMana > gsoMeMenu.eset.emana:Value() and gsoIsReady(_E, { q = 350, w = 150, e = 1000, r = 350 }) 
+            if canE then
+              local eTarget = isTarget and target or gsoGetSpellTarget(1280, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false)
+              if eTarget and gsoCastSpellSkillShot(HK_E, gsoMyHero.pos, eTarget) then
+                gsoSpellTimers.le = GetTickCount()
+                gsoSpellCan.q = false
+                gsoSpellCan.r = false
+                gsoSpellCan.botrk = false
+                return false
+              end
             end
-          end
-          
-          -- USE E :
-          local stopEIfW = gsoMeMenu.wset.stope:Value() and champInfo.hasWBuff
-          local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
-                canE = canE and not stopEIfW and meMana > gsoMyHero:GetSpellData(_E).mana and (not isTarget or gsoSpellState.e)
-                canE = canE and ( myHero.mana * 100 ) / myHero.maxMana > gsoMeMenu.eset.emana:Value() and gsoIsReady(_E, { q = 350, w = 150, e = 1000, r = 350 }) 
-          if canE then
-            local eTarget
-            if isTarget then
-              eTarget = target
-            else
-              eTarget = gsoGetTarget(1280, gsoMyHero.pos, enemyList, "ap", false, false)
-            end
-            if eTarget and gsoCastSpellSkillShot(HK_E, mePos, eTarget, {hero = true}) then
-              gsoSpellState.le = GetTickCount()
-              gsoSpellState.q = false
-              gsoSpellState.r = false
-              gsoState.enabledAttack = false
-              args.Process = false
-              return
-            end
-          end
-          
-          -- USE R :
-          local rStacks = gsoBuffCount(myHero, "kogmawlivingartillerycost") < gsoMeMenu.rset.stack:Value()
-          local stopRIfW = gsoMeMenu.wset.stopr:Value() and champInfo.hasWBuff
-          local canR = ( isCombo and gsoMeMenu.rset.combo:Value() ) or ( isHarass and gsoMeMenu.rset.harass:Value() )
-                canR = canR and rStacks and not stopRIfW and gsoIsReady(_R, { q = 350, w = 150, e = 350, r = 750 }) and (not isTarget or gsoSpellState.r)
-                canR = canR and meMana > gsoMyHero:GetSpellData(_R).mana and ( gsoMyHero.mana * 100 ) / gsoMyHero.maxMana > gsoMeMenu.rset.rmana:Value()
-          if canR then
-            
-            local rrange = 900 + ( 300 * gsoMyHero:GetSpellData(_R).level )
-            
-            -- only enemies with hp lower than 40%
-            local onlyLowR = gsoMeMenu.rset.onlylow:Value()
-            
-            -- check for target in attack range
-            local rTarget
-            if not onlyLowR and isTarget then rTarget = target end
-            if onlyLowR and isTarget and ( target.health * 100 ) / target.maxHealth < 39 then rTarget = target end
-            
-            -- check for targets in R range
-            local rTargets = {}
-            if not rTarget then
+            --R
+            local rStacks = gsoBuffCount(myHero, "kogmawlivingartillerycost") < gsoMeMenu.rset.stack:Value()
+            local stopRIfW = gsoMeMenu.wset.stopr:Value() and champInfo.hasWBuff
+            local canR = ( isCombo and gsoMeMenu.rset.combo:Value() ) or ( isHarass and gsoMeMenu.rset.harass:Value() )
+                  canR = canR and rStacks and not stopRIfW and gsoIsReady(_R, { q = 350, w = 150, e = 350, r = 750 }) and (not isTarget or gsoSpellCan.r)
+                  canR = canR and meMana > gsoMyHero:GetSpellData(_R).mana and ( gsoMyHero.mana * 100 ) / gsoMyHero.maxMana > gsoMeMenu.rset.rmana:Value()
+            if canR then
+              local rrange = 900 + ( 300 * gsoMyHero:GetSpellData(_R).level )
+              local onlyLowR = gsoMeMenu.rset.onlylow:Value()
+              if onlyLowR and isTarget and ( target.health * 100 ) / target.maxHealth > 39 then isTarget = false end
+              local enemyList = gsoObjects.enemyHeroes_spell
+              local rTargets = {}
               if onlyLowR then
                 for i = 1, #enemyList do
                   local hero = enemyList[i]
@@ -1284,29 +1228,21 @@ function OnLoad()
               else
                 rTargets = enemyList
               end
-            end
-            
-            -- target
-            local rT
-            if rTarget then
-              rT = rTarget
-            else
-              rT = gsoGetTarget(gsoSpellData.r.range + 110, gsoMyHero.pos, rTargets, "ap", false, false)
-            end
-            if rT and gsoCastSpellSkillShot(HK_R, mePos, rT, {hero = true}) then
-              gsoSpellState.lr = GetTickCount()
-              gsoSpellState.q = false
-              gsoSpellState.e = false
-              gsoState.enabledAttack = false
-              args.Process = false
-              return
+              local rTarget = isTarget and target or gsoGetSpellTarget(gsoSpellData.r.range + 110, rTargets, gsoMyHero.pos, true, false)
+              if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget) then
+                gsoSpellTimers.lr = GetTickCount()
+                gsoSpellCan.q = false
+                gsoSpellCan.e = false
+                gsoSpellCan.botrk = false
+                return false
+              end
             end
           end
         end
+        return true
       end)
-
-
-    -- KOG TICK
+      
+      --[[ on tick ]]
       gsoOrbwalker:OnTick(function()
         local hasWBuff = false
         for i = 0, gsoMyHero.buffCount do
@@ -1318,27 +1254,14 @@ function OnLoad()
         end
         champInfo.hasWBuff = hasWBuff
         local mePos = myHero.pos
-        
         local canR = gsoIsReady(_R, { q = 350, w = 150, e = 350, r = 750 })
         if canR and gsoState.canMove and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + 0.07 then
-          
-          local enemyList = {}
-          for i = 1, #gsoObjects.enemyHeroes do
-            local hero = gsoObjects.enemyHeroes[i]
-            if hero and hero.visible and not gsoImmortal(hero, false) then
-              enemyList[#enemyList+1] = hero
-            end
-          end
-          -- spell data
+          local enemyList = gsoObjects.enemyHeroes_spell
           local extraRRange = 300 * myHero:GetSpellData(_R).level 
           gsoSpellData.r.range = 900 + extraRRange
-          
           local rStacks = gsoBuffCount(myHero, "kogmawlivingartillerycost") < gsoMeMenu.rset.stack:Value()
           local checkRStacksKS = gsoMeMenu.rset.ksmenu.csksr:Value()
           if gsoMeMenu.rset.ksmenu.ksr:Value() and ( not checkRStacksKS or rStacks ) then
-            
-            -- check for killable targets in R range
-
             local rTargets = {}
             for i = 1, #enemyList do
               local hero = enemyList[i]
@@ -1351,30 +1274,18 @@ function OnLoad()
                 rTargets[#rTargets+1] = hero
               end
             end
-            
-            -- target
-            local rT
-            if #rTargets > 0 then
-              rT = gsoGetTarget(gsoSpellData.r.range + 110, gsoMyHero.pos, rTargets, "ap", false, false)
-            end
-            
-            -- use spell
-            if rT and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rT, {}) then
-              gsoSpellState.lr = GetTickCount()
-              gsoSpellState.q = false
-              gsoSpellState.e = false
-              gsoState.enabledAttack = false
+            if gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, gsoGetSpellTarget(gsoSpellData.r.range + 110, rTargets, gsoMyHero.pos, true, false)) then
+              gsoSpellTimers.lr = GetTickCount()
+              gsoSpellCan.q = false
+              gsoSpellCan.e = false
+              gsoSpellCan.botrk = false
               return
             end
           end
-          
           local checkRStacksSemi = gsoMeMenu.rset.semirkog.semistacks:Value()
           if gsoMeMenu.rset.semirkog.semir:Value() and ( not checkRStacksSemi or rStacks ) then
-            
-            -- only enemies with hp lower than 40%
             local onlyLowR = gsoMeMenu.rset.semirkog.semilow:Value()
-
-            -- check for targets in R range
+            local enemyList = gsoObjects.enemyHeroes_spell
             local rTargets = {}
             if onlyLowR then
               for i = 1, #enemyList do
@@ -1386,30 +1297,23 @@ function OnLoad()
             else
               rTargets = enemyList
             end
-            
-            -- target
-            local rT
-            if #rTargets > 0 then
-              rT = gsoGetTarget(gsoSpellData.r.range + 110, gsoMyHero.pos, rTargets, "ap", false, false)
-            end
-            
-            -- use spell
-            if rT and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rT, {}) then
-              gsoSpellState.lr = GetTickCount()
-              gsoSpellState.q = false
-              gsoSpellState.e = false
-              gsoState.enabledAttack = false
+            if gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, gsoGetSpellTarget(gsoSpellData.r.range + 110, rTargets, gsoMyHero.pos, true, false)) then
+              gsoSpellTimers.lr = GetTickCount()
+              gsoSpellCan.q = false
+              gsoSpellCan.e = false
+              gsoSpellCan.botrk = false
               return
             end
           end
         end
       end)
-    
-      gsoOrbwalker:OnIssue(function(issue)
-        if issue.attack then
-          gsoSpellState.q = true; gsoSpellState.w = true; gsoSpellState.e = true; gsoSpellState.r = true
-        end
-      end)
+      
+      --[[ can move | attack ]]
+      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 200, w = 0, e = 200, r = 200 }) end)
+      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 350, w = 0, e = 350, r = 350 }) end)
+      
+      --[[ on issue ]]
+      gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
     end,
     
     
@@ -1477,7 +1381,7 @@ function OnLoad()
         gsoMeMenu:MenuElement({name = "E settings", id = "eset", type = MENU })
           gsoMeMenu.eset:MenuElement({id = "combo", name = "Combo", value = true})
           gsoMeMenu.eset:MenuElement({id = "harass", name = "Harass", value = false})
-      gsoDrawData = { q = true, qr = 500+120, w = true, wr = 900+350, e = true, er = 425, r = true, rr = 1200 }
+      gsoSpellDraw = { q = true, qr = 500+120, w = true, wr = 900+350, e = true, er = 425, r = true, rr = 1200 }
       gsoSpellData.w = { delay = 0.25, range = 1250, width = 75, speed = 1600, sType = "line", col = false, mCol = false, hCol = false, out = true }
       gsoOrbwalker:OnMove(function(args)
         local target = args.Target
@@ -1505,7 +1409,7 @@ function OnLoad()
         
         if not isTarget or afterAttack then
           local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
-                canE = canE and (not isTarget or (isTarget and gsoSpellState.e)) and gsoIsReadyFast(_E, { q = 500, w = 250, e = 1000, r = 500 }) and not champInfo.hasRBuff
+                canE = canE and (not isTarget or (isTarget and gsoSpellCan.e)) and gsoIsReadyFast(_E, { q = 500, w = 250, e = 1000, r = 500 }) and not champInfo.hasRBuff
           if canE then
             local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
             for i = 1, #enemyList do
@@ -1523,10 +1427,10 @@ function OnLoad()
               local extPos = mePos + (mousePos-mePos):Normalized() * extRange
               local distEnemyToExt = gsoDistance(extPos, heroPos)
               if distEnemyToExt < meRange + hero.boundingRadius and gsoCastSpell(HK_E) then
-                gsoSpellState.le = GetTickCount()
-                gsoSpellState.q = false
-                gsoSpellState.w = false
-                gsoSpellState.r = false
+                gsoSpellTimers.lre = GetTickCount()
+                gsoSpellCan.q = false
+                gsoSpellCan.w = false
+                gsoSpellCan.r = false
                 gsoExtra.resetAttack = true
                 gsoState.enabledAttack = false
                 args.Process = false
@@ -1535,17 +1439,17 @@ function OnLoad()
             end
           end
           local canQ = (isCombo and gsoMeMenu.qset.combo:Value()) or (isHarass and gsoMeMenu.qset.harass:Value())
-                canQ = canQ and isTarget and gsoSpellState.q and gsoIsReady(_Q, { q = 1000, w = 400, e = 400, r = 500 }) and not champInfo.hasRBuff
+                canQ = canQ and isTarget and gsoSpellCan.q and gsoIsReady(_Q, { q = 1000, w = 400, e = 400, r = 500 }) and not champInfo.hasRBuff
           if canQ and gsoCastSpellTarget(HK_Q, 500 + gsoMyHero.boundingRadius + target.boundingRadius, mePos, target, {hero=true}, {minions=true, heroes=true}) then
-            gsoSpellState.lq = GetTickCount()
-            gsoSpellState.w = false
-            gsoSpellState.r = false
+            gsoSpellTimers.lrq = GetTickCount()
+            gsoSpellCan.w = false
+            gsoSpellCan.r = false
             gsoState.enabledAttack = false
             args.Process = false
             return
           end
           local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
-                canW = canW and (not isTarget or gsoSpellState.w) and gsoIsReady(_W, { q = 500, w = 350, e = 350, r = 500 }) and not champInfo.hasRBuff
+                canW = canW and (not isTarget or gsoSpellCan.w) and gsoIsReady(_W, { q = 500, w = 350, e = 350, r = 500 }) and not champInfo.hasRBuff
           if canW then
             local wTarget
             if isTarget then
@@ -1553,10 +1457,10 @@ function OnLoad()
             else
               wTarget = gsoGetTarget(1350, gsoMyHero.pos, enemyList, "ad", false, false)
             end
-            if wTarget and gsoCastSpellSkillShot(HK_W, mePos, wTarget, {hero = true}) then
-              gsoSpellState.lw = GetTickCount()
-              gsoSpellState.q = false
-              gsoSpellState.r = false
+            if wTarget and gsoCastSpellSkillShot(HK_W, mePos, wTarget) then
+              gsoSpellTimers.lrw = GetTickCount()
+              gsoSpellCan.q = false
+              gsoSpellCan.r = false
               gsoState.enabledAttack = false
               args.Process = false
               return
@@ -1575,7 +1479,7 @@ function OnLoad()
       end)
       gsoOrbwalker:OnIssue(function(issue)
         if issue.attack then
-          gsoSpellState.q = true; gsoSpellState.w = true; gsoSpellState.e = true; gsoSpellState.r = true
+          gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true
         end
       end)
     end,
@@ -1684,10 +1588,10 @@ function OnLoad()
           gsoMeMenu:MenuElement({name = "W settings", id = "wset", type = MENU })
             gsoMeMenu.wset:MenuElement({id = "combo", name = "Combo", value = true})
             gsoMeMenu.wset:MenuElement({id = "harass", name = "Harass", value = false})
-      gsoDrawData = { q = true, qr = 1250, r = true, rr = 1000 }
+      gsoSpellDraw = { q = true, qr = 1250, r = true, rr = 1000 }
       gsoSpellData.q = { delay = 0.25, range = 1250, width = 60, speed = 1350, sType = "line", col = false, mCol = false, hCol = false, out = true }
       gsoOrbwalker:AttackSpeed(function()
-        local wDiff = gsoGetTickCount() - gsoSpellState.lwk - gsoExtra.minLatency
+        local wDiff = gsoGetTickCount() - gsoSpellTimers.lwk - gsoExtra.minLatency
         if wDiff > 3500 and wDiff < 4500 then
           return champInfo.asNoW
         end
@@ -1721,9 +1625,9 @@ function OnLoad()
               canW = canW and isTarget and gsoGameTimer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.5 )
               canW = canW and gsoIsReadyFast(_W, { q = 250, w = 1000, e = 0, r = 0 })
         if canW and gsoCastSpell(HK_W) then
-          gsoSpellState.lw = GetTickCount()
-          gsoSpellState.q = false
-          gsoOrbwalker:AddAction({ func = function() gsoExtra.resetAttack = true end, endTime = gsoGameTimer() + 0.05 })
+          gsoSpellTimers.lrw = GetTickCount()
+          gsoSpellCan.q = false
+          gsoActions({ func = function() gsoExtra.resetAttack = true end, startTime = gsoGameTimer() + 0.05 })
           args.Process = false
           return
         end
@@ -1732,7 +1636,7 @@ function OnLoad()
           
           -- USE Q :
           local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-                canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 0, e = 0, r = 0 }) and (not isTarget or gsoSpellState.q)
+                canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 0, e = 0, r = 0 }) and (not isTarget or gsoSpellCan.q)
           if canQ then
             local qTarget
             if isTarget then
@@ -1740,8 +1644,8 @@ function OnLoad()
             else
               qTarget = gsoGetTarget(1250, gsoMyHero.pos, enemyList, "ad", false, false)
             end
-            if qTarget and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qTarget, {hero = true}) then
-              gsoSpellState.lq = GetTickCount()
+            if qTarget and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qTarget) then
+              gsoSpellTimers.lrq = GetTickCount()
               gsoState.enabledAttack = false
               args.Process = false
               return
@@ -1751,7 +1655,7 @@ function OnLoad()
       end)
       gsoOrbwalker:OnIssue(function(issue)
         if issue.attack then
-          gsoSpellState.q = true; gsoSpellState.w = true; gsoSpellState.e = true; gsoSpellState.r = true
+          gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true
         end
       end)
     end,
@@ -1845,7 +1749,7 @@ function OnLoad()
         if rLvl == 0 then rLvl = 1 end
         return 150 + ( 250 * rLvl )
       end
-      gsoDrawData = { q = true, qr = 680, r = true, rf = function() return _teemoR() end }
+      gsoSpellDraw = { q = true, qr = 680, r = true, rf = function() return _teemoR() end }
       gsoSpellData.r = { delay = 0.25, range = 0, width = 200, speed = 1000, sType = "circular", col = false, mCol = false, hCol = false, out = false }
       gsoOrbwalker:OnMove(function(args)
         local target = args.Target
@@ -1875,7 +1779,7 @@ function OnLoad()
           
           -- USE Q :
           local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-                canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 0, e = 0, r = 750 }) and (not isTarget or gsoSpellState.q)
+                canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 0, e = 0, r = 750 }) and (not isTarget or gsoSpellCan.q)
           if canQ then
             local qTarget
             if isTarget then
@@ -1884,8 +1788,8 @@ function OnLoad()
               qTarget = gsoGetTarget(680, gsoMyHero.pos, enemyList, "ap", false, false)
             end
             if qTarget and gsoCastSpellTarget(HK_Q, 680, mePos, qTarget, {hero=true}, {minions=true, heroes=true}) then
-              gsoSpellState.r = false
-              gsoSpellState.lq = gsoGetTickCount()
+              gsoSpellCan.r = false
+              gsoSpellTimers.lrq = gsoGetTickCount()
               gsoState.enabledAttack = false
               args.Process = false
               return
@@ -1894,7 +1798,7 @@ function OnLoad()
           
           -- USE R :
           local canR = ( isCombo and gsoMeMenu.rset.combo:Value() ) or ( isHarass and gsoMeMenu.rset.harass:Value() )
-                canR = canR and gsoIsReady(_R, { q = 350, w = 0, e = 0, r = 1000 }) and (not isTarget or gsoSpellState.r)
+                canR = canR and gsoIsReady(_R, { q = 350, w = 0, e = 0, r = 1000 }) and (not isTarget or gsoSpellCan.r)
           if canR then
             local rRange = 150 + ( 250 * gsoMyHero:GetSpellData(_R).level )
             gsoSpellData.r.range = rRange
@@ -1908,9 +1812,9 @@ function OnLoad()
                 rTarget = gsoGetTarget(rRange, gsoMyHero.pos, enemyList, "ap", false, false)
               end
             end
-            if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget, {hero = true}) then
-              gsoSpellState.q = false
-              gsoSpellState.lr = gsoGetTickCount()
+            if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget) then
+              gsoSpellCan.q = false
+              gsoSpellTimers.lrr = gsoGetTickCount()
               gsoState.enabledAttack = false
               args.Process = false
               return
@@ -1924,7 +1828,7 @@ function OnLoad()
             for i = 1, #enemyList do
               local hero = enemyList[i]
               if gsoDistance(mePos, hero.pos) < gsoMeMenu.wset.mindist:Value() and gsoCastSpell(HK_W) then
-                gsoSpellState.lw = GetTickCount()
+                gsoSpellTimers.lrw = GetTickCount()
                 return
               end
             end
@@ -1933,7 +1837,7 @@ function OnLoad()
       end)
       gsoOrbwalker:OnIssue(function(issue)
         if issue.attack then
-          gsoSpellState.q = true; gsoSpellState.w = true; gsoSpellState.e = true; gsoSpellState.r = true
+          gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true
         end
       end)
     end,
@@ -2024,7 +1928,7 @@ function OnLoad()
               gsoMeMenu.eset:MenuElement({id = "harass", name = "Harass", value = false})
       
       --[[ SPELL DRAW ]]
-      gsoDrawData = { q = true, qr = 300, e = true, er = 550 }
+      gsoSpellDraw = { q = true, qr = 300, e = true, er = 550 }
       
       --[[ ON MOVE ]]
       gsoOrbwalker:OnMove(function(args)
@@ -2047,14 +1951,14 @@ function OnLoad()
         --E
         if isTarget and afterAttack then
           local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
-                canE = canE and gsoSpellState.e and gsoIsReady(_E, { q = 400, w = 0, e = 1000, r = 0 })
+                canE = canE and gsoSpellCan.e and gsoIsReady(_E, { q = 400, w = 0, e = 1000, r = 0 })
           if canE then
             local ePred = target:GetPrediction(2000,0.15)
             local tPos = target.pos
             local canEonTarget = ePred and gsoDistance(ePred, tPos) < 500 and gsoCheckWall(mePos, ePred, 475) and gsoCheckWall(mePos, tPos, 475)
             if canEonTarget and gsoCastSpellTarget(HK_E, 500, mePos, target, {hero=true}, {minions=true, heroes=true}) then
-              gsoSpellState.q = false
-              gsoSpellState.le = gsoGetTickCount()
+              gsoSpellCan.q = false
+              gsoSpellTimers.lre = gsoGetTickCount()
               gsoState.enabledAttack = false
               args.Process = false
               return
@@ -2065,7 +1969,7 @@ function OnLoad()
         --Q
         if not isTarget or afterAttack then
           local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-                canQ = canQ and (not isTarget or gsoSpellState.q) and gsoIsReadyFast(_Q, { q = 1000, w = 0, e = 750, r = 0 })
+                canQ = canQ and (not isTarget or gsoSpellCan.q) and gsoIsReadyFast(_Q, { q = 1000, w = 0, e = 750, r = 0 })
           if canQ then
           local enemyList = {}
           for i = 1, #gsoObjects.enemyHeroes do
@@ -2090,8 +1994,8 @@ function OnLoad()
               local extPos = mePos + (mousePos-mePos):Normalized() * extRange
               local distEnemyToExt = gsoDistance(extPos, heroPos)
               if distEnemyToExt < meRange + hero.boundingRadius and gsoCastSpell(HK_Q) then
-                gsoSpellState.e = false
-                gsoSpellState.lq = gsoGetTickCount()
+                gsoSpellCan.e = false
+                gsoSpellTimers.lrq = gsoGetTickCount()
                 gsoState.enabledAttack = false
                 gsoExtra.resetAttack = true
                 args.Process = false
@@ -2105,7 +2009,7 @@ function OnLoad()
       --[[ ON ISSUE ]]
       gsoOrbwalker:OnIssue(function(issue)
         if issue.attack then
-          gsoSpellState.q = true; gsoSpellState.w = true; gsoSpellState.e = true; gsoSpellState.r = true
+          gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true
         end
       end)
     end,
@@ -2161,23 +2065,20 @@ function OnLoad()
     gsoMenu.gsodraw:MenuElement({name = "Enabled",  id = "enabled", value = true})
   gsoMenu:MenuElement({name = "Items", id = "gsoitem", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/item.png" })
     gsoMenu.gsoitem:MenuElement({id = "botrk", name = "        botrk", value = true, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/botrk.png" })
-  gsoOrbwalker:OnMove(function(args)
-    local botrkMinus = gsoGetTickCount() - gsoItems.lastBotrk
-    if botrkMinus < 100 then
-      args.Process = false
-      return
-    end
-    local botrkTarget = args.Target
-    local canBotrk = botrkTarget and gsoDistance(botrkTarget.pos, gsoMyHero.pos) < 520
-    if canBotrk and gsoMenu.gsoitem.botrk:Value() and botrkMinus > 1000 and gsoGameTimer() > gsoTimers.lastMoveSend + 0.075 and gsoGameTimer() > gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.5 ) and gsoMode.isCombo() then
-      local botrkHK = gsoItems._botrk()
-      if botrkHK and gsoCastSpellTarget(botrkHK, 520, gsoMyHero.pos, botrkTarget, {hero=true}, {heroes=true}) then
-        gsoItems.lastBotrk = gsoGetTickCount()
-        args.Process = false
-        return
+  gsoOrbwalker:OnMove(function()
+    if gsoMode.isCombo() then
+      local target = gsoExtra.lastTarget
+      local isTarget = target ~= nil and target.type == Obj_AI_Hero and gsoIsHeroValid(520, target, false, false) == true and gsoGetTickCount() - gsoItems.lastBotrk > 1000
+      if isTarget and gsoMenu.gsoitem.botrk:Value() and gsoGameTimer() > gsoTimers.lastMoveSend + 0.075 and gsoGameTimer() > gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 ) then
+        local botrkHK = gsoItems._botrk()
+        if botrkHK and gsoSpellCan.botrk == true and gsoCastSpellTarget(botrkHK, 520, gsoMyHero.pos, target) then
+          gsoItems.lastBotrk = gsoGetTickCount()
+          return false
+        end
       end
     end
   end)
+  gsoOrbwalker:CanMove(function() if gsoGetTickCount() - gsoItems.lastBotrk < 100 then return false else return true end end)
   if myHero.charName == "Aatrox" then gsoLoadMyHero.__Aatrox() elseif myHero.charName == "Ahri" then gsoLoadMyHero.__Ahri() elseif myHero.charName == "Akali" then gsoLoadMyHero.__Akali() elseif myHero.charName == "Alistar" then gsoLoadMyHero.__Alistar() elseif myHero.charName == "Amumu" then gsoLoadMyHero.__Amumu() elseif myHero.charName == "Anivia" then gsoLoadMyHero.__Anivia() elseif myHero.charName == "Annie" then gsoLoadMyHero.__Annie() elseif myHero.charName == "Ashe" then gsoLoadMyHero.__Ashe() elseif myHero.charName == "AurelionSol" then gsoLoadMyHero.__AurelionSol() elseif myHero.charName == "Azir" then gsoLoadMyHero.__Azir() elseif myHero.charName == "Bard" then gsoLoadMyHero.__Bard() elseif myHero.charName == "Blitzcrank" then gsoLoadMyHero.__Blitzcrank() elseif myHero.charName == "Brand" then gsoLoadMyHero.__Brand() elseif myHero.charName == "Braum" then gsoLoadMyHero.__Braum() elseif myHero.charName == "Caitlyn" then gsoLoadMyHero.__Caitlyn() elseif myHero.charName == "Camille" then gsoLoadMyHero.__Camille() elseif myHero.charName == "Cassiopeia" then gsoLoadMyHero.__Cassiopeia() elseif myHero.charName == "Chogath" then gsoLoadMyHero.__Chogath() elseif myHero.charName == "Corki" then gsoLoadMyHero.__Corki() elseif myHero.charName == "Darius" then gsoLoadMyHero.__Darius() elseif myHero.charName == "Diana" then gsoLoadMyHero.__Diana() elseif myHero.charName == "DrMundo" then gsoLoadMyHero.__DrMundo() elseif myHero.charName == "Draven" then gsoLoadMyHero.__Draven() elseif myHero.charName == "Ekko" then gsoLoadMyHero.__Ekko() elseif myHero.charName == "Elise" then gsoLoadMyHero.__Elise() elseif myHero.charName == "Evelynn" then gsoLoadMyHero.__Evelynn() elseif myHero.charName == "Ezreal" then gsoLoadMyHero.__Ezreal() elseif myHero.charName == "Fiddlesticks" then gsoLoadMyHero.__Fiddlesticks() elseif myHero.charName == "Fiora" then gsoLoadMyHero.__Fiora() elseif myHero.charName == "Fizz" then gsoLoadMyHero.__Fizz() elseif myHero.charName == "Galio" then gsoLoadMyHero.__Galio() elseif myHero.charName == "Gangplank" then gsoLoadMyHero.__Gangplank() elseif myHero.charName == "Garen" then gsoLoadMyHero.__Garen() elseif myHero.charName == "Gnar" then gsoLoadMyHero.__Gnar() elseif myHero.charName == "Gragas" then gsoLoadMyHero.__Gragas() elseif myHero.charName == "Graves" then gsoLoadMyHero.__Graves() elseif myHero.charName == "Hecarim" then gsoLoadMyHero.__Hecarim() elseif myHero.charName == "Heimerdinger" then gsoLoadMyHero.__Heimerdinger() elseif myHero.charName == "Illaoi" then gsoLoadMyHero.__Illaoi() elseif myHero.charName == "Irelia" then gsoLoadMyHero.__Irelia() elseif myHero.charName == "Ivern" then gsoLoadMyHero.__Ivern() elseif myHero.charName == "Janna" then gsoLoadMyHero.__Janna() elseif myHero.charName == "JarvanIV" then gsoLoadMyHero.__JarvanIV() elseif myHero.charName == "Jax" then gsoLoadMyHero.__Jax() elseif myHero.charName == "Jayce" then gsoLoadMyHero.__Jayce() elseif myHero.charName == "Jhin" then gsoLoadMyHero.__Jhin() elseif myHero.charName == "Jinx" then gsoLoadMyHero.__Jinx() elseif myHero.charName == "Kalista" then gsoLoadMyHero.__Kalista() elseif myHero.charName == "Karma" then gsoLoadMyHero.__Karma() elseif myHero.charName == "Karthus" then gsoLoadMyHero.__Karthus() elseif myHero.charName == "Kassadin" then gsoLoadMyHero.__Kassadin() elseif myHero.charName == "Katarina" then gsoLoadMyHero.__Katarina() elseif myHero.charName == "Kayle" then gsoLoadMyHero.__Kayle() elseif myHero.charName == "Kayn" then gsoLoadMyHero.__Kayn() elseif myHero.charName == "Kennen" then gsoLoadMyHero.__Kennen() elseif myHero.charName == "Khazix" then gsoLoadMyHero.__Khazix() elseif myHero.charName == "Kindred" then gsoLoadMyHero.__Kindred() elseif myHero.charName == "Kled" then gsoLoadMyHero.__Kled() elseif myHero.charName == "KogMaw" then gsoLoadMyHero.__KogMaw() elseif myHero.charName == "Leblanc" then gsoLoadMyHero.__Leblanc() elseif myHero.charName == "LeeSin" then gsoLoadMyHero.__LeeSin() elseif myHero.charName == "Leona" then gsoLoadMyHero.__Leona() elseif myHero.charName == "Lissandra" then gsoLoadMyHero.__Lissandra() elseif myHero.charName == "Lucian" then gsoLoadMyHero.__Lucian() elseif myHero.charName == "Lulu" then gsoLoadMyHero.__Lulu() elseif myHero.charName == "Lux" then gsoLoadMyHero.__Lux() elseif myHero.charName == "Malphite" then gsoLoadMyHero.__Malphite() elseif myHero.charName == "Malzahar" then gsoLoadMyHero.__Malzahar() elseif myHero.charName == "Maokai" then gsoLoadMyHero.__Maokai() elseif myHero.charName == "MasterYi" then gsoLoadMyHero.__MasterYi() elseif myHero.charName == "MissFortune" then gsoLoadMyHero.__MissFortune() elseif myHero.charName == "MonkeyKing" then gsoLoadMyHero.__MonkeyKing() elseif myHero.charName == "Mordekaiser" then gsoLoadMyHero.__Mordekaiser() elseif myHero.charName == "Morgana" then gsoLoadMyHero.__Morgana() elseif myHero.charName == "Nami" then gsoLoadMyHero.__Nami() elseif myHero.charName == "Nasus" then gsoLoadMyHero.__Nasus() elseif myHero.charName == "Nautilus" then gsoLoadMyHero.__Nautilus() elseif myHero.charName == "Nidalee" then gsoLoadMyHero.__Nidalee() elseif myHero.charName == "Nocturne" then gsoLoadMyHero.__Nocturne() elseif myHero.charName == "Nunu" then gsoLoadMyHero.__Nunu() elseif myHero.charName == "Olaf" then gsoLoadMyHero.__Olaf() elseif myHero.charName == "Orianna" then gsoLoadMyHero.__Orianna() elseif myHero.charName == "Ornn" then gsoLoadMyHero.__Ornn() elseif myHero.charName == "Pantheon" then gsoLoadMyHero.__Pantheon() elseif myHero.charName == "Poppy" then gsoLoadMyHero.__Poppy() elseif myHero.charName == "Quinn" then gsoLoadMyHero.__Quinn() elseif myHero.charName == "Rakan" then gsoLoadMyHero.__Rakan() elseif myHero.charName == "Rammus" then gsoLoadMyHero.__Rammus() elseif myHero.charName == "RekSai" then gsoLoadMyHero.__RekSai() elseif myHero.charName == "Renekton" then gsoLoadMyHero.__Renekton() elseif myHero.charName == "Rengar" then gsoLoadMyHero.__Rengar() elseif myHero.charName == "Riven" then gsoLoadMyHero.__Riven() elseif myHero.charName == "Rumble" then gsoLoadMyHero.__Rumble() elseif myHero.charName == "Ryze" then gsoLoadMyHero.__Ryze() elseif myHero.charName == "Sejuani" then gsoLoadMyHero.__Sejuani() elseif myHero.charName == "Shaco" then gsoLoadMyHero.__Shaco() elseif myHero.charName == "Shen" then gsoLoadMyHero.__Shen() elseif myHero.charName == "Shyvana" then gsoLoadMyHero.__Shyvana() elseif myHero.charName == "Singed" then gsoLoadMyHero.__Singed() elseif myHero.charName == "Sion" then gsoLoadMyHero.__Sion() elseif myHero.charName == "Sivir" then gsoLoadMyHero.__Sivir() elseif myHero.charName == "Skarner" then gsoLoadMyHero.__Skarner() elseif myHero.charName == "Sona" then gsoLoadMyHero.__Sona() elseif myHero.charName == "Soraka" then gsoLoadMyHero.__Soraka() elseif myHero.charName == "Swain" then gsoLoadMyHero.__Swain() elseif myHero.charName == "Syndra" then gsoLoadMyHero.__Syndra() elseif myHero.charName == "TahmKench" then gsoLoadMyHero.__TahmKench() elseif myHero.charName == "Taliyah" then gsoLoadMyHero.__Taliyah() elseif myHero.charName == "Talon" then gsoLoadMyHero.__Talon() elseif myHero.charName == "Taric" then gsoLoadMyHero.__Taric() elseif myHero.charName == "Teemo" then gsoLoadMyHero.__Teemo() elseif myHero.charName == "Thresh" then gsoLoadMyHero.__Thresh() elseif myHero.charName == "Tristana" then gsoLoadMyHero.__Tristana() elseif myHero.charName == "Trundle" then gsoLoadMyHero.__Trundle() elseif myHero.charName == "Tryndamere" then gsoLoadMyHero.__Tryndamere() elseif myHero.charName == "TwistedFate" then gsoLoadMyHero.__TwistedFate() elseif myHero.charName == "Twitch" then gsoLoadMyHero.__Twitch() elseif myHero.charName == "Udyr" then gsoLoadMyHero.__Udyr() elseif myHero.charName == "Urgot" then gsoLoadMyHero.__Urgot() elseif myHero.charName == "Varus" then gsoLoadMyHero.__Varus() elseif myHero.charName == "Vayne" then gsoLoadMyHero.__Vayne() elseif myHero.charName == "Veigar" then gsoLoadMyHero.__Veigar() elseif myHero.charName == "Velkoz" then gsoLoadMyHero.__Velkoz() elseif myHero.charName == "Vi" then gsoLoadMyHero.__Vi() elseif myHero.charName == "Viktor" then gsoLoadMyHero.__Viktor() elseif myHero.charName == "Vladimir" then gsoLoadMyHero.__Vladimir() elseif myHero.charName == "Volibear" then gsoLoadMyHero.__Volibear() elseif myHero.charName == "Warwick" then gsoLoadMyHero.__Warwick() elseif myHero.charName == "Xayah" then gsoLoadMyHero.__Xayah() elseif myHero.charName == "Xerath" then gsoLoadMyHero.__Xerath() elseif myHero.charName == "XinZhao" then gsoLoadMyHero.__XinZhao() elseif myHero.charName == "Yasuo" then gsoLoadMyHero.__Yasuo() elseif myHero.charName == "Yorick" then gsoLoadMyHero.__Yorick() elseif myHero.charName == "Zac" then gsoLoadMyHero.__Zac() elseif myHero.charName == "Zed" then gsoLoadMyHero.__Zed() elseif myHero.charName == "Ziggs" then gsoLoadMyHero.__Ziggs() elseif myHero.charName == "Zilean" then gsoLoadMyHero.__Zilean() elseif myHero.charName == "Zoe" then gsoLoadMyHero.__Zoe() elseif myHero.charName == "Zyra" then gsoLoadMyHero.__Zyra() end
   gsoMenu.gsodraw:MenuElement({name = "Circles", id = "circle1", type = MENU,
     onclick = function()
@@ -2195,19 +2096,19 @@ function OnLoad()
         gsoMenu.gsodraw.circle1.iaxecolor:Hide(true)
         gsoMenu.gsodraw.circle1.iaxewidth:Hide(true)
         gsoMenu.gsodraw.circle1.iaxeradius:Hide(true) end
-      if gsoDrawData.q then
+      if gsoSpellDraw.q then
         gsoMenu.gsodraw.circle1.qrange:Hide(true)
         gsoMenu.gsodraw.circle1.qrangecolor:Hide(true)
         gsoMenu.gsodraw.circle1.qrangewidth:Hide(true) end
-      if gsoDrawData.w then
+      if gsoSpellDraw.w then
         gsoMenu.gsodraw.circle1.wrange:Hide(true)
         gsoMenu.gsodraw.circle1.wrangecolor:Hide(true)
         gsoMenu.gsodraw.circle1.wrangewidth:Hide(true) end
-      if gsoDrawData.e then
+      if gsoSpellDraw.e then
         gsoMenu.gsodraw.circle1.erange:Hide(true)
         gsoMenu.gsodraw.circle1.erangecolor:Hide(true)
         gsoMenu.gsodraw.circle1.erangewidth:Hide(true) end
-      if gsoDrawData.r then
+      if gsoSpellDraw.r then
         gsoMenu.gsodraw.circle1.rrange:Hide(true)
         gsoMenu.gsodraw.circle1.rrangecolor:Hide(true)
         gsoMenu.gsodraw.circle1.rrangewidth:Hide(true) end end })
@@ -2224,7 +2125,7 @@ function OnLoad()
         gsoMenu.gsodraw.circle1.notcolor:Hide() end })
       gsoMenu.gsodraw.circle1:MenuElement({id = "notenable", name = "        Enabled", value = true})
       gsoMenu.gsodraw.circle1:MenuElement({id = "notcolor", name = "        Color", color = Draw.Color(200, 188, 77, 26)}) end
-  if gsoDrawData.q then
+  if gsoSpellDraw.q then
     gsoMenu.gsodraw.circle1:MenuElement({name = "Q Range", id = "note5", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
       onclick = function()
         gsoMenu.gsodraw.circle1.qrange:Hide()
@@ -2233,7 +2134,7 @@ function OnLoad()
       gsoMenu.gsodraw.circle1:MenuElement({id = "qrange", name = "        Enabled", value = true})
       gsoMenu.gsodraw.circle1:MenuElement({id = "qrangecolor", name = "        Color", color = Draw.Color(255, 66, 134, 244)})
       gsoMenu.gsodraw.circle1:MenuElement({id = "qrangewidth", name = "        Width", value = 1, min = 1, max = 10}) end
-  if gsoDrawData.w then
+  if gsoSpellDraw.w then
     gsoMenu.gsodraw.circle1:MenuElement({name = "W Range", id = "note6", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
       onclick = function()
         gsoMenu.gsodraw.circle1.wrange:Hide()
@@ -2242,7 +2143,7 @@ function OnLoad()
       gsoMenu.gsodraw.circle1:MenuElement({id = "wrange", name = "        Enabled", value = true})
       gsoMenu.gsodraw.circle1:MenuElement({id = "wrangecolor", name = "        Color", color = Draw.Color(255, 92, 66, 244)})
       gsoMenu.gsodraw.circle1:MenuElement({id = "wrangewidth", name = "        Width", value = 1, min = 1, max = 10}) end
-  if gsoDrawData.e then
+  if gsoSpellDraw.e then
     gsoMenu.gsodraw.circle1:MenuElement({name = "E Range", id = "note7", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
       onclick = function()
           gsoMenu.gsodraw.circle1.erange:Hide()
@@ -2251,7 +2152,7 @@ function OnLoad()
       gsoMenu.gsodraw.circle1:MenuElement({id = "erange", name = "        Enabled", value = true})
       gsoMenu.gsodraw.circle1:MenuElement({id = "erangecolor", name = "        Color", color = Draw.Color(255, 66, 244, 149)})
       gsoMenu.gsodraw.circle1:MenuElement({id = "erangewidth", name = "        Width", value = 1, min = 1, max = 10}) end
-  if gsoDrawData.r then
+  if gsoSpellDraw.r then
     gsoMenu.gsodraw.circle1:MenuElement({name = "R Range", id = "note8", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
       onclick = function()
         gsoMenu.gsodraw.circle1.rrange:Hide()
@@ -2333,26 +2234,26 @@ function OnDraw()
     if not gsoLoaded or not gsoMenu.gsodraw.enabled:Value() then return end
     local mePos = gsoMyHero.pos
     local drawMenu = gsoMenu.gsodraw.circle1
-    if gsoDrawData.q and drawMenu.qrange:Value() then
-        local qrange = gsoDrawData.qf and gsoDrawData.qf() or gsoDrawData.qr
+    if gsoSpellDraw.q and drawMenu.qrange:Value() then
+        local qrange = gsoSpellDraw.qf and gsoSpellDraw.qf() or gsoSpellDraw.qr
         gsoDrawCircle(mePos, qrange, drawMenu.qrangewidth:Value(), drawMenu.qrangecolor:Value()) end
-    if gsoDrawData.w and drawMenu.wrange:Value() then
-        local wrange = gsoDrawData.wf and gsoDrawData.wf() or gsoDrawData.wr
+    if gsoSpellDraw.w and drawMenu.wrange:Value() then
+        local wrange = gsoSpellDraw.wf and gsoSpellDraw.wf() or gsoSpellDraw.wr
         gsoDrawCircle(mePos, wrange, drawMenu.wrangewidth:Value(), drawMenu.wrangecolor:Value()) end
-    if gsoDrawData.e and drawMenu.erange:Value() then
-        local erange = gsoDrawData.ef and gsoDrawData.ef() or gsoDrawData.er
+    if gsoSpellDraw.e and drawMenu.erange:Value() then
+        local erange = gsoSpellDraw.ef and gsoSpellDraw.ef() or gsoSpellDraw.er
         gsoDrawCircle(mePos, erange, drawMenu.erangewidth:Value(), drawMenu.erangecolor:Value()) end
-    if gsoDrawData.r and drawMenu.rrange:Value() then
-        local rrange = gsoDrawData.rf and gsoDrawData.rf() or gsoDrawData.rr
+    if gsoSpellDraw.r and drawMenu.rrange:Value() then
+        local rrange = gsoSpellDraw.rf and gsoSpellDraw.rf() or gsoSpellDraw.rr
         gsoDrawCircle(mePos, rrange, drawMenu.rrangewidth:Value(), drawMenu.rrangecolor:Value()) end
 end
 function OnWndMsg(msg, wParam)
   if not gsoLoaded then return end
   local getTick = gsoGetTickCount()
   local manualNum = -1
-  if wParam == HK_Q and getTick > gsoSpellState.lqk + 1000 and Game.CanUseSpell(_Q) == 0 then gsoSpellState.lqk = getTick; manualNum = 0
-  elseif wParam == HK_W and getTick > gsoSpellState.lwk + 1000 and Game.CanUseSpell(_W) == 0 then gsoSpellState.lwk = getTick; manualNum = 1
-  elseif wParam == HK_E and getTick > gsoSpellState.lek + 1000 and Game.CanUseSpell(_E) == 0 then gsoSpellState.lek = getTick; manualNum = 2
-  elseif wParam == HK_R and getTick > gsoSpellState.lrk + 1000 and Game.CanUseSpell(_R) == 0 then gsoSpellState.lrk = getTick; manualNum = 3 end
+  if wParam == HK_Q and getTick > gsoSpellTimers.lqk + 1000 and Game.CanUseSpell(_Q) == 0 then gsoSpellTimers.lqk = getTick; manualNum = 0
+  elseif wParam == HK_W and getTick > gsoSpellTimers.lwk + 1000 and Game.CanUseSpell(_W) == 0 then gsoSpellTimers.lwk = getTick; manualNum = 1
+  elseif wParam == HK_E and getTick > gsoSpellTimers.lek + 1000 and Game.CanUseSpell(_E) == 0 then gsoSpellTimers.lek = getTick; manualNum = 2
+  elseif wParam == HK_R and getTick > gsoSpellTimers.lrk + 1000 and Game.CanUseSpell(_R) == 0 then gsoSpellTimers.lrk = getTick; manualNum = 3 end
   if manualNum > -1 and not gsoDelayedSpell[manualNum] then if gsoMode.isCombo() or gsoMode.isHarass() or gsoMode.isLaneClear() or gsoMode.isLastHit() then gsoDelayedSpell[manualNum] = { function() Control.KeyDown(wParam);Control.KeyUp(wParam);Control.KeyDown(wParam);Control.KeyUp(wParam);Control.KeyDown(wParam);Control.KeyUp(wParam); end, getTick} end end
 end
