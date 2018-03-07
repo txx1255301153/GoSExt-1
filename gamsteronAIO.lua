@@ -1985,7 +1985,159 @@ function OnLoad()
     __Udyr = function() end,
     __Urgot = function() end,
     __Varus = function() end,
-    __Vayne = function() end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    __Vayne = function()
+      
+      require "MapPositionGOS"
+      
+      --[[ MENU ]]
+      local gsoMeMenu = gsoMenu:MenuElement({name = "Vayne", id = "gsovayne", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/vayne.png" })
+          gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+              gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+              gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+          gsoMeMenu:MenuElement({name = "E settings", id = "eset", type = MENU })
+              gsoMeMenu.eset:MenuElement({id = "combo", name = "Combo", value = true})
+              gsoMeMenu.eset:MenuElement({id = "harass", name = "Harass", value = false})
+      
+      --[[ SPELL DRAW ]]
+      gsoDrawData = { q = true, qr = 300, e = true, er = 550 }
+      
+      --[[ ON MOVE ]]
+      gsoOrbwalker:OnMove(function(args)
+        local target = args.Target
+        local isTarget = target ~= nil
+        local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+        local isCombo = gsoMode.isCombo()
+        local isHarass = gsoMode.isHarass()
+        local mePos = gsoMyHero.pos
+        
+        if not gsoCheckTimers({ q = 200, w = 0, e = 400, r = 0 }) then
+          args.Process = false
+          return
+        end
+        if not gsoState.enabledAttack and gsoCheckTimers({ q = 300, w = 0, e = 500, r = 0 }) then
+          gsoState.enabledAttack = true
+          return
+        end
+        
+        --E
+        if isTarget and afterAttack then
+          local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
+                canE = canE and gsoSpellState.e and gsoIsReady(_E, { q = 400, w = 0, e = 1000, r = 0 })
+          if canE then
+            local ePred = target:GetPrediction(2000,0.15)
+            local tPos = target.pos
+            local canEonTarget = ePred and gsoDistance(ePred, tPos) < 500 and gsoCheckWall(mePos, ePred, 475) and gsoCheckWall(mePos, tPos, 475)
+            if canEonTarget and gsoCastSpellTarget(HK_E, 500, mePos, target, {hero=true}, {minions=true, heroes=true}) then
+              gsoSpellState.q = false
+              gsoSpellState.le = gsoGetTickCount()
+              gsoState.enabledAttack = false
+              args.Process = false
+              return
+            end
+          end
+        end
+        
+        --Q
+        if not isTarget or afterAttack then
+          local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
+                canQ = canQ and (not isTarget or gsoSpellState.q) and gsoIsReadyFast(_Q, { q = 1000, w = 0, e = 750, r = 0 })
+          if canQ then
+          local enemyList = {}
+          for i = 1, #gsoObjects.enemyHeroes do
+            local hero = gsoObjects.enemyHeroes[i]
+            if hero and hero.visible and not gsoImmortal(hero, false) then
+              enemyList[#enemyList+1] = hero
+            end
+          end
+            local meRange = myHero.range + myHero.boundingRadius
+            for i = 1, #enemyList do
+              local hero = enemyList[i]
+              local heroPos = hero.pos
+              local distToMouse = gsoDistance(mePos, mousePos)
+              local distToHero = gsoDistance(mePos, heroPos)
+              local distToEndPos = gsoDistance(mePos, hero.pathing.endPos)
+              local extRange
+              if distToEndPos > distToHero then
+                extRange = distToMouse > 200 and 200 or distToMouse
+              else
+                extRange = distToMouse > 300 and 300 or distToMouse
+              end
+              local extPos = mePos + (mousePos-mePos):Normalized() * extRange
+              local distEnemyToExt = gsoDistance(extPos, heroPos)
+              if distEnemyToExt < meRange + hero.boundingRadius and gsoCastSpell(HK_Q) then
+                gsoSpellState.e = false
+                gsoSpellState.lq = gsoGetTickCount()
+                gsoState.enabledAttack = false
+                gsoExtra.resetAttack = true
+                args.Process = false
+                return
+              end
+            end
+          end
+        end
+      end)
+      
+      --[[ ON ISSUE ]]
+      gsoOrbwalker:OnIssue(function(issue)
+        if issue.attack then
+          gsoSpellState.q = true; gsoSpellState.w = true; gsoSpellState.e = true; gsoSpellState.r = true
+        end
+      end)
+    end,
+      
+      
+      
+
+
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
     __Veigar = function() end,
     __Velkoz = function() end,
     __Vi = function() end,
