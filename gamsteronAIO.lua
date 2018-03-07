@@ -1719,6 +1719,11 @@ function OnLoad()
     
     
     __Teemo = function()
+      
+      --[[ set ap ]]
+      gsoOrbwalker.IsAP()
+      
+      --[[ menu ]]
       local gsoMeMenu = gsoMenu:MenuElement({name = "Teemo", id = "gsoteemo", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/teemo.png" })
         gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
             gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
@@ -1731,116 +1736,89 @@ function OnLoad()
             gsoMeMenu.rset:MenuElement({id = "immo", name = "only if enemy isImmobile", value = true})
             gsoMeMenu.rset:MenuElement({id = "combo", name = "Combo", value = true})
             gsoMeMenu.rset:MenuElement({id = "harass", name = "Harass", value = false})
+      
+      --[[ draw ]]
       local function _teemoR()
         local rLvl = gsoMyHero:GetSpellData(_R).level
         if rLvl == 0 then rLvl = 1 end
         return 150 + ( 250 * rLvl )
       end
       gsoSpellDraw = { q = true, qr = 680, r = true, rf = function() return _teemoR() end }
+      
+      --[[ spell data ]]
       gsoSpellData.r = { delay = 0.25, range = 0, width = 200, speed = 1000, sType = "circular", col = false, mCol = false, hCol = false, out = false }
+      
+      --[[ on move ]]
       gsoOrbwalker:OnMove(function(args)
-        local target = args.Target
-        local isTarget = target ~= nil
-        local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
-        local mePos = gsoMyHero.pos
-        local enemyList = {}
-        for i = 1, #gsoObjects.enemyHeroes do
-          local hero = gsoObjects.enemyHeroes[i]
-          if hero and hero.visible and not gsoImmortal(hero, false) then
-            enemyList[#enemyList+1] = hero
-          end
-        end
-        
-        if not gsoCheckTimers({ q = 250, w = 0, e = 0, r = 250 }) then
-          args.Process = false
-          return
-        end
-        if not gsoState.enabledAttack and gsoCheckTimers({ q = 350, w = 0, e = 0, r = 350 }) then
-          gsoState.enabledAttack = true
-          return
-        end
-        
-        if not isTarget or afterAttack then
-          
-          -- USE Q :
-          local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-                canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 0, e = 0, r = 750 }) and (not isTarget or gsoSpellCan.q)
-          if canQ then
-            local qTarget
-            if isTarget then
-              qTarget = target
-            else
-              qTarget = gsoGetTarget(680, gsoMyHero.pos, enemyList, "ap", false, false)
-            end
-            if qTarget and gsoCastSpellTarget(HK_Q, 680, mePos, qTarget, {hero=true}, {minions=true, heroes=true}) then
-              gsoSpellCan.r = false
-              gsoSpellTimers.lrq = gsoGetTickCount()
-              gsoState.enabledAttack = false
-              args.Process = false
-              return
-            end
-          end
-          
-          -- USE R :
-          local canR = ( isCombo and gsoMeMenu.rset.combo:Value() ) or ( isHarass and gsoMeMenu.rset.harass:Value() )
-                canR = canR and gsoIsReady(_R, { q = 350, w = 0, e = 0, r = 1000 }) and (not isTarget or gsoSpellCan.r)
-          if canR then
-            local rRange = 150 + ( 250 * gsoMyHero:GetSpellData(_R).level )
-            gsoSpellData.r.range = rRange
-            local onlyImmobile = gsoMeMenu.rset.immo:Value()
-            local rTarget = onlyImmobile and gsoGetImmobileEnemy(mePos, enemyList, rRange) or nil
-            if not rTarget and not onlyImmobile then
-              local isTeemoTarget = isTarget and gsoDistance(mePos, target.pos) < rRange
-              if isTeemoTarget then
-                rTarget = target
-              else
-                rTarget = gsoGetTarget(rRange, gsoMyHero.pos, enemyList, "ap", false, false)
+        if isCombo or isHarass then
+          local target = gsoExtra.lastTarget
+          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+          local mePos = gsoMyHero.pos
+          local enemyList = gsoObjects.enemyHeroes_spell
+          if not isTarget or afterAttack then
+            --Q
+            local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
+                  canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 0, e = 0, r = 750 }) and (not isTarget or gsoSpellCan.q)
+            if canQ then
+              local qTarget = target
+              if not isTarget then qTarget = gsoGetTarget(680, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false) end
+              if qTarget and gsoCastSpellTarget(HK_Q, 680, mePos, qTarget) then
+                gsoSpellCan.r = false
+                gsoSpellTimers.lq = gsoGetTickCount()
+                return false
               end
             end
-            if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget) then
-              gsoSpellCan.q = false
-              gsoSpellTimers.lrr = gsoGetTickCount()
-              gsoState.enabledAttack = false
-              args.Process = false
-              return
+            --R
+            local canR = ( isCombo and gsoMeMenu.rset.combo:Value() ) or ( isHarass and gsoMeMenu.rset.harass:Value() )
+                  canR = canR and gsoIsReady(_R, { q = 350, w = 0, e = 0, r = 1000 }) and (not isTarget or gsoSpellCan.r)
+            if canR then
+              local rRange = 150 + ( 250 * gsoMyHero:GetSpellData(_R).level )
+              gsoSpellData.r.range = rRange
+              local onlyImmobile = gsoMeMenu.rset.immo:Value()
+              local rTarget = nil
+              if onlyImmobile then rTarget = gsoGetImmobileEnemy(mePos, enemyList, rRange) end
+              if not rTarget and not onlyImmobile then
+                local isTeemoTarget = isTarget and gsoDistance(mePos, target.pos) < rRange
+                if isTeemoTarget then
+                  rTarget = target
+                else
+                  rTarget = gsoGetTarget(rRange, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false)
+                end
+              end
+              if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget) then
+                gsoSpellCan.q = false
+                gsoSpellTimers.lr = gsoGetTickCount()
+                return false
+              end
             end
-          end
-          
-          -- USE W :
-          local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
-                canW = canW and gsoIsReadyFast(_W, { q = 350, w = 1000, e = 0, r = 350 })
-          if canW then
-            for i = 1, #enemyList do
-              local hero = enemyList[i]
-              if gsoDistance(mePos, hero.pos) < gsoMeMenu.wset.mindist:Value() and gsoCastSpell(HK_W) then
-                gsoSpellTimers.lrw = GetTickCount()
-                return
+            --W
+            local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
+                  canW = canW and gsoIsReadyFast(_W, { q = 350, w = 1000, e = 0, r = 350 })
+            if canW then
+              for i = 1, #enemyList do
+                local hero = enemyList[i]
+                if gsoDistance(mePos, hero.pos) < gsoMeMenu.wset.mindist:Value() and gsoCastSpell(HK_W) then
+                  gsoSpellTimers.lw = GetTickCount()
+                  return false
+                end
               end
             end
           end
         end
+        return true
       end)
-      gsoOrbwalker:OnIssue(function(issue)
-        if issue.attack then
-          gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true
-        end
-      end)
-    end,
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+      
+      --[[ can move | attack ]]
+      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 250, w = 0, e = 0, r = 250 }) end)
+      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 350, w = 0, e = 0, r = 350 }) end)
+      
+      --[[ on issue ]]
+      gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
+    end,    
+
     
     
     
@@ -1919,98 +1897,70 @@ function OnLoad()
       
       --[[ ON MOVE ]]
       gsoOrbwalker:OnMove(function(args)
-        local target = args.Target
-        local isTarget = target ~= nil
-        local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
-        local mePos = gsoMyHero.pos
-        
-        if not gsoCheckTimers({ q = 200, w = 0, e = 400, r = 0 }) then
-          args.Process = false
-          return
-        end
-        if not gsoState.enabledAttack and gsoCheckTimers({ q = 300, w = 0, e = 500, r = 0 }) then
-          gsoState.enabledAttack = true
-          return
-        end
-        
-        --E
-        if isTarget and afterAttack then
-          local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
-                canE = canE and gsoSpellCan.e and gsoIsReady(_E, { q = 400, w = 0, e = 1000, r = 0 })
-          if canE then
-            local ePred = target:GetPrediction(2000,0.15)
-            local tPos = target.pos
-            local canEonTarget = ePred and gsoDistance(ePred, tPos) < 500 and gsoCheckWall(mePos, ePred, 475) and gsoCheckWall(mePos, tPos, 475)
-            if canEonTarget and gsoCastSpellTarget(HK_E, 500, mePos, target, {hero=true}, {minions=true, heroes=true}) then
-              gsoSpellCan.q = false
-              gsoSpellTimers.lre = gsoGetTickCount()
-              gsoState.enabledAttack = false
-              args.Process = false
-              return
-            end
-          end
-        end
-        
-        --Q
-        if not isTarget or afterAttack then
-          local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-                canQ = canQ and (not isTarget or gsoSpellCan.q) and gsoIsReadyFast(_Q, { q = 1000, w = 0, e = 750, r = 0 })
-          if canQ then
-          local enemyList = {}
-          for i = 1, #gsoObjects.enemyHeroes do
-            local hero = gsoObjects.enemyHeroes[i]
-            if hero and hero.visible and not gsoImmortal(hero, false) then
-              enemyList[#enemyList+1] = hero
-            end
-          end
-            local meRange = myHero.range + myHero.boundingRadius
-            for i = 1, #enemyList do
-              local hero = enemyList[i]
-              local heroPos = hero.pos
-              local distToMouse = gsoDistance(mePos, mousePos)
-              local distToHero = gsoDistance(mePos, heroPos)
-              local distToEndPos = gsoDistance(mePos, hero.pathing.endPos)
-              local extRange
-              if distToEndPos > distToHero then
-                extRange = distToMouse > 200 and 200 or distToMouse
-              else
-                extRange = distToMouse > 300 and 300 or distToMouse
+        if isCombo or isHarass then
+          local target = gsoExtra.lastTarget
+          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+          local mePos = gsoMyHero.pos
+          local enemyList = gsoObjects.enemyHeroes_spell
+          --E
+          if isTarget and afterAttack then
+            local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
+                  canE = canE and gsoSpellCan.e and gsoIsReady(_E, { q = 400, w = 0, e = 1000, r = 0 })
+            if canE then
+              local ePred = target:GetPrediction(2000,0.15)
+              local tPos = target.pos
+              local canEonTarget = ePred and gsoDistance(ePred, tPos) < 500 and gsoCheckWall(mePos, ePred, 475) and gsoCheckWall(mePos, tPos, 475)
+              if canEonTarget and gsoCastSpellTarget(HK_E, 500, mePos, target) then
+                gsoSpellCan.q = false
+                gsoSpellTimers.le = gsoGetTickCount()
+                return false
               end
-              local extPos = mePos + (mousePos-mePos):Normalized() * extRange
-              local distEnemyToExt = gsoDistance(extPos, heroPos)
-              if distEnemyToExt < meRange + hero.boundingRadius and gsoCastSpell(HK_Q) then
-                gsoSpellCan.e = false
-                gsoSpellTimers.lrq = gsoGetTickCount()
-                gsoState.enabledAttack = false
-                gsoExtra.resetAttack = true
-                args.Process = false
-                return
+            end
+          end
+          --Q
+          if not isTarget or afterAttack then
+            local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
+                  canQ = canQ and (not isTarget or gsoSpellCan.q) and gsoIsReadyFast(_Q, { q = 1000, w = 0, e = 750, r = 0 })
+            if canQ then
+              local meRange = myHero.range + myHero.boundingRadius
+              for i = 1, #enemyList do
+                local hero = enemyList[i]
+                local heroPos = hero.pos
+                local distToMouse = gsoDistance(mePos, mousePos)
+                local distToHero = gsoDistance(mePos, heroPos)
+                local distToEndPos = gsoDistance(mePos, hero.pathing.endPos)
+                local extRange
+                if distToEndPos > distToHero then
+                  extRange = distToMouse > 200 and 200 or distToMouse
+                else
+                  extRange = distToMouse > 300 and 300 or distToMouse
+                end
+                local extPos = mePos + (mousePos-mePos):Normalized() * extRange
+                local distEnemyToExt = gsoDistance(extPos, heroPos)
+                if distEnemyToExt < meRange + hero.boundingRadius and gsoCastSpell(HK_Q) then
+                  gsoSpellCan.e = false
+                  gsoSpellTimers.lq = gsoGetTickCount()
+                  gsoExtra.resetAttack = true
+                  return false
+                end
               end
             end
           end
         end
+        return true
       end)
       
-      --[[ ON ISSUE ]]
-      gsoOrbwalker:OnIssue(function(issue)
-        if issue.attack then
-          gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true
-        end
-      end)
-    end,
+      --[[ can move | attack ]]
+      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 200, w = 0, e = 400, r = 0 }) end)
+      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 300, w = 0, e = 500, r = 0 }) end)
       
-      
-      
+      --[[ on issue ]]
+      gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
+    end,    
 
-
-            
-            
-            
-            
-            
-            
             
             
             
