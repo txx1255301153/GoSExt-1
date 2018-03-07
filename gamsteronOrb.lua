@@ -116,7 +116,7 @@ function OnLoad()
             :BonusDamageOnMinion(function() return bonusDamageOnMinion() end) -> event
             :BonusDamageOnMinion2(function(minion) return bonusDamageOnMinion2(minion) end) -> event
             :AttackSpeed(function() return attackSpeed() end) -> event ( after buff end time that increase attack speed. Ashe Q, Tristana Q etc. )
-            .AddAction(action) -> function, add delayed action. action = { func = function() doWork() end, endTime = Game.Timer() + 0.05 }
+            .AddAction(action) -> function, add delayed action. action = { func = function() doWork() end, startTime = Game.Timer() + 0.05 }
             .MinionHealthPrediction(minionHealth, minionHandle, time) -> function, return number, predicted enemy minion health - very accurate, for enemy minions only
             .IsImmortal(unit, jaxE) -> function, return boolean, only heroes
             .GetTarget(range, sourcePos, enemyHeroes, dmgType, bb, jaxE) -> function, return unit or nil
@@ -592,7 +592,7 @@ function OnTick()
                                     local cacheDelayedActions = {}
                                     for i = 1, #gsoDelayedActions do
                                         local t = gsoDelayedActions[i]
-                                        if gsoGameTimer() > t.endTime then
+                                        if gsoGameTimer() > t.startTime then
                                             t.func()
                                         else
                                             cacheDelayedActions[#cacheDelayedActions+1] = t
