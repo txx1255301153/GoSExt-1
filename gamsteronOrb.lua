@@ -16,7 +16,7 @@ events
 gsoOrbwalker:OnTick(function() onTick() end)
 gsoOrbwalker:OnMove(function() onMove() end)
 gsoOrbwalker:OnAttack(function() onAttack() end)
-gsoOrbwalker:OnIssue(function(args) print(checkIssue(args)) end)
+gsoOrbwalker:OnIssue(function(args) onIssue(args) end)
 gsoOrbwalker:OnEnemyHeroLoad(function(heroName) localMenu.useon:MenuElement({id = heroName, name = heroName, value = true}) end)
 gsoOrbwalker:CanChangeAnimationTime(function() return canChangeAnimationTime() end)
 gsoOrbwalker:BonusDamageOnMinion(function() return bonusDamageOnMinion() end)
