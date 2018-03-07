@@ -1089,6 +1089,7 @@ local function gsoOrbwalkerLogic()
       elseif gsoMode.isLaneClear() then
         gsoAttackMove(gsoGetLaneClearTarget())
       end
+    end
   else
     gsoState.isMoving = false
     gsoState.isAttacking = false
