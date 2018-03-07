@@ -898,11 +898,12 @@ function OnLoad()
     __Jinx = function()
       
       --[[ vars ]]
-      local champInfo = { hasQBuff = false }
+      local champInfo = { hasQBuff = false, asQ = gsoMyHero.attackSpeed, lasQBuff = 0, lastQNoBuff = 0 }
       
       --[[ menu ]]
       local gsoMeMenu = gsoMenu:MenuElement({id = "gsojinx", name = "Jinx", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/jinx.png" })
         gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+          gsoMeMenu.qset:MenuElement({id = "qrange", name = "Extra Q Buff Range", value = 0, min = 0, max = 50, step = 10 })
           gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
           gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
         gsoMeMenu:MenuElement({name = "W settings", id = "wset", type = MENU })
@@ -964,9 +965,12 @@ function OnLoad()
             local qRange = 575 + extraQ
             if not isTarget and not champInfo.hasQBuff and gsoCountEnemyHeroesInRange(mePos, qRange + 300, false) > 0 then
               canCastQ = true
+              champInfo.lasQBuff = gsoGetTickCount()
             end
             if isTarget and champInfo.hasQBuff and gsoDistance(mePos, target.pos) < 525 + gsoMyHero.boundingRadius then
               canCastQ = true
+              champInfo.lastQNoBuff = gsoGetTickCount()
+              champInfo.asQ = gsoMyHero.attackSpeed
             end
             if canCastQ and gsoCastSpell(HK_Q) then
               gsoSpellTimers.lq = gsoGetTickCount()
@@ -997,6 +1001,31 @@ function OnLoad()
       --[[ on tick ]]
       gsoOrbwalker:OnTick(function()
         champInfo.hasQBuff = gsoHasBuff(gsoMyHero, "jinxq") == true
+        local isCombo = gsoMode.isCombo()
+        local isHarass = gsoMode.isHarass()
+        local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
+        if canQ and gsoIsReadyFast(_Q, { q = 650, w = 550, e = 75, r = 550 }) then
+          local target = gsoExtra.lastTarget
+          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local canCastQ = false
+          local extraQ = 25 * myHero:GetSpellData(_Q).level
+          local qRange = 575 + extraQ
+          local mePos = gsoMyHero.pos
+          if gsoCountEnemyHeroesInRange(mePos, 525+gsoMeMenu.qset.qrange:Value(), false) == 0 and not champInfo.hasQBuff and gsoCountEnemyHeroesInRange(mePos, qRange + 300, false) > 0 then
+            canCastQ = true
+            champInfo.lasQBuff = gsoGetTickCount()
+          end
+          if isTarget and champInfo.hasQBuff and gsoDistance(mePos, target.pos) < 525 + gsoMyHero.boundingRadius then
+            canCastQ = true
+            champInfo.lastQNoBuff = gsoGetTickCount()
+            champInfo.asQ = gsoMyHero.attackSpeed
+          end
+          if canCastQ and gsoCastSpell(HK_Q) then
+            gsoSpellTimers.lq = gsoGetTickCount()
+            gsoSpellCan.botrk = false
+            return false
+          end
+        end
         -- semi r
         if gsoMeMenu.rset.semirjinx.enabled:Value() and gsoIsReady(_R, { q = 0, w = 550, e = 75, r = 1000 }) then
           local enemyList = gsoObjects.enemyHeroes_spell
@@ -1020,10 +1049,24 @@ function OnLoad()
           end
         end
       end)
-      gsoOrbwalker:CanChangeAnimationTime(function() return true end)
+      gsoOrbwalker:CanChangeAnimationTime(function()
+        if gsoGetTickCount() < champInfo.lasQBuff + 350 or champInfo.hasQBuff then
+          return false
+        elseif gsoGetTickCount() > champInfo.lastQNoBuff + 150 then
+          return true
+        end
+      end)
       --[[ can move | attack ]]
       gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 0, w = 500, e = 0, r = 500 }) end)
       gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 0, w = 600, e = 0, r = 600 }) end)
+      
+      --[[ custom attack speed ]]
+      gsoOrbwalker:AttackSpeed(function()
+        if gsoGetTickCount() < champInfo.lasQBuff + 350 or champInfo.hasQBuff then
+          return champInfo.asQ
+        end
+        return gsoMyHero.attackSpeed
+      end)
       
       --[[ on issue ]]
       gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
