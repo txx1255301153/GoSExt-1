@@ -26,7 +26,7 @@ functions
 gsoOrbwalker.AddAction(action)
 gsoOrbwalker.IsImmortal(unit, jaxE)
 gsoOrbwalker.MinionHealthPrediction(minionHealth, minionHandle, time)
-gsoOrbwalker.GetTarget(enemyHeroes, sourcePos, isAP)
+gsoOrbwalker.GetTarget(enemyHeroes, sourcePos, dmgAP)
 gsoOrbwalker.CalculateDamage(unit, spellData)
 gsoOrbwalker.CursorPositionChanged(action, pos)
 gsoOrbwalker.GetAutoAttackRange(attacker, defender) ( added support for minions and turrets )
@@ -119,7 +119,7 @@ function OnLoad()
             .AddAction(action) -> function, add delayed action. action = { func = function() doWork() end, startTime = Game.Timer() + 0.05 }
             .MinionHealthPrediction(minionHealth, minionHandle, time) -> function, return number, predicted enemy minion health - very accurate, for enemy minions only
             .IsImmortal(unit, jaxE) -> function, return boolean, only heroes
-            .GetTarget(enemyHeroes, sourcePos, isAP) -> function, return unit or nil
+            .GetTarget(enemyHeroes, sourcePos, dmgAP) -> function, return unit or nil
                   ( isAP -> (false or nothing) or true ) -> gettarget(enemyList, myHero.pos) <- dmgType AD
                   ( enemyHeroes -> list with enemy heroes )
                   ( sourcePos -> for example orianna ball or myHero.pos )
