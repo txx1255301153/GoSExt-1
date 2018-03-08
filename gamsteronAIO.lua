@@ -624,7 +624,6 @@ function OnLoad()
   local function gsoCastSpell(hkSpell)
     Control.KeyDown(hkSpell)
     Control.KeyUp(hkSpell)
-    gsoTimers.lastMoveSend = 0
     return true
   end
   local function gsoCastSpellTarget(hkSpell, range, sourcePos, target)
@@ -2670,7 +2669,12 @@ function OnLoad()
             end
           end
           if xEnemies >= gsoMeMenu.eset.erootx:Value() then
-            gsoCastSpell(HK_E)
+            Control.KeyDown(HK_E)
+            Control.KeyUp(HK_E)
+            Control.KeyDown(HK_E)
+            Control.KeyUp(HK_E)
+            Control.KeyDown(HK_E)
+            Control.KeyUp(HK_E)
             gsoSpellTimers.le = gsoGetTickCount()
           end
         end
