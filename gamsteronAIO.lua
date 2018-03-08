@@ -1846,7 +1846,238 @@ function OnLoad()
     
     
     __Thresh = function() end,
-    __Tristana = function() end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    __Tristana = function()
+      
+      --[[ VARS ]]
+      local champInfo = { asNoQ = 0, tristanaETar = nil }
+      
+      --[[ MENU ]]
+      local gsoMeMenu = gsoMenu:MenuElement({name = "Tristana", id = "gsotristana", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/tristana.png" })
+        gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+          gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        gsoMeMenu:MenuElement({name = "E settings", id = "eset", type = MENU })
+          gsoMeMenu.eset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        gsoMeMenu:MenuElement({name = "R settings", id = "rset", type = MENU })
+          gsoMeMenu.rset:MenuElement({id = "ks", name = "KS", value = true})
+          gsoMeMenu.rset:MenuElement({id = "kse", name = "KS only E + R", value = false})
+      
+      --[[ DRAW ]]
+      gsoSpellDraw = { w = true, wr = 900 }
+      
+      local function gsoTristEDmgAD(stacks)
+        local elvl = gsoMyHero:GetSpellData(_E).level
+        local meDmg = gsoMyHero.totalDamage
+        local meAP = gsoMyHero.ap
+        local stacksDmg = 0
+        local baseDmg = 50 + ( 10 * elvl ) + ( ( 0.4 + ( 0.1 * elvl ) ) * meDmg ) + ( 0.5 * meAP )
+        if stacks > 0 then
+          local stackDmg = 15 + ( 3 * elvl ) + ( ( 0.12 + ( 0.03 * elvl ) ) * meDmg ) + ( 0.15 * meAP )
+          stacksDmg = stacks * stackDmg
+        end
+        return baseDmg + stacksDmg
+      end
+      
+      local function gsoTristEDmgAP()
+        return 
+      end
+      
+      --[[ ON MOVE ]]
+      gsoOrbwalker:OnMove(function()
+        local isCombo = gsoMode.isCombo()
+        local isHarass = gsoMode.isHarass()
+        if isCombo or isHarass then
+          local target = gsoExtra.lastTarget
+          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          --local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+          local beforeAttack = gsoGameTimer() > gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.5 )
+          local mePos = gsoMyHero.pos
+          --RKS
+          local enemyList = gsoObjects.enemyHeroes_spell
+          local canR = gsoMeMenu.rset.ks:Value() and isTarget and gsoIsReady(_R, { q = 0, w = 350, e = 250, r = 1000 })
+          if canR then
+            local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
+            for i = 1, #enemyList do
+              local unit = enemyList[i]
+              local rDmg = gsoCalcDmg(unit, { dmgAP = (200 + ( 100 * gsoMyHero:GetSpellData(_R).level ) + gsoMyHero.ap), dmgType = "ap" } )
+              local checkEDmg = champInfo.tristanaETar and champInfo.tristanaETar.unit.networkID == unit.networkID
+              local eDmg = 0
+              if checkEDmg then
+                eDmg = gsoCalcDmg(unit, { dmgAP = 25 + ( 25 * gsoMyHero:GetSpellData(_E).level ) + ( 0.25 * gsoMyHero.ap ), dmgAD = gsoTristEDmgAD(champInfo.tristanaETar.stacks), dmgType = "mixed" }) or 0
+              end
+              local unitKillable = eDmg + rDmg > unit.health + (unit.hpRegen * 2)
+              if unitKillable and gsoCastSpellTarget(HK_R, gsoMyHero.range + gsoMyHero.boundingRadius + target.boundingRadius - 35, gsoMyHero.pos, target) then
+                gsoSpellTimers.lr = gsoGetTickCount()
+                gsoSpellCan.botrk = false
+                return false
+              end
+            end
+          end
+          --Q
+          local canQ = (isCombo and gsoMeMenu.qset.combo:Value()) or (isHarass and gsoMeMenu.qset.harass:Value())
+                canQ = canQ and isTarget and beforeAttack and gsoIsReadyFast(_Q,{ q = 1000, w = 750, e = 0, r = 0 })
+          if canQ and gsoCastSpell(HK_Q)then
+            champInfo.asNoQ = myHero.attackSpeed
+            gsoSpellTimers.lq = gsoGetTickCount()
+            gsoSpellCan.botrk = false
+            return false
+          end
+          --E
+          local canE = (isCombo and gsoMeMenu.eset.combo:Value()) or (isHarass and gsoMeMenu.eset.harass:Value())
+                canE = canE and isTarget and beforeAttack and gsoIsReady(_E, { q = 0, w = 350, e = 1000, r = 250 })
+          if canE then
+            local targetPos = target.pos
+            local targetID = target.networkID
+            if gsoCastSpellTarget(HK_E, gsoMyHero.range + gsoMyHero.boundingRadius + target.boundingRadius - 35, gsoMyHero.pos, target) then
+              gsoSpellTimers.le = gsoGetTickCount()
+              champInfo.tristanaETar = { id = targetID, stacks = 1, unit = target }
+              gsoSpellCan.botrk = false
+              return false
+            end
+          end
+        end
+        return true
+      end)
+      
+      --[[ ON TICK ]]
+      gsoOrbwalker:OnTick(function()
+        local enemyList = gsoObjects.enemyHeroes_spell
+        for i = 1, #enemyList do
+          local hero = enemyList[i]
+          for i = 0, hero.buffCount do
+            local buff = hero:GetBuff(i)
+            if buff and buff.count > 0 and buff.duration > 1 and buff.name:lower() == "tristanaechargesound" and champInfo.tristanaETar and not champInfo.tristanaETar.endTime then
+              champInfo.tristanaETar.endTime = gsoGameTimer() + buff.duration - gsoExtra.minLatency
+            end
+          end
+        end
+        if champInfo.tristanaETar and champInfo.tristanaETar.endTime and gsoGameTimer() > champInfo.tristanaETar.endTime then
+          champInfo.tristanaETar = nil
+        end
+        local getTick = gsoGetTickCount()
+        if getTick - gsoSpellTimers.lw > 1000 and Game.CanUseSpell(_W) == 0 then
+          for k,v in pairs(gsoDelayedSpell) do
+            if k == 1 then
+              if not gsoState.isChangingCursorPos then
+                v[1]()
+                gsoSetCursor({ endTime = GetTickCount() + 50, action = function() return end, active = true }, nil)
+                gsoSpellTimers.lw = gsoGetTickCount()
+                gsoDelayedSpell[k] = nil
+                break
+              end
+              if GetTickCount() - v[2] > 125 then
+                gsoDelayedSpell[k] = nil
+              end
+              break
+            end
+          end
+        end
+      end)
+      
+      --[[ ATTACK SPEED ]]
+      gsoOrbwalker:AttackSpeed(function()
+        local qDiff = gsoGetTickCount() - gsoSpellTimers.lqk
+        if qDiff > 7000 and qDiff < 8000 then
+          return champInfo.asNoQ
+        end
+        return gsoMyHero.attackSpeed
+      end)
+      
+      --[[ can move | attack ]]
+      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 0, w = 500, e = 100, r = 100 }) end)
+      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 0, w = 800, e = 200, r = 200 }) end)
+      
+      --[[ on issue ]]
+      gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
+    end,
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+    
     __Trundle = function() end,
     __Tryndamere = function() end,
     __TwistedFate = function() end,
@@ -2086,7 +2317,7 @@ function OnLoad()
       gsoOrbwalker:CanAttack(function()
         local num = 1150 - (gsoGetTickCount() - (gsoSpellTimers.lqk + (gsoExtra.maxLatency*1000)))
         if num < (gsoTimers.windUpTime*1000)+50 and num > - 50 then
-            return false
+          return false
         end
         return gsoCheckTimers({ q = 0, w = 350, e = 350, r = 0 })
       end)
