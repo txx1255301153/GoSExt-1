@@ -2492,7 +2492,7 @@ function OnLoad()
     __Xayah = function()
       
       --[[ vars ]]
-      local champInfo = {}
+      local champInfo = { wEndTime = 0, windUpOld = 0, asNoW = 0 }
       
       --[[ menu ]]
       local gsoMeMenu = gsoMenu:MenuElement({id = "gsoxayah", name = "Xayah", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/gsoxayahysd2.png" })
@@ -2500,6 +2500,9 @@ function OnLoad()
           gsoMeMenu.qset:MenuElement({id = "outaa", name = "Out of attack range", value = false})
           gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
           gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        gsoMeMenu:MenuElement({name = "W settings", id = "wset", type = MENU })
+          gsoMeMenu.wset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.wset:MenuElement({id = "harass", name = "Harass", value = false})
       
       --[[ draw data ]]
       gsoSpellDraw = { q = true, qr = 1100 }
@@ -2517,6 +2520,23 @@ function OnLoad()
           local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
+          --W
+          local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
+                canW = canW and isTarget and gsoIsReadyFast(_W, { q = 250, w = 1000, e = 100, r = 500 })
+          if canW then
+            local extraWAS = gsoMyHero:GetSpellData(_W).level * 0.05
+            local aaSpeed = gsoMyHero.attackSpeed + 0.25 + extraWAS
+                  aaSpeed = aaSpeed * gsoExtra.baseAttackSpeed
+            local numAS   = aaSpeed >= 2.5 and 1 / 2.5 or 1 / aaSpeed
+            if gsoGameTimer() > gsoTimers.lastAttackSend + numAS - gsoExtra.minLatency and gsoCastSpell(HK_W) then
+              champInfo.windUpOld = gsoTimers.windUpTime
+              champInfo.asNoW = myHero.attackSpeed
+              gsoSpellTimers.lw = gsoGetTickCount()
+              gsoActions({ func = function() gsoExtra.resetAttack = true end, startTime = gsoGameTimer() + gsoExtra.minLatency })
+              gsoSpellCan.botrk = false
+              return false
+            end
+          end
           --Q
           if not isTarget or afterAttack then
             local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
@@ -2536,7 +2556,22 @@ function OnLoad()
       
       --[[ on tick ]]
       gsoOrbwalker:OnTick(function()
-        
+        local wDuration = gsoBuffDuration(gsoMyHero, "xayahw")
+        champInfo.wEndTime = wDuration > 0 and gsoGameTimer() + wDuration or champInfo.wEndTime
+      end)
+      
+      gsoOrbwalker:CanChangeAnimationTime(function()
+        return champInfo.wEndTime-gsoGameTimer() > 0
+      end)
+      
+      --[[ custom attack speed ]]
+      gsoOrbwalker:AttackSpeed(function()
+        local num = champInfo.wEndTime - gsoGameTimer()
+        if num < champInfo.windUpOld and num > -2 then
+          print("hello")
+          return champInfo.asNoW
+        end
+        return gsoMyHero.attackSpeed
       end)
       
       --[[ can move | attack ]]
