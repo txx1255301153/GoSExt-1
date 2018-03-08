@@ -2464,7 +2464,151 @@ function OnLoad()
     __Vladimir = function() end,
     __Volibear = function() end,
     __Warwick = function() end,
-    __Xayah = function() end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    __Xayah = function()
+      
+      --[[ vars ]]
+      local champInfo = {}
+      
+      --[[ menu ]]
+      local gsoMeMenu = gsoMenu:MenuElement({id = "gsoxayah", name = "Xayah", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/gsoxayahysd2.png" })
+        gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+          gsoMeMenu.qset:MenuElement({id = "outaa", name = "Out of attack range", value = false})
+          gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+      
+      --[[ draw data ]]
+      gsoSpellDraw = { q = true, qr = 1100 }
+      
+      --[[ spell data ]]
+      gsoSpellData.q = { delay = 0.15, range = 1100, width = 45, speed = 2075, sType = "line", col = false, hCol = false, mCol = false, out = true }
+      gsoSpellData.e = { delay = 0, range = 2000, width = 45, speed = 5700, sType = "line", col = false, hCol = false, mCol = false, out = false }
+      
+      --[[ on move ]]
+      gsoOrbwalker:OnMove(function(args)
+        local isCombo = gsoMode.isCombo()
+        local isHarass = gsoMode.isHarass()
+        if isCombo or isHarass then
+          local target = gsoExtra.lastTarget
+          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+          local mePos = gsoMyHero.pos
+          --Q
+          if not isTarget or afterAttack then
+            local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
+            if canQ and gsoIsReady(_Q, { q = 1000, w = 0, e = 0, r = 600 }) then
+              local qTarget = target
+              if not isTarget then qTarget = gsoGetTarget(1100, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, false, false) end
+              if qTarget and (not gsoMeMenu.qset.outaa:Value() or not isTarget) and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qTarget) then
+                gsoSpellTimers.lq = gsoGetTickCount()
+                gsoSpellCan.botrk = false
+                return false
+              end
+            end
+          end
+        end
+        return true
+      end)
+      
+      --[[ on tick ]]
+      gsoOrbwalker:OnTick(function()
+        
+      end)
+      
+      --[[ can move | attack ]]
+      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 150, w = 0, e = 0, r = 500 }) end)
+      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 200, w = 0, e = 0, r = 600 }) end)
+      
+      --[[ on issue ]]
+      gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
+    end,
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
     __Xerath = function() end,
     __XinZhao = function() end,
     __Yasuo = function() end,
