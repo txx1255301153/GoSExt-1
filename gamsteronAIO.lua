@@ -1011,7 +1011,7 @@ function OnLoad()
           local extraQ = 25 * myHero:GetSpellData(_Q).level
           local qRange = 575 + extraQ
           local mePos = gsoMyHero.pos
-          if gsoCountEnemyHeroesInRange(mePos, 525+gsoMeMenu.qset.qrange:Value(), false) == 0 and not champInfo.hasQBuff and gsoCountEnemyHeroesInRange(mePos, qRange + 300, false) > 0 then
+          if not isTarget and not champInfo.hasQBuff and gsoCountEnemyHeroesInRange(mePos, qRange + 300, false) > 0 then
             canCastQ = true
             champInfo.lasQBuff = gsoGetTickCount()
           end
@@ -1850,7 +1850,92 @@ function OnLoad()
     __Trundle = function() end,
     __Tryndamere = function() end,
     __TwistedFate = function() end,
-    __Twitch = function() end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    __Twitch = function()
+      local champInfo = { hasQBuff = false, QEndTime = 0, hasQASBuff = false, QASEndTime = 0, lastASCheck = 0, asNoQ = myHero.attackSpeed, windUpNoQ = myHero.attackData.windUpTime, eBuffs = {}, boolRecall = true }
+      local gsoMeMenu = gsoMenu:MenuElement({name = "Twitch", id = "gsotwitch", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/twitch.png" })
+        gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+          gsoMeMenu.qset:MenuElement({id = "recallkey", name = "Invisible Recall Key", key = string.byte("T"), value = false, toggle = true})
+          gsoMeMenu.qset.recallkey:Value(false)
+          gsoMeMenu.qset:MenuElement({id = "note1", name = "Note: Key should be diffrent than recall key", type = SPACE})
+        gsoMeMenu:MenuElement({name = "W settings", id = "wset", type = MENU })
+          gsoMeMenu.wset:MenuElement({id = "stopq", name = "Stop if Q invisible", value = true})
+          gsoMeMenu.wset:MenuElement({id = "stopwult", name = "Stop if R", value = false})
+          gsoMeMenu.wset:MenuElement({id = "combo", name = "Use W Combo", value = true})
+          gsoMeMenu.wset:MenuElement({id = "harass", name = "Use W Harass", value = false})
+        gsoMeMenu:MenuElement({name = "E settings", id = "eset", type = MENU })
+          gsoMeMenu.eset:MenuElement({id = "combo", name = "Use E Combo", value = true})
+          gsoMeMenu.eset:MenuElement({id = "harass", name = "Use E Harass", value = false})
+          gsoMeMenu.eset:MenuElement({id = "stacks", name = "X stacks", value = 6, min = 1, max = 6, step = 1 })
+          gsoMeMenu.eset:MenuElement({id = "enemies", name = "X enemies", value = 1, min = 1, max = 5, step = 1 })
+      gsoSpellDraw = { w = true, wr = 950, e = true, er = 1200, r = true, rf = function() return gsoMyHero.range + 300 + ( gsoMyHero.boundingRadius * 2 ) end }
+      gsoSpellData.w = { delay = 0.25, range = 950, width = 275, speed = 1400, sType = "circular", col = false, hCol = false, mCol = false, out = false }
+      gsoOrbwalker:AttackSpeed(function()
+        local wDiff = gsoGetTickCount() - gsoSpellTimers.lwk - gsoExtra.minLatency
+        if wDiff > 3500 and wDiff < 4500 then
+          return champInfo.asNoW
+        end
+        return gsoMyHero.attackSpeed
+      end)
+      gsoOrbwalker:OnMove(function(args)
+        local isCombo = gsoMode.isCombo()
+        local isHarass = gsoMode.isHarass()
+        if isCombo or isHarass then
+          local target = gsoExtra.lastTarget
+          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+          local mePos = gsoMyHero.pos
+          local enemyList = gsoObjects.enemyHeroes_spell
+          --W
+          local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
+                canW = canW and isTarget and gsoGameTimer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.5 )
+                canW = canW and gsoIsReadyFast(_W, { q = 250, w = 1000, e = 0, r = 0 })
+          if canW and gsoCastSpell(HK_W) then
+            champInfo.asNoW = myHero.attackSpeed
+            gsoSpellTimers.lw = GetTickCount()
+            gsoSpellCan.q = false
+            gsoActions({ func = function() gsoExtra.resetAttack = true end, startTime = gsoGameTimer() + 0.05 })
+            return false
+          end
+          --Q
+          if not isTarget or afterAttack then
+            local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
+                  canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 0, e = 0, r = 0 }) and (not isTarget or gsoSpellCan.q)
+            if canQ then
+              local qTarget = target
+              if not isTarget then qTarget = gsoGetTarget(1250, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, false, false) end
+              if qTarget and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qTarget) then
+                gsoSpellTimers.lq = GetTickCount()
+                return false
+              end
+            end
+          end
+        end
+        return true
+      end)
+    
+      --[[ can move | attack ]]
+      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 250, w = 0, e = 0, r = 0 }) end)
+      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 350, w = 0, e = 0, r = 0 }) end)
+      
+      --[[ on issue ]]
+      gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
+    end,
+    
+    
+    
+    
+    
+    
+    
     __Udyr = function() end,
     __Urgot = function() end,
     __Varus = function() end,
