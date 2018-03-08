@@ -471,13 +471,13 @@ local function gsoGetTarget(range, enemyHeroes, sourcePos, dmgAP, bb)
     local unit = enemyHeroes[i]
     local move_lat = 1.5 * gsoExtra.maxLatency
     local move_t = 0.15 + move_lat
-    local move_s = gsoMyHero.ms * move_t
     local unitBB = 0
     if bb == true then unitBB = unit.boundingRadius end
-    local dist1 = gsoDistance(sourcePos, unit.pos)
-    local dist2 = gsoDistance(unit.pos, gsoExtended(sourcePos, sourcePos, gsoExtra.lastMovePos, move_s))
-    local dist3 = dist2 > dist1 and dist2 or dist1
-    if dist3 < range + unitBB then
+    local mePos = gsoMyHero.pos
+    local unitPos = unit.pos
+    local dist1 = gsoDistance(mePos, unitPos)
+    local dist2 = gsoDistance(unitPos, gsoExtended(mePos, mePos, gsoExtra.lastMovePos, gsoMyHero.ms * move_t))
+    if dist1 < range + unitBB and dist2 < range + unitBB then
       if selectedID and unit.networkID == selectedID then
         return selected
       elseif mode == 1 then
