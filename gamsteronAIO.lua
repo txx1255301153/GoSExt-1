@@ -2568,7 +2568,6 @@ function OnLoad()
       gsoOrbwalker:AttackSpeed(function()
         local num = champInfo.wEndTime - gsoGameTimer()
         if num < champInfo.windUpOld and num > -2 then
-          print("hello")
           return champInfo.asNoW
         end
         return gsoMyHero.attackSpeed
