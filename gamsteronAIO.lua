@@ -2493,6 +2493,7 @@ function OnLoad()
       
       --[[ vars ]]
       local champInfo = { wEndTime = 0, windUpOld = 0, asNoW = 0 }
+      local xayahEPas = {}
       
       --[[ menu ]]
       local gsoMeMenu = gsoMenu:MenuElement({id = "gsoxayah", name = "Xayah", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/gsoxayahysd2.png" })
@@ -2501,8 +2502,14 @@ function OnLoad()
           gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
           gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
         gsoMeMenu:MenuElement({name = "W settings", id = "wset", type = MENU })
+          gsoMeMenu.wset:MenuElement({id = "wonaa", name = "On Attack", value = false})
           gsoMeMenu.wset:MenuElement({id = "combo", name = "Combo", value = true})
           gsoMeMenu.wset:MenuElement({id = "harass", name = "Harass", value = false})
+        gsoMeMenu:MenuElement({name = "E settings", id = "eset", type = MENU })
+          gsoMeMenu.eset:MenuElement({name = "Draw", id = "edraw", type = MENU })
+            gsoMeMenu.eset.edraw:MenuElement({id = "enabled", name = "Enabled", value = true})
+            gsoMeMenu.eset.edraw:MenuElement({id = "ecolor", name = "Color", color = Draw.Color(255, 144, 81, 160)})
+            gsoMeMenu.eset.edraw:MenuElement({id = "ewidth", name = "Width", value = 1, min = 1, max = 10})
       
       --[[ draw data ]]
       gsoSpellDraw = { q = true, qr = 1100 }
@@ -2511,8 +2518,29 @@ function OnLoad()
       gsoSpellData.q = { delay = 0.15, range = 1100, width = 45, speed = 2075, sType = "line", col = false, hCol = false, mCol = false, out = true }
       gsoSpellData.e = { delay = 0, range = 2000, width = 45, speed = 5700, sType = "line", col = false, hCol = false, mCol = false, out = false }
       
+      gsoOrbwalker:OnAttack(function()
+        if gsoMeMenu.wset.wonaa:Value() then
+          local isCombo = gsoMode.isCombo()
+          local isHarass = gsoMode.isHarass()
+          if isCombo or isHarass then
+            local target = gsoExtra.lastTarget
+            local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+            --W
+            local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
+                  canW = canW and isTarget and gsoIsReadyFast(_W, { q = 250, w = 1000, e = 100, r = 500 })
+            if canW and gsoCastSpell(HK_W) then
+              champInfo.windUpOld = gsoTimers.windUpTime
+              champInfo.asNoW = myHero.attackSpeed
+              gsoSpellTimers.lw = gsoGetTickCount()
+              gsoSpellCan.botrk = false
+            end
+          end
+        end
+        return true
+      end)
+      
       --[[ on move ]]
-      gsoOrbwalker:OnMove(function(args)
+      gsoOrbwalker:OnMove(function()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
@@ -2553,11 +2581,45 @@ function OnLoad()
         end
         return true
       end)
-      
+      Callback.Add('Draw', function()
+        for k,v in pairs(xayahEPas) do
+          if v.active and gsoGameTimer() > v.endTime then
+            v.active = false
+          elseif not v.active and gsoGameTimer() > v.endTime + 10 then
+            xayahEPas[k] = nil
+          elseif v.active then
+            local p1 = gsoMyHero.pos:To2D()
+            local p2 = v.pos:To2D()
+            Draw.Line(p1.x, p1.y, p2.x, p2.y,gsoMeMenu.eset.edraw.ewidth:Value(),gsoMeMenu.eset.edraw.ecolor:Value())
+          end
+        end
+      end)
+      Callback.Add('WndMsg', function(msg, wParam)
+        local getTick = gsoGetTickCount()
+        local manualNum = -1
+        if wParam == HK_E and getTick > gsoSpellTimers.lek + 1000 and Game.CanUseSpell(_E) == 0 then
+          for k,v in pairs(xayahEPas) do
+            if v.active then
+              v.active = false
+            end
+          end
+        end
+      end)
       --[[ on tick ]]
       gsoOrbwalker:OnTick(function()
         local wDuration = gsoBuffDuration(gsoMyHero, "xayahw")
         champInfo.wEndTime = wDuration > 0 and gsoGameTimer() + wDuration or champInfo.wEndTime
+        local mePos = gsoMyHero.pos
+        for i = 1, Game.ParticleCount() do
+          local particle = Game.Particle(i)
+          local pPos = particle and particle.pos or nil
+          if pPos and particle.name == "Xayah_Base_Passive_Dagger_Mark8s" and gsoDistance(mePos, pPos) < 2500 then
+            local particleID = particle.networkID
+            if not xayahEPas[particleID] then
+              xayahEPas[particleID] = { pos = pPos, endTime = gsoGameTimer() + 6 - gsoExtra.maxLatency, active = true }
+            end
+          end
+        end
       end)
       
       gsoOrbwalker:CanChangeAnimationTime(function()
