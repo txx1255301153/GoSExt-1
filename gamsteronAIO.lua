@@ -2596,8 +2596,7 @@ function OnLoad()
       end)
       Callback.Add('WndMsg', function(msg, wParam)
         local getTick = gsoGetTickCount()
-        local manualNum = -1
-        if wParam == HK_E and getTick > gsoSpellTimers.lek + 1000 and Game.CanUseSpell(_E) == 0 then
+        if wParam == HK_E and Game.CanUseSpell(_E) == 0 then
           for k,v in pairs(xayahEPas) do
             if v.active then
               v.active = false
