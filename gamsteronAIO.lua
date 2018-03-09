@@ -1203,7 +1203,7 @@ function OnLoad()
     
     --[[ local functions ]]
       local function gsoCastQ(t)
-        if t and gsoCastSpellSkillshot(myHero.pos, t, , HK_Q) then
+        if t and gsoCastSpellSkillshot(myHero.pos, t, HK_Q) then
           gsoSpellTimers.lq = GetTickCount()
           gsoSpellCan.w = false
           return true
@@ -1411,7 +1411,7 @@ function OnLoad()
           end
           local rrange = gsoMeMenu.rset.semirez.rrange:Value()
           local rTarget = gsoAIO.TS:_getTarget(rrange, false, false, rTargets)
-          if rTarget and gsoCastSpellSkillshotGlobal(myHero.pos, rTarget, , HK_R) then
+          if rTarget and gsoCastSpellSkillshotGlobal(myHero.pos, rTarget, HK_R) then
             gsoSpellTimers.lr = GetTickCount()
           end
         end
@@ -1476,7 +1476,7 @@ function OnLoad()
                 canW = canW and ( not wout or (wout and not isTarget) )
           if canW and gsoAIO.Utils:_isReady(gT, { q = 350, w = 1000, e = 500, r = 1100 }, _W) and ( not isTarget or (isTarget and gsoSpellCan.w) ) then
             local wTarget = isTarget and target or gsoAIO.TS:_getTarget(1000, false, false, gsoAIO.OB.enemyHeroes)
-            if wTarget and gsoCastSpellSkillshot(mePos, wTarget, , HK_W) then
+            if wTarget and gsoCastSpellSkillshot(mePos, wTarget, HK_W) then
               gsoSpellTimers.lw = GetTickCount()
               gsoSpellCan.q = false
               return true
