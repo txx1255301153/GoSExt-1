@@ -470,7 +470,7 @@ local function gsoGetTarget(range, enemyHeroes, sourcePos, dmgAP, bb)
     local unitPos = unit.pos
     local dist1 = gsoDistance(mePos, unitPos)
     local dist2 = gsoDistance(unitPos, gsoExtended(mePos, mePos, gsoExtra.lastMovePos, gsoMyHero.ms * move_t))
-    if dist1 < range + unitBB and dist2 < range + unitBB then
+    if dist1 < range + unitBB - 25 and dist2 < range + unitBB then
       if selectedID and unit.networkID == selectedID then
         return selected
       elseif mode == 1 then
@@ -1028,7 +1028,7 @@ local function gsoAttackMove(unit)
       local dist1 = gsoDistance(mePos, unitPos)
       local dist2 = gsoDistance(unitPos, gsoExtended(mePos, mePos, gsoExtra.lastMovePos, gsoMyHero.ms * move_t))
       local aaRange = gsoMyHero.range + gsoMyHero.boundingRadius + aaTarget.boundingRadius
-      if dist1 < aaRange and dist2 < aaRange then
+      if dist1 < aaRange - 25 and dist2 < aaRange then
         unit = aaTarget
       end
     end
