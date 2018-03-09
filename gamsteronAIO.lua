@@ -2554,6 +2554,68 @@ function OnLoad()
           local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
+          --E
+          if gsoMeMenu.eset.eroot:Value() and gsoIsReady(_E, { q = 250, w = 0, e = 1000, r = 600 }) then
+            local enemyList = gsoObjects.enemyHeroes_spell
+            local xEnemies = 0
+            local mePos1 = gsoMyHero.pos
+            local mePos2 = gsoExtended(mePos1, mePos1, gsoExtra.lastMovePos, gsoMyHero.ms * gsoExtra.maxLatency)
+            for i = 1, #enemyList do
+              local enemy = enemyList[i]
+              local enemyPos1 = enemy.pos
+              local enemyPos2 = enemy:GetPrediction(enemy.ms,0.1)
+              local enemyBB = enemy.boundingRadius * 0.5
+              local xFeathers = 0
+              local eWidth = 45 + enemyBB
+              for k,v in pairs(xayahEPas) do
+                local vPos = v.pos
+                if v.active then
+                  local point1, onLineSegment1 = gsoClosestPointOnLineSegment(enemyPos1, mePos1, vPos)
+                  local point2, onLineSegment2 = gsoClosestPointOnLineSegment(enemyPos1, mePos2, vPos)
+                  local isHitable = true
+                  if onLineSegment1 and gsoDistance(point1, enemyPos1) > eWidth then
+                    isHitable = false
+                  end
+                  if isHitable and not onLineSegment1 and gsoDistance(point1, enemyPos1) > enemyBB then
+                    isHitable = false
+                  end
+                  if isHitable and onLineSegment2 and gsoDistance(point2, enemyPos1) > eWidth then
+                    isHitable = false
+                  end
+                  if isHitable and not onLineSegment2 and gsoDistance(point2, enemyPos1) > enemyBB then
+                    isHitable = false
+                  end
+                  if enemyPos2 and gsoDistance(enemyPos2, enemyPos1) < 500 then
+                    local point3, onLineSegment3 = gsoClosestPointOnLineSegment(enemyPos2, mePos1, vPos)
+                    local point4, onLineSegment4 = gsoClosestPointOnLineSegment(enemyPos2, mePos2, vPos)
+                    if isHitable and onLineSegment3 and gsoDistance(point3, enemyPos2) > eWidth then
+                      isHitable = false
+                    end
+                    if isHitable and not onLineSegment3 and gsoDistance(point3, enemyPos2) > enemyBB then
+                      isHitable = false
+                    end
+                    if isHitable and onLineSegment4 and gsoDistance(point4, enemyPos2) > eWidth then
+                      isHitable = false
+                    end
+                    if isHitable and not onLineSegment4 and gsoDistance(point4, enemyPos2) > enemyBB then
+                      isHitable = false
+                    end
+                  end
+                  if isHitable then
+                    xFeathers = xFeathers + 1
+                  end
+                end
+              end
+              if xFeathers >= 3 then
+                xEnemies = xEnemies + 1
+              end
+            end
+            if xEnemies >= gsoMeMenu.eset.erootx:Value() then
+              Control.KeyDown(HK_E)
+              Control.KeyUp(HK_E)
+              gsoSpellTimers.le = gsoGetTickCount()
+            end
+          end
           --W
           local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
                 canW = canW and isTarget and gsoIsReadyFast(_W, { q = 250, w = 1000, e = 100, r = 500 })
