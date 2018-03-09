@@ -2619,7 +2619,7 @@ function OnLoad()
           local enemyList = gsoObjects.enemyHeroes_spell
           local xEnemies = 0
           local mePos1 = gsoMyHero.pos
-          local mePos2 = gsoExtended(mePos1, mePos1, gsoExtra.lastMovePos, gsoMyHero.ms * 1.5 * gsoExtra.maxLatency)
+          local mePos2 = gsoExtended(mePos1, mePos1, gsoExtra.lastMovePos, gsoMyHero.ms * gsoExtra.maxLatency)
           for i = 1, #enemyList do
             local enemy = enemyList[i]
             local enemyPos1 = enemy.pos
@@ -2632,8 +2632,6 @@ function OnLoad()
               if v.active then
                 local point1, onLineSegment1 = gsoClosestPointOnLineSegment(enemyPos1, mePos1, vPos)
                 local point2, onLineSegment2 = gsoClosestPointOnLineSegment(enemyPos1, mePos2, vPos)
-                local point3, onLineSegment3 = gsoClosestPointOnLineSegment(enemyPos2, mePos1, vPos)
-                local point4, onLineSegment4 = gsoClosestPointOnLineSegment(enemyPos2, mePos2, vPos)
                 local isHitable = true
                 if onLineSegment1 and gsoDistance(point1, enemyPos1) > eWidth then
                   isHitable = false
@@ -2647,17 +2645,21 @@ function OnLoad()
                 if isHitable and not onLineSegment2 and gsoDistance(point2, enemyPos1) > enemyBB then
                   isHitable = false
                 end
-                if isHitable and onLineSegment3 and gsoDistance(point3, enemyPos2) > eWidth then
-                  isHitable = false
-                end
-                if isHitable and not onLineSegment3 and gsoDistance(point3, enemyPos2) > enemyBB then
-                  isHitable = false
-                end
-                if isHitable and onLineSegment4 and gsoDistance(point4, enemyPos2) > eWidth then
-                  isHitable = false
-                end
-                if isHitable and not onLineSegment4 and gsoDistance(point4, enemyPos2) > enemyBB then
-                  isHitable = false
+                if enemyPos2 and gsoDistance(enemyPos2, enemyPos1) < 500 then
+                  local point3, onLineSegment3 = gsoClosestPointOnLineSegment(enemyPos2, mePos1, vPos)
+                  local point4, onLineSegment4 = gsoClosestPointOnLineSegment(enemyPos2, mePos2, vPos)
+                  if isHitable and onLineSegment3 and gsoDistance(point3, enemyPos2) > eWidth then
+                    isHitable = false
+                  end
+                  if isHitable and not onLineSegment3 and gsoDistance(point3, enemyPos2) > enemyBB then
+                    isHitable = false
+                  end
+                  if isHitable and onLineSegment4 and gsoDistance(point4, enemyPos2) > eWidth then
+                    isHitable = false
+                  end
+                  if isHitable and not onLineSegment4 and gsoDistance(point4, enemyPos2) > enemyBB then
+                    isHitable = false
+                  end
                 end
                 if isHitable then
                   xFeathers = xFeathers + 1
@@ -2679,7 +2681,6 @@ function OnLoad()
           end
         end
         --Feathers
-        for i = 1, Game.ParticleCount() do end
         local mePos = gsoMyHero.pos
         for i = 1, Game.ParticleCount() do
           local particle = Game.Particle(i)
