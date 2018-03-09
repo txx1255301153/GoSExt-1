@@ -3057,7 +3057,7 @@ function OnLoad()
                 end
               end
               if gsoMeMenu.rset.rci:Value() then
-                local t = gsoGetImmobileEnemy(mePos, gsoObjects.enemyHeroes_spell, 1000)
+                local t = gsoGetImmobileEnemy(mePos, gsoObjects.enemyHeroes_spell, 900)
                 if t and gsoCastSpellSkillShot(HK_R, mePos, t.pos) then
                   gsoSpellTimers.lr = gsoGetTickCount()
                   gsoSpellCan.q = false
