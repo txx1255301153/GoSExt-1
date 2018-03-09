@@ -3518,11 +3518,10 @@ function OnLoad()
         local mePos = gsoMyHero.pos
         for i = 1, Game.ParticleCount() do
           local particle = Game.Particle(i)
-          local pPos = particle and particle.pos or nil
-          if pPos and particle.name == "Xayah_Base_Passive_Dagger_Mark8s" and gsoDistance(mePos, pPos) < 2500 then
+          if particle and particle.name == "Xayah_Base_Passive_Dagger_Mark8s" and gsoDistance(mePos, particle.pos) < 2500 then
             local particleID = particle.networkID
             if not xayahEPas[particleID] then
-              xayahEPas[particleID] = { pos = pPos, endTime = gsoGameTimer() + 6 - gsoExtra.maxLatency, active = true }
+              xayahEPas[particleID] = { pos = particle.pos, endTime = gsoGameTimer() + 6 - gsoExtra.maxLatency, active = true }
             end
           end
         end
