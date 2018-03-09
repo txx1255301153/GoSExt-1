@@ -2981,7 +2981,192 @@ function OnLoad()
     
     __Udyr = function() end,
     __Urgot = function() end,
-    __Varus = function() end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    __Varus = function()
+      --[[ vars ]]
+      local champInfo = { hasQBuff = false, lastQ2 = 0, enabled = true, qEndTime = 0, asNoQ = myHero.attackSpeed, oldWindUp = myHero.attackData.windUpTime }
+      local gsoWStacks = {}
+      
+      --[[ menu ]]
+      local gsoMeMenu = gsoMenu:MenuElement({id = "gsovarus", name = "Varus", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/gsovarussf3f.png" })
+        gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+          gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        gsoMeMenu:MenuElement({name = "E settings", id = "eset", type = MENU })
+          gsoMeMenu.eset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        gsoMeMenu:MenuElement({name = "R settings", id = "rset", type = MENU })
+          gsoMeMenu.rset:MenuElement({id = "combo", name = "Use R Combo", value = true})
+          gsoMeMenu.rset:MenuElement({id = "harass", name = "Use R Harass", value = false})
+          gsoMeMenu.rset:MenuElement({id = "rci", name = "Use R if enemy isImmobile", value = true})
+          gsoMeMenu.rset:MenuElement({id = "rcd", name = "Use R if enemy distance < X", value = true})
+          gsoMeMenu.rset:MenuElement({id = "rdist", name = "use R if enemy distance < X", value = 500, min = 250, max = 1000, step = 50})
+      
+      --[[ draw ]]
+      gsoSpellDraw = { q = true, qr = 1650, e = true, er = 950, r = true, rr = 1075 }
+      
+      --[[ spell data ]]
+      gsoSpellData.q = { delay = 0.25, range = 1650, width = 70, speed = 1900, sType = "line", col = false, hCol = false, mCol = false, out = true }
+      gsoSpellData.e = { delay = 0.25, range = 925, width = 235, speed = 1500, sType = "circular", col = false, hCol = false, mCol = false, out = false }
+      gsoSpellData.r = { delay = 0.25, range = 1075, width = 120, speed = 1950, sType = "line", col = false, hCol = false, mCol = false, out = false }
+      
+      --[[ on move ]]
+      gsoOrbwalker:OnMove(function()
+        local isCombo = gsoMode.isCombo()
+        local isHarass = gsoMode.isHarass()
+        if isCombo or isHarass then
+          local target = gsoExtra.lastTarget
+          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+          local mePos = gsoMyHero.pos
+          local enemyList = gsoObjects.enemyHeroes_spell
+          if not isTarget or afterAttack then
+            --R
+            local canR = ( isCombo and gsoMeMenu.rset.combo:Value() ) or ( isHarass and gsoMeMenu.rset.harass:Value() )
+                  canR = canR and gsoIsReady(_R, { q = 250, w = 0, e = 350, r = 1000 })
+            if canR and champInfo.enabled then
+              if gsoMeMenu.rset.rcd:Value() then
+                local t = gsoGetClosestEnemy(mePos, gsoObjects.enemyHeroes_spell, gsoMeMenu.rset.rdist:Value())
+                if t and gsoCastSpellSkillShot(HK_R, mePos, t) then
+                  gsoSpellTimers.lr = gsoGetTickCount()
+                  gsoSpellCan.q = false
+                  gsoSpellCan.e = false
+                  gsoSpellCan.botrk = false
+                  return false
+                end
+              end
+              if gsoMeMenu.rset.rci:Value() then
+                local t = gsoGetImmobileEnemy(mePos, gsoObjects.enemyHeroes_spell, 1000)
+                if t and gsoCastSpellSkillShot(HK_R, mePos, t.pos) then
+                  gsoSpellTimers.lr = gsoGetTickCount()
+                  gsoSpellCan.q = false
+                  gsoSpellCan.e = false
+                  gsoSpellCan.botrk = false
+                  return false
+                end
+              end
+            end
+            --Q
+            local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
+                  canQ = canQ and (not isTarget or gsoSpellCan.q) and gsoIsReady(_Q, { q = 1500, w = 0, e = 1000, r = 250 })
+            if canQ and champInfo.enabled and gsoGetTickCount() > champInfo.lastQ2 + 1500 then
+              for i = 1, #enemyList do
+                local hero  = enemyList[i]
+                if gsoBuffCount(hero, "varuswdebuff") == 3 and gsoDistance(gsoMyHero.pos, hero.pos) < 1400 then
+                  Control.KeyDown(HK_Q)
+                  gsoSpellTimers.lq = GetTickCount() + Game.Latency()
+                  gsoSpellCan.botrk = false
+                  gsoState.enabledAttack = false
+                  champInfo.enabled = false
+                  gsoSpellCan.e = false
+                  return false
+                end
+              end
+            end
+            --E
+            local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
+                  canE = canE and (not isTarget or gsoSpellCan.e) and gsoIsReady(_E, { q = 250, w = 0, e = 1000, r = 250 })
+            if canE and champInfo.enabled then
+              local eTargets = {}
+              for i = 1, #enemyList do
+                local hero  = enemyList[i]
+                if gsoBuffCount(hero, "varuswdebuff") == 3 and gsoDistance(gsoMyHero.pos, hero.pos) < 925 then
+                  eTargets[#eTargets+1] = hero
+                end
+              end
+              local eTarget = gsoGetTarget(925, eTargets, gsoMyHero.pos, false, false)
+              if eTarget and gsoCastSpellSkillShot(HK_E, mePos, eTarget) then
+                gsoSpellTimers.le = GetTickCount()
+                gsoSpellCan.botrk = false
+                gsoSpellCan.q = false
+                return false
+              end
+            end
+          end
+        end
+        return true
+      end)
+      
+      gsoOrbwalker:OnTick(function()
+        local enemyList = gsoObjects.enemyHeroes_spell
+        --Q
+        local canQ = champInfo.enabled == false
+        if canQ and gsoGetTickCount() > champInfo.lastQ2 + 1000 then
+          local qTargets = {}
+          for i = 1, #enemyList do
+            local hero  = enemyList[i]
+            if gsoBuffCount(hero, "varuswdebuff") == 3 and gsoDistance(myHero.pos, hero.pos) < 1650 then
+              qTargets[#qTargets+1] = hero
+            end
+          end
+          local qTimer = gsoGetTickCount() - gsoSpellTimers.lq
+                qTimer = qTimer * 0.001
+          local qExtraRange = qTimer < 2 and qTimer * 0.5 * 700 or 700
+          local qRange = 925 + qExtraRange
+          local qTarget1 = gsoGetTarget(qRange, qTargets, gsoMyHero.pos, false, false)
+          if qTarget1 then
+            local qPred1 = qTarget1:GetPrediction(1900,0.25+gsoExtra.maxLatency)
+            if qPred1 and gsoDistance(qPred1, qTarget1.pos) < 500 and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qPred1) then
+              champInfo.enabled = true
+              gsoState.enabledAttack = true
+              lastQ2 = GetTickCount()
+              gsoSpellCan.botrk = false
+              gsoSpellCan.e = false
+              gsoState.enabledMove = false
+            else
+              local qTarget2 = gsoGetTarget(1550, qTargets, gsoMyHero.pos, false, false)
+              local qPred2 = qTarget2:GetPrediction(1900,0.25+gsoExtra.maxLatency)
+              if qPred2 and gsoDistance(qPred1, qTarget2.pos) < 500 and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qPred2) then
+                champInfo.enabled = true
+                gsoState.enabledAttack = true
+                lastQ2 = GetTickCount()
+                gsoSpellCan.botrk = false
+                gsoSpellCan.e = false
+                gsoState.enabledMove = false
+              end
+            end
+          end
+        end
+        if canQ and gsoGetTickCount() > gsoSpellTimers.lq + 500 and not gsoHasBuff(gsoMyHero, "varusq") then
+          champInfo.enabled = true
+          gsoState.enabledAttack = true
+          lastQ2 = GetTickCount()
+          gsoSpellCan.botrk = false
+          gsoSpellCan.e = false
+        end
+        if not gsoState.enabledMove and not canQ and GetTickCount() > lastQ2 + 100 then
+          gsoState.enabledMove = true
+        end
+      end)
+      
+      --[[ can move | attack ]]
+      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 150, w = 0, e = 150, r = 150 }) end)
+      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 250, w = 0, e = 250, r = 250 }) end)
+      
+      --[[ on issue ]]
+      gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
+    end,
     
     
     
