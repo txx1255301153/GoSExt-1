@@ -1,5 +1,5 @@
 
-local gsoVersion = "2.2"
+local gsoVersion = "2.3"
 
  --[[
 
@@ -450,13 +450,6 @@ local function gsoCalculateDmg(unit, spellData)
   end
   assert(false, "[234] CalculateDmg: spellData - expected array { dmgType = string(ap or ad or mixed or true), dmgAP = number or dmgAD = number or ( dmgAP = number and dmgAD = number ) or dmgTrue = number } !")
 end
-local function gsoIsHeroValid(range, sourcePos, hero, jaxE, bb)
-  if hero and gsoDistance(hero.pos, sourcePos) < range + (bb == true and hero.boundingRadius or 0) and not hero.dead and hero.isTargetable and hero.valid and hero.visible and not gsoIsImmortal(hero, jaxE) then
-    return true
-  else
-    return false
-  end
-end
 local function gsoGetTarget(range, enemyHeroes, sourcePos, dmgAP, bb)
   local selected = gsoExtra.selectedTarget
   local menuSelected = gsoMenu.ts.selected.enable:Value()
@@ -821,7 +814,8 @@ local function gsoMinionsLogic()
     mLH = gsoMenu.orb.delays.lhDelay:Value() * 0.001
     aaData = gsoMyHero.attackData
     projSpeed = aaData.projectileSpeed
-    windUp = aaData.windUpTime + gsoExtra.minLatency - mLH
+    windUp = aaData.windUpTime - mLH
+    windUp = windUp + (gsoExtra.minLatency*0.5)
     anim = aaData.animationTime
     meDmg = myHero.totalDamage + gsoBonusDmg()
   end
@@ -892,7 +886,7 @@ local function gsoOrbwalkerTimersLogic()
         sToAA = sToAA - 0.05
         sToAA = sToAA - gsoGameTimer()
   local sToMove = gsoServerStart + extraWindUp
-        sToMove = sToMove - gsoExtra.minLatency
+        sToMove = sToMove - (gsoExtra.minLatency*0.5)
         sToMove = sToMove - gsoGameTimer()
   local isChatOpen = gsoGameIsChatOpen()
   gsoTimers.secondsToAttack = sToAA > 0 and sToAA or 0
@@ -900,6 +894,8 @@ local function gsoOrbwalkerTimersLogic()
   gsoState.isEvading = ExtLibEvade and ExtLibEvade.Evading
   gsoState.canAttack = not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and (gsoTimers.secondsToAttack == 0 or gsoExtra.resetAttack) and not isChatOpen
   gsoState.canMove = not gsoState.isChangingCursorPos and not gsoState.isEvading and gsoState.enabledMove and gsoTimers.secondsToMove == 0 and not isChatOpen
+  gsoState.canAttack = gsoState.canAttack and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency
+  gsoState.canMove = gsoState.canMove and gsoGameTimer() > gsoTimers.lastAttackSend + extraWindUp + gsoTimers.windUpTime + (0.5*gsoExtra.minLatency)
 end
 
 local function gsoAddUnits()
@@ -1022,7 +1018,21 @@ end
 
 local function gsoAttackMove(unit)
   if ExtLibEvade and ExtLibEvade.Evading then gsoState.isMoving=true;gsoState.isAttacking=false;gsoState.isEvading=true;return;end
-  if not unit and gsoMode.isCombo() and gsoIsHeroValid(gsoMyHero.range+gsoMyHero.boundingRadius, gsoMyHero.pos, gsoExtra.lastTarget, true, true) then unit = gsoExtra.lastTarget end
+  if not unit and gsoState.canAttack and gsoMode.isCombo() then
+    local aaTarget = gsoExtra.lastTarget
+    if aaTarget and aaTarget.type == Obj_AI_Hero and not aaTarget.dead and aaTarget.isTargetable and aaTarget.valid and aaTarget.visible and not gsoIsImmortal(aaTarget, jaxE) then
+      local move_lat = 1.5 * gsoExtra.maxLatency
+      local move_t = 0.15 + move_lat
+      local mePos = gsoMyHero.pos
+      local unitPos = aaTarget.pos
+      local dist1 = gsoDistance(mePos, unitPos)
+      local dist2 = gsoDistance(unitPos, gsoExtended(mePos, mePos, gsoExtra.lastMovePos, gsoMyHero.ms * move_t))
+      local aaRange = gsoMyHero.range + gsoMyHero.boundingRadius + aaTarget.boundingRadius
+      if dist1 < aaRange and dist2 < aaRange then
+        unit = aaTarget
+      end
+    end
+  end
   for i = 1, #gsoCanMove do
     if gsoCanMove[i]() == false then
       gsoState.canMove = false
@@ -1102,16 +1112,12 @@ local function gsoOrbwalkerLogic()
     if gsoBaseWindUp == 0 then gsoBaseWindUp=gsoMyHero.attackData.windUpTime/gsoMyHero.attackData.animationTime;gsoExtra.baseWindUp=gsoBaseWindUp;end
     if isCombo then
       gsoAttackMove(gsoGetComboTarget())
-    else
-      gsoState.canAttack = gsoState.canAttack and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency
-      gsoState.canMove = gsoState.canMove and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + (0.5*gsoExtra.minLatency)
-      if isHarass then
-        gsoAttackMove(gsoGetHarassTarget())
-      elseif gsoMode.isLastHit() then
-        gsoAttackMove(gsoGetLastHitTarget())
-      elseif gsoMode.isLaneClear() then
-        gsoAttackMove(gsoGetLaneClearTarget())
-      end
+    elseif isHarass then
+      gsoAttackMove(gsoGetHarassTarget())
+    elseif gsoMode.isLastHit() then
+      gsoAttackMove(gsoGetLastHitTarget())
+    elseif gsoMode.isLaneClear() then
+      gsoAttackMove(gsoGetLaneClearTarget())
     end
   else
     gsoState.isMoving = false
@@ -1157,8 +1163,10 @@ function OnLoad()
                 gsoMenu.ts.selected.draw:MenuElement({name = "Radius",  id = "radius", value = 150, min = 1, max = 300})
     gsoMenu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = gsoIcons["orb"] })
         gsoMenu.orb:MenuElement({name = "Delays", id = "delays", type = MENU})
-            gsoMenu.orb.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 5, min = 0, max = 25, step = 1 })
-            gsoMenu.orb.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = 0, max = 25, step = 1 })
+            gsoMenu.orb.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 5, min = -25, max = 10, step = 1 })
+            if gsoMenu.orb.delays.windup:Value() > 10 then gsoMenu.orb.delays.windup:Value(10) end
+            gsoMenu.orb.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -25, max = 10, step = 1 })
+            if gsoMenu.orb.delays.lhDelay:Value() > 10 then gsoMenu.orb.delays.lhDelay:Value(10) end
             gsoMenu.orb.delays:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
         gsoMenu.orb:MenuElement({name = "Keys", id = "keys", type = MENU})
             gsoMenu.orb.keys:MenuElement({name = "Combo Key", id = "combo", key = string.byte(" ")})
