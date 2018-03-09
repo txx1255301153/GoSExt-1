@@ -866,11 +866,657 @@ function OnLoad()
     __Darius = function() end,
     __Diana = function() end,
     __DrMundo = function() end,
-    __Draven = function() end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    __Draven = function()
+      
+      --[[ vars ]]
+      local gsoLastMove = 0
+      local gsoQParticles = {}
+      
+      --[[ menu ]]
+      local gsoMeMenu = gsoMenu:MenuElement({name = "Draven", id = "gsodraven", type = MENU, leftIcon = self.Icons["draven"] })
+        gsoMeMenu:MenuElement({name = "AXE settings", id = "aset", type = MENU })
+          gsoMeMenu.aset:MenuElement({id = "stopmove", name = "Hold radius", value = 100, min = 100, max = 125, step = 5 })
+          gsoMeMenu.aset:MenuElement({id = "cdist", name = "distance from axe to cursor", value = 750, min = 500, max = 1500, step = 50 })
+          gsoMeMenu.aset:MenuElement({id = "catch", name = "Catch axes", value = true})
+          gsoMeMenu.aset:MenuElement({id = "catcht", name = "stop under turret", value = true})
+          gsoMeMenu.aset:MenuElement({id = "catcho", name = "[combo] stop if no enemy in range", value = true})
+        gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+          gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+        gsoMeMenu:MenuElement({name = "W settings", id = "wset", type = MENU })
+          gsoMeMenu.wset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.wset:MenuElement({id = "harass", name = "Harass", value = false})
+          gsoMeMenu.wset:MenuElement({id = "hdist", name = "max enemy distance", value = 750, min = 500, max = 2000, step = 50 })
+        gsoMeMenu:MenuElement({name = "E settings", id = "eset", type = MENU })
+          gsoMeMenu.eset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.eset:MenuElement({id = "harass", name = "Harass", value = false})
+        gsoMeMenu:MenuElement({name = "R Semi Manual", id = "rset", type = MENU })
+          gsoMeMenu.rset:MenuElement({name = "Semi Manual", id = "semirdraven", type = MENU })
+            gsoMeMenu.rset.semirdraven:MenuElement({name = "Semi-Manual Key", id = "enabled", key = string.byte("T")})
+            gsoMeMenu.rset.semirdraven:MenuElement({name = "Only enemies with HP < X%", id = "semilow", value = true})
+            gsoMeMenu.rset.semirdraven:MenuElement({name = "X %", id = "semip", value = 35, min = 1, max = 100, step = 1 })
+            gsoMeMenu.rset.semirdraven:MenuElement({name = "Semi-Manual Max. Range", id = "rrange", value = 2000, min = 1000, max = 15000, step = 100 })
+            gsoMeMenu.rset.semirdraven:MenuElement({name = "Use on:", id = "useon", type = MENU })
+      
+      --[[ draw ]]
+      gsoSpellDraw = { e = true, er = 1050 }
+      Callback.Add('Draw', function()
+        if gsoMeMenu.aset.catch:Value() then
+          local aenabled = gsoMenu.gsodraw.circle1.aaxeenable:Value()
+          local ienabled = gsoMenu.gsodraw.circle1.iaxeenable:Value()
+          if aenabled or ienabled then
+            for k,v in pairs(gsoQParticles) do
+              if not v.success then
+                if v.active and aenabled then
+                  local acol = gsoMenu.gsodraw.circle1.aaxecolor:Value()
+                  local arad = gsoMenu.gsodraw.circle1.aaxeradius:Value()
+                  local awid = gsoMenu.gsodraw.circle1.aaxewidth:Value()
+                  gsoDrawCircle(v.pos, arad, awid, acol)
+                elseif ienabled then
+                  local icol = gsoMenu.gsodraw.circle1.iaxecolor:Value()
+                  local irad = gsoMenu.gsodraw.circle1.iaxeradius:Value()
+                  local iwid = gsoMenu.gsodraw.circle1.iaxewidth:Value()
+                  gsoDrawCircle(v.pos, irad, iwid, icol)
+                end
+              end
+            end
+          end
+        end
+      end)
+      
+      gsoOrbwalker:OnMove(function()
+        local isTarget = target and target.type == Obj_AI_Hero
+        local isCombo = gsoAIO.Menu.menu.orb.keys.combo:Value()
+        local isHarass = gsoAIO.Menu.menu.orb.keys.harass:Value()
+        local mePos = myHero.pos
+        -- USE E :
+        local canE = ( isCombo and gsoAIO.Menu.menu.gsodraven.eset.combo:Value() ) or ( isHarass and gsoAIO.Menu.menu.gsodraven.eset.harass:Value() )
+        if canE and gsoAIO.Utils:_isReady(gT, { q = 0, w = 0, e = 1000, r = 250 }, _E) then
+          local eTarget = isTarget and target or gsoAIO.TS:_getTarget(1050, false, false, gsoAIO.OB.enemyHeroes)
+          if eTarget and gsoAIO.Utils:_castSpellSkillshot(mePos, eTarget, { delay = 0.25, range = 1050, width = 150, speed = 1400, sType = "line", col = false }, HK_E) then
+            self.lastE = GetTickCount()
+            return true
+          end
+        end
+        -- USE W :
+        local canW = ( isCombo and gsoAIO.Menu.menu.gsodraven.wset.combo:Value() ) or ( isHarass and gsoAIO.Menu.menu.gsodraven.wset.harass:Value() )
+        if canW and Game.Timer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 ) then
+          for i = 1, #gsoAIO.OB.enemyHeroes do
+            local hero  = gsoAIO.OB.enemyHeroes[i]
+            local delayNum = isTarget and 2750 or 2000
+            if hero and gsoAIO.Utils:_valid(hero, false) and gsoAIO.Utils:_getDistance(myHero.pos, hero.pos) < gsoAIO.Menu.menu.gsodraven.wset.hdist:Value() then
+              if gsoAIO.Utils:_castSpell2({ q = 0, w = delayNum, e = 350, r = 350 }, _W, HK_W) then
+                self.lastW = GetTickCount()
+                return true
+              end
+            end
+          end
+        end
+        return false
+      end)
+      
+      gsoOrbwalker:SetMousePos(function()
+        if not gsoAIO.Menu.menu.gsodraven.aset.catch:Value() then return nil end
+        local qPos = nil
+        local kID = nil
+        local num = 1000000000
+        for k,v in pairs(self.qParticles) do
+          if not v.success then
+            local distanceToMouse = gsoAIO.Utils:_getDistance(v.pos, mousePos)
+            if distanceToMouse < num then
+              qPos = v.pos
+              num = distanceToMouse
+              kID = k
+            end
+          end
+        end
+        if qPos ~= nil then
+          qPos = qPos:Extended(mousePos, gsoAIO.Menu.menu.gsodraven.aset.stopmove:Value())
+          local stopNearUnit = gsoAIO.Utils:_nearTurret(qPos, 0, true) or gsoAIO.Utils:_nearHeroes(qPos, 0, true) or gsoAIO.Utils:_nearMinions(qPos, 0, true)
+          local stopUnderTurret = gsoAIO.Menu.menu.gsodraven.aset.catcht:Value() and gsoAIO.Utils:_nearTurret(qPos, 775, false)
+          local stopOutOfAARange = gsoAIO.Menu.menu.gsodraven.aset.catcho:Value() and not gsoAIO.Utils:_nearHeroes(qPos, myHero.range + myHero.boundingRadius + 30, false)
+          if qPos and ( stopNearUnit or stopUnderTurret or stopOutOfAARange ) then
+            qPos = nil
+            self.qParticles[kID].active = false
+          else
+            self.qParticles[kID].active = true
+          end
+        end
+        return qPos
+      end)
+      
+      --[[ on enemy hero load ]]
+      gsoOrbwalker:OnEnemyHeroLoad(function(heroName)
+        gsoMeMenu.rset.semirdraven.useon:MenuElement({id = heroName, name = heroName, value = true})
+      end)
+      
+      --[[ on attack ]]
+      gsoOrbwalker:OnAttack(function()
+        local isTarget = target and target.type == Obj_AI_Hero
+        local canQ = ( gsoMenu.orb.keys.combo:Value() and gsoMeMenu.qset.combo:Value() ) or ( gsoMenu.orb.keys.harass:Value() and gsoMeMenu.qset.harass:Value() )
+        if canQ and isTarget and gsoCastSpell({ q = 1000, w = 0, e = 250, r = 250 }, _Q, HK_Q) then
+          self.lastQ = GetTickCount()
+        end
+      end)
+      
+      --[[ on tick ]]
+      gsoOrbwalker:OnTick(function()
+        -- semi r
+        if gsoMeMenu.rset.semirdraven.enabled:Value() and gsoAIO.Utils:_isReady({ q = 0, w = 100, e = 250, r = 1000 }, _R) then
+          local rTargets = {}
+          for i = 1, #gsoAIO.OB.enemyHeroes do
+            local hero = gsoAIO.OB.enemyHeroes[i]
+            local heroName = hero.charName
+            local isFromList = gsoMeMenu.rset.semirdraven.useon[heroName] and gsoMeMenu.rset.semirdraven.useon[heroName]:Value()
+            local hpPercent = gsoMeMenu.rset.semirdraven.semilow:Value() and gsoMeMenu.rset.semirdraven.semip:Value() or 100
+            local isLowHP = isFromList and ( ( hero.health + ( hero.hpRegen * 3 ) ) * 100 ) / hero.maxHealth <= hpPercent
+            if isLowHP then
+              rTargets[#rTargets+1] = hero
+            end
+          end
+          local rrange = gsoMeMenu.rset.semirdraven.rrange:Value()
+          local rTarget = gsoAIO.TS:_getTarget(rrange, false, false, rTargets)
+          if rTarget and gsoAIO.Utils:_castSpellSkillshotGlobal(myHero.pos, rTarget, { delay = 0.25, range = rrange, width = 125, speed = 2000, sType = "line", col = false }, HK_R) then
+            self.lastR = GetTickCount()
+          end
+        end
+        -- handle axes
+        local mePos = myHero.pos
+        for i = 1, Game.ParticleCount() do
+          local particle = Game.Particle(i)
+          local particlePos = particle and particle.pos or nil
+          if particlePos and gsoDistance(mePos, particlePos) < 500 then
+            local pname = particle.name
+            if pname == "Draven_Base_Q_reticle" then
+              local particleID = particle.handle
+              if not gsoQParticles[particleID] then
+                gsoQParticles[particleID] = { pos = particlePos, tick = GetTickCount(), success = false, active = false }
+                gsoTimers.lastMoveSend = 0
+              end
+            end
+          end
+        end
+        for k,v in pairs(gsoQParticles) do
+          local timerMinus = GetTickCount() - v.tick
+          local numMenu = 900 - (gsoAIO.Utils.minPing*1000) + (myHero.ms - 330)*2
+          if not v.success and timerMinus > numMenu then
+            gsoQParticles[k].success = true
+            gsoTimers.lastMoveSend = 0
+          end
+          if timerMinus > numMenu and timerMinus < numMenu + 100 then
+            gsoTimers.lastMoveSend = 0
+          end
+          if timerMinus > 2000 then
+            gsoQParticles[k] = nil
+          end
+        end
+      end)
+      
+      --[[ can move | attack ]]
+      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 0, w = 0, e = 250, r = 250 }) end)
+      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 0, w = 0, e = 350, r = 350 }) end)
+      
+      --[[ on issue ]]
+      gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
+    end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     __Ekko = function() end,
     __Elise = function() end,
     __Evelynn = function() end,
-    __Ezreal = function() end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    __Ezreal = function()
+    
+    --[[ vars ]]
+      local gsoShouldWaitT = 0
+      local gsoShouldWait = false
+    
+    --[[ spell data ]]
+      gsoSpellData.q = { delay = 0.25, range = 1150, width = 60, speed = 2000, sType = "line", col = true, hCol = true, mCol = true, out = true }
+      gsoSpellData.w = { delay = 0.25, range = 1000, width = 80, speed = 1550, sType = "line", col = false, hCol = false, mCol = false, out = true }
+      gsoSpellData.r = { delay = 1, range = rrange, width = 160, speed = 2000, sType = "line", col = false, hCol = false, mCol = false, out = true }
+    
+    --[[ menu ]]
+      local gsoMeMenu = gsoMenu:MenuElement({name = "Ezreal", id = "gsoezreal", type = MENU, leftIcon = self.Icons["ezreal"] })
+        gsoMeMenu:MenuElement({name = "Auto Q", id = "autoq", type = MENU })
+          gsoMeMenu.autoq:MenuElement({id = "enable", name = "Enable", value = true, key = string.byte("T"), toggle = true})
+          gsoMeMenu.autoq:MenuElement({id = "autoqout", name = "Only if enemy out of attack range", value = true})
+          gsoMeMenu.autoq:MenuElement({id = "mana", name = "Q Auto min. mana percent", value = 50, min = 0, max = 100, step = 1 })
+          gsoMeMenu.autoq:MenuElement({name = "Use on:", id = "useon", type = MENU })
+        gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+          gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+          gsoMeMenu.qset:MenuElement({id = "laneclear", name = "LaneClear", value = false})
+          gsoMeMenu.qset:MenuElement({id = "lasthit", name = "LastHit", value = true})
+          gsoMeMenu.qset:MenuElement({id = "qout", name = "Only if enemy out of attack range", value = false})
+          gsoMeMenu.qset:MenuElement({id = "qlh", name = "Q LastHit min. mana percent", value = 10, min = 0, max = 100, step = 1 })
+          gsoMeMenu.qset:MenuElement({id = "qlc", name = "Q LaneClear min. mana percent", value = 50, min = 0, max = 100, step = 1 })
+        gsoMeMenu:MenuElement({name = "W settings", id = "wset", type = MENU })
+          gsoMeMenu.wset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.wset:MenuElement({id = "harass", name = "Harass", value = false})
+          gsoMeMenu.wset:MenuElement({id = "wout", name = "Only if enemy out of attack range", value = false})
+        gsoMeMenu:MenuElement({name = "R settings", id = "rset", type = MENU })
+          gsoMeMenu.rset:MenuElement({name = "Semi Manual", id = "semirez", type = MENU })
+            gsoMeMenu.rset.semirez:MenuElement({name = "Semi-Manual Key", id = "enabled", key = string.byte("T")})
+            gsoMeMenu.rset.semirez:MenuElement({name = "Only enemies with HP < X%", id = "semilow", value = true})
+            gsoMeMenu.rset.semirez:MenuElement({name = "X %", id = "semip", value = 35, min = 1, max = 100, step = 1 })
+            gsoMeMenu.rset.semirez:MenuElement({name = "Semi-Manual Max. Range", id = "rrange", value = 2000, min = 1000, max = 15000, step = 100 })
+            gsoMeMenu.rset.semirez:MenuElement({name = "Use on:", id = "useon", type = MENU })
+    
+    --[[ draw ]]
+      gsoSpellDraw = { q = true, qr = 1150, w = true, wr = 1000, e = true, er = 475 }
+      Callback.Add('Draw', function()
+        if gsoMenu.gsodraw.texts1.enableautoq:Value() then
+          local mePos = myHero.pos:To2D()
+          local posX = mePos.x - 50
+          local posY = mePos.y
+          if gsoMeMenu.autoq.enable:Value() then
+            Draw.Text("Auto Q Enabled", gsoMenu.gsodraw.texts1.sizeautoq:Value(), posX, posY, gsoMenu.gsodraw.texts1.colorautoqe:Value()) 
+          else
+            Draw.Text("Auto Q Disabled", gsoMenu.gsodraw.texts1.sizeautoq:Value(), posX, posY, gsoMenu.gsodraw.texts1.colorautoqd:Value()) 
+          end
+        end
+      end)
+    
+    --[[ on enemy hero load ]]
+      gsoOrbwalker:OnEnemyHeroLoad(function(heroName)
+        gsoMeMenu.rset.semirez.useon:MenuElement({id = heroName, name = heroName, value = true})
+      end)
+    
+    --[[ local functions ]]
+      local function gsoCastQ(t)
+        if t and gsoCastSpellSkillshot(myHero.pos, t, , HK_Q) then
+          gsoSpellTimers.lq = GetTickCount()
+          gsoSpellCan.w = false
+          return true
+        end
+        return false
+      end
+
+      local function gsoCastQFarm()
+        local meRange = myHero.range + myHero.boundingRadius
+        local manaPercent = 100 * myHero.mana / myHero.maxMana
+        local isLH = gsoMeMenu.qset.lasthit:Value() and (gsoMenu.orb.keys.lastHit:Value() or gsoMenu.orb.keys.harass:Value())
+        local isLC = gsoMeMenu.qset.laneclear:Value() and gsoMenu.orb.keys.laneClear:Value()
+        if isLH or isLC then
+          local canLH = manaPercent > gsoMeMenu.qset.qlh:Value()
+          local canLC = manaPercent > gsoMeMenu.qset.qlc:Value()
+          if not canLH and not canLC then return false end
+          if self.shouldWait == true and gsoGameTimer() > self.shouldWaitT + 0.5 then
+            self.shouldWait = false
+          end
+          local almostLH = false
+          local laneClearT = {}
+          local lastHitT = {}
+          
+          -- [[ set enemy minions ]]
+          local mLH = gsoMenu.orb.delays.lhDelay:Value()*0.001
+          for i = 1, #gsoAIO.OB.enemyMinions do
+            local eMinion = gsoAIO.OB.enemyMinions[i]
+            local eMinion_handle	= eMinion.handle
+            local eMinion_health	= eMinion.health
+            local myHero_aaData		= myHero.attackData
+            local myHero_pFlyTime	= gsoDistance(myHero.pos, eMinion.pos) / 2000
+            for k1,v1 in pairs(gsoAIO.Farm.aAttacks) do
+              for k2,v2 in pairs(gsoAIO.Farm.aAttacks[k1]) do
+                if v2.canceled == false and eMinion_handle == v2.to.handle then
+                  local checkT	= gsoGameTimer()
+                  local pEndTime	= v2.startTime + v2.pTime
+                  if pEndTime > checkT and  pEndTime - checkT < myHero_pFlyTime - mLH then
+                    eMinion_health = eMinion_health - v2.dmg
+                  end
+                end
+              end
+            end
+            local myHero_dmg = ((25 * myHero:GetSpellData(_Q).level) - 10) + (1.1 * myHero.totalDamage) + (0.4 * myHero.ap)
+            if eMinion_health - myHero_dmg < 0 then
+              lastHitT[#lastHitT+1] = eMinion
+            else
+              if eMinion.health - gsoAIO.Farm:_possibleDmg(eMinion, 2.5) - myHero_dmg < 0 then
+                almostLH = true
+                self.shouldWait = true
+                self.shouldWaitT = gsoGameTimer()
+              else
+                laneClearT[#laneClearT+1] = eMinion
+              end
+            end
+          end
+
+          -- [[ lasthit ]]
+          if isLH and canLH then
+            local canCheckT = false
+            for i = 1, #lastHitT do
+              local unit = lastHitT[i]
+              local unitPos = unit.pos
+              local mePos = myHero.pos
+              local checkT = gsoGameTimer() < gsoAIO.TS.LHTimers[4].tick
+              local mHandle = unit.handle
+              if not checkT or (checkT and gsoAIO.TS.LHTimers[4].id ~= mHandle) then
+                if gsoDistance(mePos, unitPos) < meRange + unit.boundingRadius then
+                  canCheckT = true
+                  break
+                end
+              end
+            end
+            if not canCheckT or (canCheckT and gsoGameTimer() < gsoAIO.Orb.lAttack + gsoAIO.Orb.animT) then
+              for i = 1, #lastHitT do
+                local minion = lastHitT[i]
+                local minionPos = minion.pos
+                local mePos = myHero.pos
+                local checkT = gsoGameTimer() < gsoAIO.TS.LHTimers[4].tick
+                local mHandle = minion.handle
+                if not checkT or (checkT and gsoAIO.TS.LHTimers[4].id ~= mHandle) then
+                  local distance = gsoDistance(mePos, minionPos)
+                  if distance < 1150 and self:_castQ(minion, minionPos, mePos) then
+                    gsoAIO.TS.LHTimers[0].tick = gsoGameTimer() + 0.75
+                    gsoAIO.TS.LHTimers[0].id = mHandle
+                    return true
+                  end
+                end
+              end
+            end
+
+          -- [[ laneclear ]]
+          elseif isLC and canLC then
+            local canCheckT = false
+            for i = 1, #lastHitT do
+              local unit = lastHitT[i]
+              local unitPos = unit.pos
+              local mePos = myHero.pos
+              local checkT = gsoGameTimer() < gsoAIO.TS.LHTimers[4].tick
+              local mHandle = unit.handle
+              if not checkT or (checkT and gsoAIO.TS.LHTimers[4].id ~= mHandle) then
+                if gsoDistance(mePos, unitPos) < meRange + unit.boundingRadius then
+                  canCheckT = true
+                  break
+                end
+              end
+            end
+            if not canCheckT or (canCheckT and gsoGameTimer() < gsoAIO.Orb.lAttack + gsoAIO.Orb.animT) then
+              for i = 1, #lastHitT do
+                local minion = lastHitT[i]
+                local minionPos = minion.pos
+                local mePos = myHero.pos
+                local checkT = gsoGameTimer() < gsoAIO.TS.LHTimers[4].tick
+                local mHandle = minion.handle
+                if not checkT or (checkT and gsoAIO.TS.LHTimers[4].id ~= mHandle) then
+                  local distance = gsoDistance(mePos, minionPos)
+                  if distance < 1150 and self:_castQ(minion, minionPos, mePos) then
+                    gsoAIO.TS.LHTimers[0].tick = gsoGameTimer() + 0.75
+                    gsoAIO.TS.LHTimers[0].id = mHandle
+                    return true
+                  end
+                end
+              end
+            end
+            if not almostLH and not self.shouldWait then
+              canCheckT = false
+              for i = 1, #gsoAIO.OB.enemyHeroes do
+                local unit = gsoAIO.OB.enemyHeroes[i]
+                local unitPos = unit.pos
+                local mePos = myHero.pos
+                if gsoDistance(mePos, unitPos) < meRange + unit.boundingRadius then
+                  canCheckT = true
+                  break
+                end
+              end
+              if not canCheckT or (canCheckT and gsoGameTimer() < gsoAIO.Orb.lAttack + gsoAIO.Orb.animT) then
+                for i = 1, #gsoAIO.OB.enemyHeroes do
+                  local unit = gsoAIO.OB.enemyHeroes[i]
+                  local unitPos = unit.pos
+                  local mePos = myHero.pos
+                  local distance = gsoDistance(mePos, unitPos)
+                  if distance < 1150 and self:_castQ(unit, unitPos, mePos) then return true end
+                end
+              end
+              canCheckT = false
+              for i = 1, #laneClearT do
+                local unit = laneClearT[i]
+                local unitPos = unit.pos
+                local mePos = myHero.pos
+                if gsoDistance(mePos, unitPos) < meRange + unit.boundingRadius then
+                  canCheckT = true
+                  break
+                end
+              end
+              if not canCheckT or (canCheckT and gsoGameTimer() < gsoAIO.Orb.lAttack + gsoAIO.Orb.animT) then
+                for i = 1, #laneClearT do
+                  local minion = laneClearT[i]
+                  local minionPos = minion.pos
+                  local mePos = myHero.pos
+                  local distance = gsoDistance(myHero.pos, minionPos)
+                  if distance < 1150 and self:_castQ(minion, minionPos, mePos) then return true end
+                end
+              end
+            end
+          end
+        end
+        return false
+      end
+      
+    --[[ on tick ]]
+      gsoOrbwalker:OnTick(function()
+        local getTick = GetTickCount() - (gsoAIO.Utils.maxPing*1000)
+        if getTick - gsoSpellTimers.le > 1000 and Game.CanUseSpell(_E) == 0 then
+          local dActions = gsoDelayedSpell
+          for k,v in pairs(dActions) do
+            if k == 2 then
+              if gsoAIO.Orb.dActionsC == 0 then
+                v[1]()
+                gsoAIO.Orb.dActions[GetTickCount()] = { function() return 0 end, 50 }
+                gsoAIO.Orb.enableAA = false
+                gsoAIO.Orb.dActionsC = gsoAIO.Orb.dActionsC + 1
+                gsoSpellTimers.le = GetTickCount()
+                gsoDelayedSpell[k] = nil
+                break
+              end
+              if GetTickCount() - v[2] > 125 then
+                gsoDelayedSpell[k] = nil
+              end
+              break
+            end
+          end
+        end
+        
+        -- semi r
+        if gsoMeMenu.rset.semirez.enabled:Value() and gsoAIO.Utils:_isReady({ q = 350, w = 350, e = 550, r = 1100 }, _R) then
+          local rTargets = {}
+          for i = 1, #gsoAIO.OB.enemyHeroes do
+            local hero = gsoAIO.OB.enemyHeroes[i]
+            local heroName = hero.charName
+            local isFromList = gsoMeMenu.rset.semirez.useon[heroName] and gsoMeMenu.rset.semirez.useon[heroName]:Value()
+            local hpPercent = gsoMeMenu.rset.semirez.semilow:Value() and gsoMeMenu.rset.semirez.semip:Value() or 100
+            local isLowHP = isFromList and ( ( hero.health + ( hero.hpRegen * 3 ) ) * 100 ) / hero.maxHealth <= hpPercent
+            if isLowHP then
+              rTargets[#rTargets+1] = hero
+            end
+          end
+          local rrange = gsoMeMenu.rset.semirez.rrange:Value()
+          local rTarget = gsoAIO.TS:_getTarget(rrange, false, false, rTargets)
+          if rTarget and gsoCastSpellSkillshotGlobal(myHero.pos, rTarget, , HK_R) then
+            gsoSpellTimers.lr = GetTickCount()
+          end
+        end
+        
+        -- AUTO Q :
+        local qout = gsoMeMenu.qset.qout:Value()
+        local canQ = gsoMeMenu.autoq.enable:Value() and not gsoMenu.orb.keys.combo:Value() and not gsoMenu.orb.keys.harass:Value()
+              canQ = canQ and gsoAIO.Utils:_isReady({ q = 1000, w = 350, e = 550, r = 1100 }, _Q)
+              canQ = canQ and ( 100 * myHero.mana ) / myHero.maxMana > gsoMeMenu.autoq.mana:Value()
+              canQ = canQ and ( not qout or (qout and gsoAIO.Utils:_countEnemyHeroesInRange(myHero.pos, myHero.range + myHero.boundingRadius, true) == 0) )
+        if canQ then
+          local meRange = myHero.range + myHero.boundingRadius
+          local mePos = myHero.pos
+          for i = 1, #gsoAIO.OB.enemyHeroes do
+            local unit = gsoAIO.OB.enemyHeroes[i]
+            local unitName = unit.charName
+            if gsoMeMenu.autoq.useon[unitName] and gsoMeMenu.autoq.useon[unitName]:Value() then
+              local unitPos = unit.pos
+              local distance = gsoDistance(mePos, unitPos)
+              local isAA = distance < meRange + unit.boundingRadius
+              if distance < 1150 and ( not isAA or (isAA and gsoSpellCan.q) ) and gsoCastSpellSkillshot(mePos, unit, { delay = 0.25, range = 1150, width = 60, speed = 2000, sType = "line", col = true }, HK_Q) then
+                gsoSpellTimers.lq = GetTickCount()
+                gsoSpellCan.w = false
+                break
+              end
+            end
+          end
+        end
+      end)
+    
+    --[[ on move ]]
+      gsoOrbwalker:OnMove(function()
+        local isTarget = target and target.type == Obj_AI_Hero
+        local afterAttack = gsoGameTimer() < gsoAIO.Orb.lAttack + ( gsoAIO.Orb.animT * 0.75 )
+        local isCombo = gsoMenu.orb.keys.combo:Value()
+        local isHarass = gsoMenu.orb.keys.harass:Value()
+        local mePos = myHero.pos
+        if not isTarget or afterAttack then
+          -- Q :
+          local canQ = gsoAIO.Utils:_isReady(gT, { q = 1000, w = 350, e = 500, r = 1100 }, _Q)
+          local qout = gsoMeMenu.qset.qout:Value()
+                canQ = canQ and ( not qout or (qout and not isTarget) )
+          -- Q FARM :
+          if canQ and ( not isTarget or (isTarget and gsoSpellCan.q) ) and self:_castQFarm() then
+            gsoSpellCan.w = false
+            return true
+          end
+          -- Q COMBO :
+          canQ = canQ and ( ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() ) )
+          if canQ and ( not isTarget or (isTarget and gsoSpellCan.q) ) then
+            local qTarget = isTarget and target or gsoAIO.TS:_getTarget(1150, true, false, gsoAIO.OB.enemyHeroes)
+            local qTPos = qTarget and qTarget.pos or nil
+            if qTarget and gsoCastSpellSkillshot(mePos, qTarget, { delay = 0.25, range = 1150, width = 60, speed = 2000, sType = "line", col = true }, HK_Q) then
+              gsoSpellTimers.lq = GetTickCount()
+              gsoSpellCan.w = false
+              return true
+            end
+          end
+          -- USE W :
+          local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
+          local wout = gsoMeMenu.wset.wout:Value()
+                canW = canW and ( not wout or (wout and not isTarget) )
+          if canW and gsoAIO.Utils:_isReady(gT, { q = 350, w = 1000, e = 500, r = 1100 }, _W) and ( not isTarget or (isTarget and gsoSpellCan.w) ) then
+            local wTarget = isTarget and target or gsoAIO.TS:_getTarget(1000, false, false, gsoAIO.OB.enemyHeroes)
+            if wTarget and gsoCastSpellSkillshot(mePos, wTarget, , HK_W) then
+              gsoSpellTimers.lw = GetTickCount()
+              gsoSpellCan.q = false
+              return true
+            end
+          end
+        end
+        return false
+      end)
+      
+      --[[ can move | attack ]]
+      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 175, w = 175, e = 250, r = 1000 }) end)
+      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 350, w = 350, e = 350, r = 1100 }) end)
+      
+      --[[ on issue ]]
+      gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
+    end,
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     __Fiddlesticks = function() end,
     __Fiora = function() end,
     __Fizz = function() end,
