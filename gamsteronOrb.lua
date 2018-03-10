@@ -877,7 +877,7 @@ local function gsoOrbwalkerTimersLogic()
   gsoTimers.animationTime = animT > gsoServerAnim and animT or gsoServerAnim
   for i = 1, #gsoCanChangeAnim do
     if gsoCanChangeAnim[i] then
-      gsoTimers.animationTime = animT
+      gsoTimers.animationTime = animT > gsoServerAnim and gsoServerAnim or animT
       break
     end
   end
