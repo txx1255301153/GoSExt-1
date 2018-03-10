@@ -3064,7 +3064,8 @@ function OnLoad()
         gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
           gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
           gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
-          gsoMeMenu.qset:MenuElement({id = "qload", name = "Minimum Q Loading Time [ms]", value = 1000, min = 0, max = 2000, step = 100})
+          gsoMeMenu.qset:MenuElement({id = "qload", name = "Minimum Q Loading Time X[ms]", value = 1000, min = 0, max = 2000, step = 100})
+          gsoMeMenu.qset:MenuElement({id = "qloadaa", name = "Minimum Q Loading Time X[ms] in attack range", value = 0, min = 0, max = 2000, step = 100})
         gsoMeMenu:MenuElement({name = "E settings", id = "eset", type = MENU })
           gsoMeMenu.eset:MenuElement({id = "combo", name = "Combo", value = true})
           gsoMeMenu.eset:MenuElement({id = "harass", name = "Harass", value = false})
@@ -3080,7 +3081,7 @@ function OnLoad()
       
       --[[ spell data ]]
       gsoSpellData.q = { delay = 0.25, range = 1650, width = 70, speed = 1900, sType = "line", col = false, hCol = false, mCol = false, out = true }
-      gsoSpellData.e = { delay = 0.25, range = 925, width = 235, speed = 1500, sType = "circular", col = false, hCol = false, mCol = false, out = false }
+      gsoSpellData.e = { delay = 0.5, range = 925, width = 235, speed = 1500, sType = "circular", col = false, hCol = false, mCol = false, out = false }
       gsoSpellData.r = { delay = 0.25, range = 1075, width = 120, speed = 1950, sType = "line", col = false, hCol = false, mCol = false, out = false }
       
       --[[ on move ]]
@@ -3125,7 +3126,7 @@ function OnLoad()
             if canQ and champInfo.enabled and gsoGetTickCount() > champInfo.lastQ2 + 1500 then
               for i = 1, #enemyList do
                 local hero  = enemyList[i]
-                if (not isTarget or gsoBuffCount(hero, "varuswdebuff") == 3) and gsoDistance(gsoMyHero.pos, hero.pos) < 1400 then
+                if (not isTarget or gsoBuffCount(hero, "varuswdebuff") == 3 or gsoMyHero:GetSpellData(_W).level == 0) and gsoDistance(gsoMyHero.pos, hero.pos) < 1400 then
                   champInfo.isTarget = isTarget
                   Control.KeyDown(HK_Q)
                   gsoSpellTimers.lq = GetTickCount() + Game.Latency()
@@ -3144,7 +3145,7 @@ function OnLoad()
               local eTargets = {}
               for i = 1, #enemyList do
                 local hero  = enemyList[i]
-                if (not isTarget or gsoBuffCount(hero, "varuswdebuff") == 3) and gsoDistance(gsoMyHero.pos, hero.pos) < 925 then
+                if (not isTarget or gsoBuffCount(hero, "varuswdebuff") == 3 or gsoMyHero:GetSpellData(_W).level == 0) and gsoDistance(gsoMyHero.pos, hero.pos) < 925 then
                   eTargets[#eTargets+1] = hero
                 end
               end
@@ -3169,14 +3170,15 @@ function OnLoad()
           local qTargets = {}
           for i = 1, #enemyList do
             local hero  = enemyList[i]
-            if (not champInfo.isTarget or gsoBuffCount(hero, "varuswdebuff") == 3) and gsoDistance(myHero.pos, hero.pos) < 1650 then
+            if (not champInfo.isTarget or gsoBuffCount(hero, "varuswdebuff") == 3 or gsoMyHero:GetSpellData(_W).level == 0) and gsoDistance(myHero.pos, hero.pos) < 1650 then
               qTargets[#qTargets+1] = hero
             end
           end
           local qTimer = gsoGetTickCount() - gsoSpellTimers.lq
                 qTimer = qTimer * 0.001
           local qExtraRange = qTimer < 2 and qTimer * 0.5 * 700 or 700
-          if qTimer > gsoMeMenu.qset.qload:Value() * 0.001 then
+          local qInAA = gsoCountEnemyHeroesInRange(gsoMyHero.pos, gsoMyHero.range + gsoMyHero.boundingRadius, true) > 0 and qTimer > gsoMeMenu.qset.qloadaa:Value() * 0.001 
+          if qTimer > gsoMeMenu.qset.qload:Value() * 0.001 or qInAA == true then
             local qRange = 925 + qExtraRange
             local qTarget1 = gsoGetTarget(qRange, qTargets, gsoMyHero.pos, false, false)
             if qTarget1 then
