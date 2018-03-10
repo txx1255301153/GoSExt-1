@@ -295,7 +295,7 @@ local gsoMode = {
 local gsoTimers = { lastAttackSend = 0, lastMoveSend = 0, secondsToAttack = 0, secondsToMove = 0, windUpTime = 0, animationTime = 0 }
 local gsoState = { isAttacking = false, isMoving = false, isEvading = false, isChangingCursorPos = false, isBlindedByTeemo = false, canAttack = true, canMove = true, enabledAttack = true, enabledMove = true, enabledOrb = true, stopMoveCustomPos = false }
 local gsoExtra = { resetAttack = false, lastMovePos = myHero.pos, maxLatency = Game.Latency() * 0.001, minLatency = Game.Latency() * 0.001, lastTarget = nil, selectedTarget = nil, allyTeam = myHero.team, attackSpeed = 0, baseAttackSpeed = 0, baseWindUp = 0 }
-local gsoFarm = { allyActiveAttacks = {}, lastHitable = {}, almostLastHitable = {}, laneClearable = {} }
+local gsoFarm = { allyActiveAttacks = {}, lastHitable = {}, almostLastHitable = {}, laneClearable = {}, lastHitID = 0, lastHitQID = 0, lastHitWID = 0, lastHitEID = 0, lastHitRID = 0 }
 local gsoObjects = { allyHeroes = {}, enemyHeroes_immortal = {}, enemyHeroes_attack = {}, enemyHeroes_spell = {}, allyMinions = {}, enemyMinions = {}, allyTurrets = {}, enemyTurrets = {} }
 
 local gsoPriorities = {
@@ -966,11 +966,12 @@ local function gsoGetLastHitTarget()
   local mePos = gsoMyHero.pos
   for i = 1, #lastHitable do
     local minion = lastHitable[i]
-    if gsoDistance(mePos, minion.pos) < meRange + 25 and minion.health < min then
+    if gsoDistance(mePos, minion.pos) < meRange + 25 and minion.health < min and minion.handle ~= gsoFarm.lastHitQID then
       min = minion.health
       lastHitTarget = minion.Minion
     end
   end
+  if lastHitTarget ~= nil then gsoFarm.lastHitID = lastHitTarget.handle end
   return lastHitTarget
 end
 
