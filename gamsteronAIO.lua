@@ -3063,6 +3063,7 @@ function OnLoad()
         gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
           gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
           gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+          gsoMeMenu.qset:MenuElement({id = "qload", name = "Minimum Q Loading Time [ms]", value = 1000, min = 0, max = 2000, step = 100})
         gsoMeMenu:MenuElement({name = "E settings", id = "eset", type = MENU })
           gsoMeMenu.eset:MenuElement({id = "combo", name = "Combo", value = true})
           gsoMeMenu.eset:MenuElement({id = "harass", name = "Harass", value = false})
@@ -3174,27 +3175,29 @@ function OnLoad()
           local qTimer = gsoGetTickCount() - gsoSpellTimers.lq
                 qTimer = qTimer * 0.001
           local qExtraRange = qTimer < 2 and qTimer * 0.5 * 700 or 700
-          local qRange = 925 + qExtraRange
-          local qTarget1 = gsoGetTarget(qRange, qTargets, gsoMyHero.pos, false, false)
-          if qTarget1 then
-            local qPred1 = qTarget1:GetPrediction(1900,0.25+gsoExtra.maxLatency)
-            if qPred1 and gsoDistance(qPred1, qTarget1.pos) < 500 and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qPred1) then
-              champInfo.enabled = true
-              gsoState.enabledAttack = true
-              lastQ2 = GetTickCount()
-              gsoSpellCan.botrk = false
-              gsoSpellCan.e = false
-              gsoState.enabledMove = false
-            else
-              local qTarget2 = gsoGetTarget(1550, qTargets, gsoMyHero.pos, false, false)
-              local qPred2 = qTarget2:GetPrediction(1900,0.25+gsoExtra.maxLatency)
-              if qPred2 and gsoDistance(qPred1, qTarget2.pos) < 500 and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qPred2) then
+          if qTimer > gsoMeMenu.qset.qload:Value() * 0.001 then
+            local qRange = 925 + qExtraRange
+            local qTarget1 = gsoGetTarget(qRange, qTargets, gsoMyHero.pos, false, false)
+            if qTarget1 then
+              local qPred1 = qTarget1:GetPrediction(1900,0.25+gsoExtra.maxLatency)
+              if qPred1 and gsoDistance(qPred1, qTarget1.pos) < 500 and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qPred1) then
                 champInfo.enabled = true
                 gsoState.enabledAttack = true
                 lastQ2 = GetTickCount()
                 gsoSpellCan.botrk = false
                 gsoSpellCan.e = false
                 gsoState.enabledMove = false
+              else
+                local qTarget2 = gsoGetTarget(1550, qTargets, gsoMyHero.pos, false, false)
+                local qPred2 = qTarget2:GetPrediction(1900,0.25+gsoExtra.maxLatency)
+                if qPred2 and gsoDistance(qPred1, qTarget2.pos) < 500 and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qPred2) then
+                  champInfo.enabled = true
+                  gsoState.enabledAttack = true
+                  lastQ2 = GetTickCount()
+                  gsoSpellCan.botrk = false
+                  gsoSpellCan.e = false
+                  gsoState.enabledMove = false
+                end
               end
             end
           end
