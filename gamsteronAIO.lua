@@ -3199,7 +3199,8 @@ function OnLoad()
             end
           end
         end
-        if canQ and gsoGetTickCount() > gsoSpellTimers.lq + 500 and not gsoHasBuff(gsoMyHero, "varusq") then
+        champInfo.hasQBuff = gsoHasBuff(gsoMyHero, "varusq")
+        if canQ and gsoGetTickCount() > gsoSpellTimers.lq + 500 and not champInfo.hasQBuff then
           champInfo.enabled = true
           gsoState.enabledAttack = true
           lastQ2 = GetTickCount()
@@ -3213,7 +3214,7 @@ function OnLoad()
       
       --[[ can move | attack ]]
       gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 150, w = 0, e = 150, r = 150 }) end)
-      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 250, w = 0, e = 250, r = 250 }) end)
+      gsoOrbwalker:CanAttack(function() return champInfo.hasQBuff == false and gsoCheckTimers({ q = 250, w = 0, e = 250, r = 250 }) end)
       
       --[[ on issue ]]
       gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
