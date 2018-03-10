@@ -983,6 +983,28 @@ function OnLoad()
         return true
       end)
       
+      --[[ ON TICK ]]
+      gsoOrbwalker:OnTick(function()
+        local getTick = gsoGetTickCount()
+        if getTick - gsoSpellTimers.lw > 1000 and Game.CanUseSpell(_W) == 0 then
+          for k,v in pairs(gsoDelayedSpell) do
+            if k == 1 then
+              if not gsoState.isChangingCursorPos then
+                v[1]()
+                gsoSetCursor({ endTime = GetTickCount() + 50, action = function() return end, active = true }, nil)
+                gsoSpellTimers.lw = gsoGetTickCount()
+                gsoDelayedSpell[k] = nil
+                break
+              end
+              if GetTickCount() - v[2] > 125 then
+                gsoDelayedSpell[k] = nil
+              end
+              break
+            end
+          end
+        end
+      end)
+      
       --[[ can move | attack ]]
       gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 150, w = 600, e = 0, r = 150 }) end)
       gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 250, w = 750, e = 0, r = 250 }) and champInfo.hasQBuff == false end)
