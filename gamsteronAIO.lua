@@ -932,7 +932,8 @@ function OnLoad()
       --[[ menu ]]
       local gsoMeMenu = gsoMenu:MenuElement({name = "Draven", id = "gsodraven", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/draven.png" })
         gsoMeMenu:MenuElement({name = "AXE settings", id = "aset", type = MENU })
-          gsoMeMenu.aset:MenuElement({id = "stopmove", name = "Hold radius", value = 50, min = 100, max = 125, step = 5 })
+          gsoMeMenu.aset:MenuElement({id = "stopmove", name = "Hold radius", value = 100, min = 75, max = 125, step = 5 })
+          if gsoMeMenu.aset.stopmove:Value() < 75 then gsoMeMenu.aset.stopmove:Value(75) end
           gsoMeMenu.aset:MenuElement({id = "cdist", name = "distance from axe to cursor", value = 750, min = 500, max = 1500, step = 50 })
           gsoMeMenu.aset:MenuElement({id = "catch", name = "Catch axes", value = true})
           gsoMeMenu.aset:MenuElement({id = "catcht", name = "stop under turret", value = true})
