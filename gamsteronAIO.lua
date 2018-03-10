@@ -3055,7 +3055,7 @@ function OnLoad()
     
     __Varus = function()
       --[[ vars ]]
-      local champInfo = { hasQBuff = false, lastQ2 = 0, enabled = true, qEndTime = 0, asNoQ = myHero.attackSpeed, oldWindUp = myHero.attackData.windUpTime }
+      local champInfo = { isTarget = false, hasQBuff = false, lastQ2 = 0, enabled = true, qEndTime = 0, asNoQ = myHero.attackSpeed, oldWindUp = myHero.attackData.windUpTime }
       local gsoWStacks = {}
       
       --[[ menu ]]
@@ -3087,7 +3087,7 @@ function OnLoad()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
           local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local isTarget = target ~= nil and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           local enemyList = gsoObjects.enemyHeroes_spell
@@ -3123,7 +3123,8 @@ function OnLoad()
             if canQ and champInfo.enabled and gsoGetTickCount() > champInfo.lastQ2 + 1500 then
               for i = 1, #enemyList do
                 local hero  = enemyList[i]
-                if gsoBuffCount(hero, "varuswdebuff") == 3 and gsoDistance(gsoMyHero.pos, hero.pos) < 1400 then
+                if (not isTarget or gsoBuffCount(hero, "varuswdebuff") == 3) and gsoDistance(gsoMyHero.pos, hero.pos) < 1400 then
+                  champInfo.isTarget = isTarget
                   Control.KeyDown(HK_Q)
                   gsoSpellTimers.lq = GetTickCount() + Game.Latency()
                   gsoSpellCan.botrk = false
@@ -3141,7 +3142,7 @@ function OnLoad()
               local eTargets = {}
               for i = 1, #enemyList do
                 local hero  = enemyList[i]
-                if gsoBuffCount(hero, "varuswdebuff") == 3 and gsoDistance(gsoMyHero.pos, hero.pos) < 925 then
+                if (not isTarget or gsoBuffCount(hero, "varuswdebuff") == 3) and gsoDistance(gsoMyHero.pos, hero.pos) < 925 then
                   eTargets[#eTargets+1] = hero
                 end
               end
@@ -3166,7 +3167,7 @@ function OnLoad()
           local qTargets = {}
           for i = 1, #enemyList do
             local hero  = enemyList[i]
-            if gsoBuffCount(hero, "varuswdebuff") == 3 and gsoDistance(myHero.pos, hero.pos) < 1650 then
+            if (not champInfo.isTarget or gsoBuffCount(hero, "varuswdebuff") == 3) and gsoDistance(myHero.pos, hero.pos) < 1650 then
               qTargets[#qTargets+1] = hero
             end
           end
