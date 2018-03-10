@@ -917,7 +917,7 @@ function OnLoad()
     
     __Corki = function()
       
-      local champInfo = { hasQBuff = false }
+      local champInfo = { hasWBuff = false }
       --[[ menu ]]
       local gsoMeMenu = gsoMenu:MenuElement({name = "Corki", id = "gsocorki", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/gsocorkidfd8.png" })
         gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
@@ -951,13 +951,13 @@ function OnLoad()
           if not isTarget or afterAttack then
             --E
             local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
-            if canE and isTarget and gsoIsReadyFast(_E, { q = 350, w = 1000, e = 1000, r = 350 }) and gsoCastSpell(HK_E) then
+            if canE and champInfo.hasWBuff == false and isTarget and gsoIsReadyFast(_E, { q = 350, w = 350, e = 1000, r = 350 }) and gsoCastSpell(HK_E) then
               gsoSpellTimers.le = GetTickCount()
             end
             --Q
             local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-                  canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 1000, e = 0, r = 350 }) and (not isTarget or gsoSpellCan.q)
-            if canQ then
+                  canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 350, e = 0, r = 350 }) and (not isTarget or gsoSpellCan.q)
+            if canQ and champInfo.hasWBuff == false then
               local qTarget = target
               if not isTarget then qTarget = gsoGetTarget(825, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false) end
               if qTarget and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qTarget) then
@@ -968,8 +968,8 @@ function OnLoad()
             end
             --R
             local canR = ( isCombo and gsoMeMenu.rset.combo:Value() ) or ( isHarass and gsoMeMenu.rset.harass:Value() )
-                  canR = canR and gsoIsReady(_R, { q = 350, w = 1000, e = 0, r = 1000 }) and (not isTarget or gsoSpellCan.r)
-            if canR then
+                  canR = canR and gsoIsReady(_R, { q = 350, w = 350, e = 0, r = 1000 }) and (not isTarget or gsoSpellCan.r)
+            if canR and champInfo.hasWBuff == false then
               local rTarget = target
               if not isTarget then rTarget = gsoGetTarget(1225, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false) end
               if rTarget and gsoCastSpellSkillShot(HK_R, mePos, rTarget) then
@@ -985,6 +985,7 @@ function OnLoad()
       
       --[[ ON TICK ]]
       gsoOrbwalker:OnTick(function()
+        champInfo.hasWBuff = gsoHasBuff(gsoMyHero, "valkyriesound") == true
         local getTick = gsoGetTickCount()
         if getTick - gsoSpellTimers.lw > 1000 and Game.CanUseSpell(_W) == 0 then
           for k,v in pairs(gsoDelayedSpell) do
@@ -1007,7 +1008,7 @@ function OnLoad()
       
       --[[ can move | attack ]]
       gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 150, w = 600, e = 0, r = 150 }) end)
-      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 250, w = 750, e = 0, r = 250 }) and champInfo.hasQBuff == false end)
+      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 250, w = 350, e = 0, r = 250 }) and champInfo.hasWBuff == false end)
       
       --[[ on issue ]]
       gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
