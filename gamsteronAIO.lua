@@ -3407,7 +3407,7 @@ function OnLoad()
       
       local function gsoUseE()
         --E
-        if gsoMeMenu.eset.eroot:Value() and gsoIsReady(_E, { q = 250, w = 0, e = 1000, r = 600 }) then
+        if gsoMeMenu.eset.eroot:Value() and gsoIsReadyFast(_E, { q = 350, w = 0, e = 1000, r = 1000 }) then
           local enemyList = gsoObjects.enemyHeroes_spell
           local xEnemies = 0
           local mePos1 = gsoMyHero.pos
