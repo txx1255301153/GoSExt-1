@@ -257,7 +257,7 @@ local gsoHarassKeys = {}
 local gsoLastHitKeys = {}
 local gsoLaneClearKeys = {}
 
-local gsoMenu = MenuElement({name = "Gamsteron Orbwalker", id = "gamsteronorb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orbbb.png" })
+local gsoMenu = MenuElement({name = "Gamsteron", id = "gamsteronorb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orbbb.png" })
 local gsoMode = {
     isCombo = function()
                   for i = 1, #gsoComboKeys do
@@ -471,7 +471,7 @@ local function gsoGetTarget(range, enemyHeroes, sourcePos, dmgAP, bb)
     local unitPos = unit.pos
     local dist1 = gsoDistance(mePos, unitPos)
     local dist2 = gsoDistance(unitPos, gsoExtended(mePos, mePos, gsoExtra.lastMovePos, gsoMyHero.ms * move_t))
-    if dist1 < range + unitBB - 25 and dist2 < range + unitBB then
+    if dist1 < range + unitBB and dist2 < range + unitBB then
       if selectedID and unit.networkID == selectedID then
         return selected
       elseif mode == 1 then
@@ -980,37 +980,47 @@ local function gsoGetHarassTarget()
 end
 
 local function gsoGetLaneClearTarget()
-  local result = gsoGetHarassTarget()
+  local result
+  local harassEnabled = gsoMenu.orb.laneset.enabledhar:Value()
+  local prioHarass = gsoMenu.orb.laneset.priohar:Value()
+  if not harassEnabled or not prioHarass then
+    result = gsoGetLastHitTarget()
+  else
+    result = gsoGetHarassTarget()
+  end
   local mePos = gsoMyHero.pos
-  if result == nil then
-    local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
-    local almostLastHitable = gsoFarm.almostLastHitable
-    local canLaneClear = true
-    for i = 1, #almostLastHitable do
-      local minion = almostLastHitable[i]
-      if gsoDistance(mePos, minion.pos) < meRange + 50 then
-          gsoShouldWait = true
-          gsoShouldWaitT = gsoGameTimer()
-          canLaneClear = false
-          break
+  if result ~= nil then return result end
+  local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
+  local almostLastHitable = gsoFarm.almostLastHitable
+  local canLaneClear = true
+  for i = 1, #almostLastHitable do
+    local minion = almostLastHitable[i]
+    if gsoDistance(mePos, minion.pos) < meRange + 50 then
+        gsoShouldWait = true
+        gsoShouldWaitT = gsoGameTimer()
+        canLaneClear = false
+        break
+    end
+  end
+  if canLaneClear and not gsoShouldWait then
+    if harassEnabled then
+      result = gsoGetComboTarget()
+      if result ~= nil then return result end
+    end
+    local enemyTurrets = gsoObjects.enemyTurrets
+    for i = 1, #enemyTurrets do
+      local turret = enemyTurrets[i]
+      if gsoDistance(turret.pos, mePos) < meRange + turret.boundingRadius then
+        return turret
       end
     end
-    if canLaneClear and not gsoShouldWait then
-      local enemyTurrets = gsoObjects.enemyTurrets
-      for i = 1, #enemyTurrets do
-        local turret = enemyTurrets[i]
-        if gsoDistance(turret.pos, mePos) < meRange then
-          return turret
-        end
-      end
-      local min = 10000000
-      local laneClearable = gsoFarm.laneClearable
-      for i = 1, #laneClearable do
-        local minion = laneClearable[i]
-        if gsoDistance(mePos, minion.pos) < meRange + 25 and minion.health < min then
-            min = minion.health
-            result = minion.Minion
-        end
+    local min = 10000000
+    local laneClearable = gsoFarm.laneClearable
+    for i = 1, #laneClearable do
+      local minion = laneClearable[i]
+      if gsoDistance(mePos, minion.pos) < meRange + 25 and minion.health < min then
+          min = minion.health
+          result = minion.Minion
       end
     end
   end
@@ -1021,7 +1031,7 @@ local function gsoAttackMove(unit)
   if ExtLibEvade and ExtLibEvade.Evading then gsoState.isMoving=true;gsoState.isAttacking=false;gsoState.isEvading=true;return;end
   if not unit and gsoState.canAttack and gsoMode.isCombo() then
     local aaTarget = gsoExtra.lastTarget
-    if aaTarget and aaTarget.type == Obj_AI_Hero and not aaTarget.dead and aaTarget.isTargetable and aaTarget.valid and aaTarget.visible and not gsoIsImmortal(aaTarget, jaxE) then
+    if aaTarget and aaTarget.type == Obj_AI_Hero and not aaTarget.dead and aaTarget.isTargetable and aaTarget.valid and aaTarget.visible and not gsoIsImmortal(aaTarget, true) then
       local move_lat = 1.5 * gsoExtra.maxLatency
       local move_t = 0.15 + move_lat
       local mePos = gsoMyHero.pos
@@ -1029,7 +1039,7 @@ local function gsoAttackMove(unit)
       local dist1 = gsoDistance(mePos, unitPos)
       local dist2 = gsoDistance(unitPos, gsoExtended(mePos, mePos, gsoExtra.lastMovePos, gsoMyHero.ms * move_t))
       local aaRange = gsoMyHero.range + gsoMyHero.boundingRadius + aaTarget.boundingRadius
-      if dist1 < aaRange - 25 and dist2 < aaRange then
+      if dist1 < aaRange and dist2 < aaRange then
         unit = aaTarget
       end
     end
@@ -1144,13 +1154,13 @@ local function gsoOrbwalkerLogic()
   if isCombo or isHarass or isLastHit or isLaneClear then
     if gsoBaseAASpeed == 0 then gsoBaseAASpeed=1/gsoMyHero.attackData.animationTime/gsoMyHero.attackSpeed;gsoExtra.baseAttackSpeed=gsoBaseAASpeed;end
     if gsoBaseWindUp == 0 then gsoBaseWindUp=gsoMyHero.attackData.windUpTime/gsoMyHero.attackData.animationTime;gsoExtra.baseWindUp=gsoBaseWindUp;end
-    if isCombo then
+    if isCombo == true then
       gsoAttackMove(gsoGetComboTarget())
-    elseif isHarass then
+    elseif isHarass == true then
       gsoAttackMove(gsoGetHarassTarget())
-    elseif gsoMode.isLastHit() then
+    elseif isLastHit == true then
       gsoAttackMove(gsoGetLastHitTarget())
-    elseif gsoMode.isLaneClear() then
+    elseif isLaneClear == true then
       gsoAttackMove(gsoGetLaneClearTarget())
     end
   else
@@ -1196,10 +1206,13 @@ function OnLoad()
                 gsoMenu.ts.selected.draw:MenuElement({name = "Width",  id = "width", value = 3, min = 1, max = 10})
                 gsoMenu.ts.selected.draw:MenuElement({name = "Radius",  id = "radius", value = 150, min = 1, max = 300})
     gsoMenu:MenuElement({name = "Orbwalker", id = "orb", type = MENU, leftIcon = gsoIcons["orb"] })
+        gsoMenu.orb:MenuElement({name = "LaneClear", id = "laneset", type = MENU})
+            gsoMenu.orb.laneset:MenuElement({ id = "enabledhar", name = "Harass enabled", value = true })
+            gsoMenu.orb.laneset:MenuElement({ id = "priohar", name = "Priorize harass over farm", value = true })
         gsoMenu.orb:MenuElement({name = "Delays", id = "delays", type = MENU})
-            gsoMenu.orb.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 5, min = -25, max = 10, step = 1 })
+            gsoMenu.orb.delays:MenuElement({name = "Extra Kite Delay", id = "windup", value = 0, min = -50, max = 50, step = 1 })
             if gsoMenu.orb.delays.windup:Value() > 10 then gsoMenu.orb.delays.windup:Value(10) end
-            gsoMenu.orb.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -25, max = 10, step = 1 })
+            gsoMenu.orb.delays:MenuElement({name = "Extra LastHit Delay", id = "lhDelay", value = 0, min = -50, max = 50, step = 1 })
             if gsoMenu.orb.delays.lhDelay:Value() > 10 then gsoMenu.orb.delays.lhDelay:Value(10) end
             gsoMenu.orb.delays:MenuElement({name = "Extra Move Delay", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
         gsoMenu.orb:MenuElement({name = "Keys", id = "keys", type = MENU})
