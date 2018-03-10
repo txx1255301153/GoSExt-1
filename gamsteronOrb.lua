@@ -293,7 +293,7 @@ local gsoMode = {
               end
 }
 local gsoTimers = { lastAttackSend = 0, lastMoveSend = 0, secondsToAttack = 0, secondsToMove = 0, windUpTime = 0, animationTime = 0 }
-local gsoState = { isAttacking = false, isMoving = false, isEvading = false, isChangingCursorPos = false, isBlindedByTeemo = false, canAttack = true, canMove = true, enabledAttack = true, enabledMove = true, enabledOrb = true }
+local gsoState = { isAttacking = false, isMoving = false, isEvading = false, isChangingCursorPos = false, isBlindedByTeemo = false, canAttack = true, canMove = true, enabledAttack = true, enabledMove = true, enabledOrb = true, stopMoveCustomPos = false }
 local gsoExtra = { resetAttack = false, lastMovePos = myHero.pos, maxLatency = Game.Latency() * 0.001, minLatency = Game.Latency() * 0.001, lastTarget = nil, selectedTarget = nil, allyTeam = myHero.team, attackSpeed = 0, baseAttackSpeed = 0, baseWindUp = 0 }
 local gsoFarm = { allyActiveAttacks = {}, lastHitable = {}, almostLastHitable = {}, laneClearable = {} }
 local gsoObjects = { allyHeroes = {}, enemyHeroes_immortal = {}, enemyHeroes_attack = {}, enemyHeroes_spell = {}, allyMinions = {}, enemyMinions = {}, allyTurrets = {}, enemyTurrets = {} }
@@ -350,6 +350,7 @@ local gsoCanChangeAnim = {}
 local gsoLoadHeroesToMenu = {}
 local gsoOnIssue = {}
 local gsoOnTick = {}
+local function gsoSetMousePos() return nil end
 local function gsoAttackSpeed() return gsoMyHero.attackSpeed end
 local function gsoBonusDmg() return 0 end
 local function gsoBonusDmgUnit(unit) return 0 end
@@ -894,8 +895,8 @@ local function gsoOrbwalkerTimersLogic()
   gsoState.isEvading = ExtLibEvade and ExtLibEvade.Evading
   gsoState.canAttack = not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and (gsoTimers.secondsToAttack == 0 or gsoExtra.resetAttack) and not isChatOpen
   gsoState.canMove = not gsoState.isChangingCursorPos and not gsoState.isEvading and gsoState.enabledMove and gsoTimers.secondsToMove == 0 and not isChatOpen
-  gsoState.canAttack = gsoState.canAttack and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency
-  gsoState.canMove = gsoState.canMove and gsoGameTimer() > gsoTimers.lastAttackSend + extraWindUp + gsoTimers.windUpTime + (0.5*gsoExtra.minLatency)
+  gsoState.canAttack = gsoState.canAttack and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency and gsoSetCursorPos == nil
+  gsoState.canMove = gsoState.canMove and gsoGameTimer() > gsoTimers.lastAttackSend + extraWindUp + gsoTimers.windUpTime + (0.5*gsoExtra.minLatency) and gsoSetCursorPos == nil
 end
 
 local function gsoAddUnits()
@@ -1072,6 +1073,11 @@ local function gsoAttackMove(unit)
       gsoState.isMoving = false
       gsoState.isAttacking = true
       gsoExtra.resetAttack = false
+      gsoState.stopMoveCustomPos = false
+    else
+      gsoState.isMoving = false
+      gsoState.isAttacking = false
+      gsoState.stopMoveCustomPos = false
     end
   elseif gsoState.canMove then
     for i = 1, #gsoOnMove do
@@ -1088,13 +1094,41 @@ local function gsoAttackMove(unit)
         end
       end
       if gsoState.canMove then
-        if gsoControlIsKeyDown(2) then gsoLastKey = gsoGetTickCount() end
-        gsoExtra.lastMovePos = mousePos
-        gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
-        gsoControlMouseEvent(MOUSEEVENTF_RIGHTUP)
-        gsoTimers.lastMoveSend = gsoGameTimer()
-        gsoState.isMoving = true
+        local mPos = gsoSetMousePos()
+        if mPos ~= nil then
+          if gsoDistance(myHero.pos, mPos) > 75 and not gsoState.isChangingCursorPos and gsoSetCursorPos == nil then
+            if gsoControlIsKeyDown(2) then gsoLastKey = gsoGetTickCount() end
+            local cPos = cursorPos
+            gsoControlSetCursor(mPos)
+            gsoExtraSetCursor = mPos
+            gsoExtra.lastMovePos = mPos
+            gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
+            gsoControlMouseEvent(MOUSEEVENTF_RIGHTUP)
+            gsoSetCursorPos = { endTime = gsoGetTickCount() + 50, action = function() gsoControlSetCursor(cPos.x, cPos.y) end, active = true }
+            gsoTimers.lastMoveSend = gsoGameTimer()
+            gsoState.isMoving = true
+            gsoState.isChangingCursorPos = true
+            gsoState.isAttacking = false
+            gsoState.stopMoveCustomPos = false
+          else
+            gsoState.isMoving = false
+            gsoState.isAttacking = false
+            gsoState.stopMoveCustomPos = true
+          end
+        elseif not gsoState.isChangingCursorPos then
+          if gsoControlIsKeyDown(2) then gsoLastKey = gsoGetTickCount() end
+          gsoExtra.lastMovePos = mousePos
+          gsoControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
+          gsoControlMouseEvent(MOUSEEVENTF_RIGHTUP)
+          gsoTimers.lastMoveSend = gsoGameTimer()
+          gsoState.isMoving = true
+          gsoState.isAttacking = false
+          gsoState.stopMoveCustomPos = false
+        end
+      else
+        gsoState.isMoving = false
         gsoState.isAttacking = false
+        gsoState.stopMoveCustomPos = false
       end
     end
   elseif not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and not isChatOpen then
@@ -1285,6 +1319,7 @@ class "__gsoOrbwalker"
         self.IsImmortal = gsoIsImmortal
         self.Distance = gsoDistance
         self.Extended = gsoExtended
+        self.CanSetCursorPos = function() return gsoSetCursorPos == nil and gsoState.isChangingCursorPos == false end
         self.AddAction = function(action) gsoDelayedActions[#gsoDelayedActions+1] = action end
         self.IsAP = function() gsoAPDmg = true end
     end
@@ -1323,4 +1358,7 @@ class "__gsoOrbwalker"
     end
     function __gsoOrbwalker:AttackSpeed(func)
         gsoAttackSpeed = func
+    end
+    function __gsoOrbwalker:SetMousePos(func)
+        gsoSetMousePos = func
     end
