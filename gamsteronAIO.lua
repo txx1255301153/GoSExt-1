@@ -10,7 +10,7 @@ local gsoControlKeyDown = Control.KeyDown
 local gsoControlIsKeyDown = Control.IsKeyDown
 local gsoControlSetCursor = Control.SetCursorPos
 local gsoControlMouseEvent = Control.mouse_event
-local gsoINFO = { version = "0.646", author = "gamsteron" }
+local gsoINFO = { version = "0.647", author = "gamsteron" }
 class "__gsoTPred"
 function  __gsoTPred:__init()
   self.GetDistanceSqr = function(p1, p2)
@@ -423,6 +423,21 @@ function OnLoad()
       return false
     end
   end
+  local function gsoInsidePolygon(polygon, point)
+    local result = false
+    local j = #polygon
+    local pointx = point.x
+    local pointz = point.z
+    for i = 1, #polygon do
+      if (polygon[i].z < pointz and polygon[j].z >= pointz or polygon[j].z < pointz and polygon[i].z >= pointz) then
+        if (polygon[i].x + ( pointz - polygon[i].z ) / (polygon[j].z - polygon[i].z) * (polygon[j].x - polygon[i].x) < pointx) then
+          result = not result
+        end
+      end
+      j = i
+    end
+    return result
+  end
   local function gsoClosestPointOnLineSegment(p, p1, p2)
     --local px,pz,py = p.x, p.z, p.y
     --local ax,az,ay = p1.x, p1.z, p1.y
@@ -677,8 +692,18 @@ function OnLoad()
     if hkSpell == HK_Q then spellData = gsoSpellData.q elseif hkSpell == HK_W then spellData = gsoSpellData.w elseif hkSpell == HK_E then spellData = gsoSpellData.e elseif hkSpell == HK_R then spellData = gsoSpellData.r end
     local castpos = target.x and target or gsoGetCastPos(spellData, sourcePos, target, from)
     if castpos then
-      castpos = spellData.out and sourcePos:Extended(castpos, 500) or castpos
-      if castpos:ToScreen().onScreen then
+      local canCheck = false
+      if spellData.out then
+        for i = 1, 35 do
+          local castpos2 = sourcePos:Extended(castpos, 3500 - i * 100)
+          if castpos2:ToScreen().onScreen then
+            castpos = castpos2
+            canCheck = true
+            break
+          end
+        end
+      end
+      if canCheck == true or castpos:ToScreen().onScreen then
         local cPos = cursorPos
         Control.SetCursorPos(castpos)
         Control.KeyDown(hkSpell)
@@ -1651,9 +1676,11 @@ function OnLoad()
       
       gsoOrbwalker.OnlyServer()
       
-      local champInfo = { hasQBuff = false }
+      local champInfo = { hasPBuff = false, hasRBuff = false }
+      local gsoJhinRPos = { polygon = nil, canDraw = false, startPos = nil, pos1 = nil, middle = nil, pos2 = nil }
       --[[ menu ]]
       local gsoMeMenu = gsoMenu:MenuElement({name = "Jhin", id = "gsojhin", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/gsojhin23d.png" })
+        gsoMeMenu:MenuElement({id = "autor", name = "Auto R -> if jhin has R Buff", value = true})
         gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
             gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
             gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
@@ -1664,9 +1691,6 @@ function OnLoad()
           gsoMeMenu.eset:MenuElement({id = "onlyimmo", name = "Only Immobile", value = true})
           gsoMeMenu.eset:MenuElement({id = "combo", name = "Combo", value = true})
           gsoMeMenu.eset:MenuElement({id = "harass", name = "Harass", value = false})
-        gsoMeMenu:MenuElement({name = "R settings", id = "rset", type = MENU })
-            gsoMeMenu.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            gsoMeMenu.rset:MenuElement({id = "harass", name = "Harass", value = false})
       
       --[[ draw ]]
       gsoSpellDraw = { q = true, qr = 550 + 120, w = true, wr = 3000, e = true, er = 750, r = true, rr = 3500 }
@@ -1676,10 +1700,65 @@ function OnLoad()
       gsoSpellData.w = { delay = 0.75, range = 3000, width = 40, speed = 5000, sType = "line", col = false, mCol = false, hCol = false, out = true }
       gsoSpellData.e = { delay = 0.25, range = 750, width = 140, speed = 1650, sType = "circular", col = false, mCol = false, hCol = false, out = false }
       gsoSpellData.r = { delay = 0.25, range = 3500, width = 80, speed = 5000, sType = "line", col = false, mCol = false, hCol = false, out = true }
-      
+      local t =0
       gsoOrbwalker:OnTick(function()
-        champInfo.hasQBuff = gsoHasBuff(gsoMyHero, "jhinpassivereload") == true
+        champInfo.hasPBuff = gsoHasBuff(gsoMyHero, "jhinpassivereload") == true
+        local enemyList = gsoObjects.enemyHeroes_spell
+        local aSpell = gsoMyHero.activeSpell
+        if aSpell and aSpell.valid and aSpell.name:lower() == "jhinr" then
+          if gsoJhinRPos.canDraw == false and GetTickCount() > gsoSpellTimers.lrk + 250 then
+            local middlePos = Vector(aSpell.placementPos)
+            local startPos = Vector(aSpell.startPos)
+            local pos1 = startPos + (middlePos - startPos):Rotated(0, 30.6 * math.pi / 180, 0):Normalized() * 3500
+            local pos2 = startPos + (middlePos - startPos):Rotated(0, -30.6 * math.pi / 180, 0):Normalized() * 3500
+            gsoJhinRPos.polygon = { pos1 + (pos1 - startPos):Normalized() * 3500, pos2 + (pos2 - startPos):Normalized() * 3500, startPos }
+            gsoJhinRPos.middle = middlePos
+            gsoJhinRPos.pos1 = pos1
+            gsoJhinRPos.pos2 = pos2
+            gsoJhinRPos.startPos = startPos
+            gsoJhinRPos.canDraw = true
+          end
+          champInfo.hasRBuff = true
+          if gsoJhinRPos.canDraw == true then
+            if gsoMeMenu.autor:Value() and gsoIsReady(_R, { q = 0, w = 0, e = 0, r = 750 }) then
+              local rTargets = {}
+              local mePos = gsoMyHero.pos
+              for i = 1, #enemyList do
+                local unit = enemyList[i]
+                local unitPos = unit.pos
+                if gsoInsidePolygon(gsoJhinRPos.polygon, unitPos) == true then
+                  local dist = gsoDistance(mePos, unitPos)
+                  local rDelay = 0.25 + (dist / 5000)
+                  local unitMoveLenght = unit.ms * rDelay * 0.75
+                  if gsoDistance(mePos, unit.pos) < 3500 - unitMoveLenght then
+                    rTargets[#rTargets+1] = unit
+                  end
+                end
+              end
+              local rTarget = gsoGetTarget(3500, rTargets, gsoMyHero.pos, false, false)
+              if rTarget then
+                if gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget) then
+                  gsoSpellTimers.lr = GetTickCount()
+                end
+              end
+            end
+          end
+        elseif champInfo.hasRBuff == true and gsoJhinRPos.canDraw == true and GetTickCount() > gsoSpellTimers.lrk + 500 then
+          champInfo.hasRBuff = false
+          gsoJhinRPos.canDraw = false
+        end
       end)
+      
+      Callback.Add('Draw', function()
+        if gsoJhinRPos.canDraw then
+          local p1 = gsoJhinRPos.startPos:To2D()
+          local p2 = gsoJhinRPos.pos1:To2D()
+          local p3 = gsoJhinRPos.pos2:To2D()
+          Draw.Line(p1.x, p1.y, p2.x, p2.y,1,gsoDrawColor(255, 255, 255, 255))
+          Draw.Line(p1.x, p1.y, p3.x, p3.y,1,gsoDrawColor(255, 255, 255, 255))
+        end
+      end)
+      
       --[[ on move ]]
       gsoOrbwalker:OnMove(function()
         local isCombo = gsoMode.isCombo()
@@ -1690,7 +1769,10 @@ function OnLoad()
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           local enemyList = gsoObjects.enemyHeroes_spell
-          if not isTarget or afterAttack or champInfo.hasQBuff == true then
+          if GetTickCount() < gsoSpellTimers.lrk + 350 then
+            champInfo.hasRBuff = true
+          end
+          if not isTarget or afterAttack or champInfo.hasPBuff == true or champInfo.hasRBuff == true then
             --W
             local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
                   canW = canW and (not isTarget or gsoSpellCan.w) and gsoIsReady(_W, { q = 0, w = 1000, e = 250, r = 250 })
@@ -1742,8 +1824,8 @@ function OnLoad()
       end)
       
       --[[ can move | attack ]]
-      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 150, w = 600, e = 150, r = 250 }) end)
-      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 250, w = 750, e = 250, r = 350 }) and champInfo.hasQBuff == false end)
+      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 150, w = 600, e = 150, r = 500 }) and champInfo.hasRBuff == false end)
+      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 250, w = 750, e = 250, r = 500 }) and champInfo.hasPBuff == false and champInfo.hasRBuff == false end)
       
       --[[ on issue ]]
       gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
