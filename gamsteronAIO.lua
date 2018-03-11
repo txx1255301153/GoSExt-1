@@ -1765,9 +1765,18 @@ function OnLoad()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
           local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
-          local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
+          local isTarget = false
+          local aaTargets = gsoObjects.enemyHeroes_attack
           local mePos = gsoMyHero.pos
+          local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
+          for i = 1, #aaTargets do
+            local aaTarget = aaTargets[i]
+            if gsoDistance(mePos, aaTarget.pos) < meRange + aaTarget.boundingRadius then
+              isTarget = true
+              break
+            end
+          end
+          local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local enemyList = gsoObjects.enemyHeroes_spell
           if GetTickCount() < gsoSpellTimers.lrk + 350 then
             champInfo.hasRBuff = true
