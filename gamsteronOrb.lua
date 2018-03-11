@@ -1,5 +1,5 @@
 
-local gsoVersion = "2.3"
+local gsoVersion = "2.4"
 
  --[[
 .
@@ -964,7 +964,11 @@ local function gsoAddUnits()
 end
 
 local function gsoGetComboTarget()
-  return gsoGetTarget(gsoMyHero.range + gsoMyHero.boundingRadius, gsoObjects.enemyHeroes_attack, gsoMyHero.pos, gsoAPDmg, true)
+  local comboT = gsoGetTarget(gsoMyHero.range + gsoMyHero.boundingRadius, gsoObjects.enemyHeroes_attack, gsoMyHero.pos, gsoAPDmg, true)
+  if comboT ~= nil then
+    gsoExtra.lastTarget = comboT
+  end
+  return comboT
 end
 
 local function gsoGetLastHitTarget()
