@@ -1776,12 +1776,10 @@ function OnLoad()
           if not isTarget or afterAttack or champInfo.hasPBuff == true then
             --W
             local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
-                  canW = canW and (not isTarget or gsoSpellCan.w) and gsoIsReady(_W, { q = 0, w = 1000, e = 250, r = 250 })
+                  canW = canW and (not isTarget or gsoSpellCan.w) and gsoIsReady(_W, { q = 350, w = 1000, e = 350, r = 500 })
             if canW then
               local t = isTarget == true and target or gsoGetTarget(3000, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, false, false)
               if t and gsoCastSpellSkillShot(HK_W, mePos, t) then
-                gsoSpellCan.q = false
-                gsoSpellCan.e = false
                 gsoSpellCan.botrk = false
                 gsoSpellTimers.lw = GetTickCount()
                 return false
@@ -1789,7 +1787,7 @@ function OnLoad()
             end
             --E
             local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
-                  canE = canE and (not isTarget or gsoSpellCan.e) and gsoIsReady(_E, { q = 0, w = 650, e = 1000, r = 250 })
+                  canE = canE and (not isTarget or gsoSpellCan.e) and gsoIsReady(_E, { q = 350, w = 750, e = 1000, r = 500 })
             if canE then
               if gsoMeMenu.eset.onlyimmo:Value() then
                 local t = gsoGetImmobileEnemy(mePos, gsoObjects.enemyHeroes_spell, 750)
@@ -1809,7 +1807,7 @@ function OnLoad()
             end
             --Q
             local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-                  canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 500, e = 0, r = 750 }) and (not isTarget or gsoSpellCan.q)
+                  canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 750, e = 350, r = 500 }) and (not isTarget or gsoSpellCan.q)
             if canQ then
               local qTarget = target
               gsoSpellData.q.range = 550 + gsoMyHero.boundingRadius
