@@ -1649,6 +1649,8 @@ function OnLoad()
     
     __Jhin = function()
       
+      gsoOrbwalker.OnlyServer()
+      
       local champInfo = { hasQBuff = false }
       --[[ menu ]]
       local gsoMeMenu = gsoMenu:MenuElement({name = "Jhin", id = "gsojhin", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/gsojhin23d.png" })
@@ -1736,10 +1738,6 @@ function OnLoad()
             end
           end
         end
-        return true
-      end)
-      
-      gsoOrbwalker:CanChangeAnimationTime(function()
         return true
       end)
       
