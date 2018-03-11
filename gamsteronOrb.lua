@@ -234,6 +234,7 @@ local gsoControlIsKeyDown = Control.IsKeyDown
 local gsoControlSetCursor = Control.SetCursorPos
 local gsoControlMouseEvent = Control.mouse_event
 
+local gsoOnlyServer = false
 local gsoAPDmg = false
 local gsoLatencies = {}
 local gsoDelayedActions = {}
@@ -864,21 +865,29 @@ local function gsoOrbwalkerTimersLogic()
       gsoServerAnim = aSpell.animation
     end
   end
-  local aaSpeed = gsoAttackSpeed() * gsoBaseAASpeed
-  local numAS   = aaSpeed >= 2.5 and 2.5 or aaSpeed
-  gsoExtra.attackSpeed = numAS
-  local animT   = 1 / numAS
-  local windUpT = animT * gsoBaseWindUp
-  gsoServerAnim = aaSpeed >= 2.5 and animT or gsoServerAnim
-  gsoServerWindup = aaSpeed >= 2.5 and windUpT or gsoServerWindup
-  local extraWindUp = math.abs(windUpT-gsoServerWindup) + (gsoMenu.orb.delays.windup:Value() * 0.001)
-  local windUpAA = windUpT > gsoServerWindup and gsoServerWindup or windUpT
-  gsoTimers.windUpTime = windUpT > gsoServerWindup and windUpT or gsoServerWindup
-  gsoTimers.animationTime = animT > gsoServerAnim and animT or gsoServerAnim
-  for i = 1, #gsoCanChangeAnim do
-    if gsoCanChangeAnim[i] then
-      gsoTimers.animationTime = animT > gsoServerAnim and gsoServerAnim or animT
-      break
+  local windUpAA
+  local extraWindUp = gsoMenu.orb.delays.windup:Value() * 0.001
+  if gsoOnlyServer == true then
+    gsoTimers.animationTime = gsoServerAnim
+    gsoTimers.windUpTime = gsoServerWindup
+    windUpAA = gsoServerWindup
+  else
+    local aaSpeed = gsoAttackSpeed() * gsoBaseAASpeed
+    local numAS   = aaSpeed >= 2.5 and 2.5 or aaSpeed
+    gsoExtra.attackSpeed = numAS
+    local animT   = 1 / numAS
+    local windUpT = animT * gsoBaseWindUp
+    gsoServerAnim = aaSpeed >= 2.5 and animT or gsoServerAnim
+    gsoServerWindup = aaSpeed >= 2.5 and windUpT or gsoServerWindup
+    extraWindUp = extraWindUp + math.abs(windUpT-gsoServerWindup)
+    windUpAA = windUpT > gsoServerWindup and gsoServerWindup or windUpT
+    gsoTimers.windUpTime = windUpT > gsoServerWindup and windUpT or gsoServerWindup
+    gsoTimers.animationTime = animT > gsoServerAnim and animT or gsoServerAnim
+    for i = 1, #gsoCanChangeAnim do
+      if gsoCanChangeAnim[i] then
+        gsoTimers.animationTime = animT > gsoServerAnim and gsoServerAnim or animT
+        break
+      end
     end
   end
   local sToAA = gsoServerStart - windUpAA
@@ -1336,6 +1345,7 @@ class "__gsoOrbwalker"
         self.CanSetCursorPos = function() return gsoSetCursorPos == nil and gsoState.isChangingCursorPos == false end
         self.AddAction = function(action) gsoDelayedActions[#gsoDelayedActions+1] = action end
         self.IsAP = function() gsoAPDmg = true end
+        self.OnlyServer = function() gsoOnlyServer = true end
     end
     function __gsoOrbwalker:CanMove(func)
         gsoCanMove[#gsoCanMove+1] = func
