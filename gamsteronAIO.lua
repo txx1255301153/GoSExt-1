@@ -1772,7 +1772,8 @@ function OnLoad()
           if GetTickCount() < gsoSpellTimers.lrk + 350 then
             champInfo.hasRBuff = true
           end
-          if not isTarget or afterAttack or champInfo.hasPBuff == true or champInfo.hasRBuff == true then
+          if champInfo.hasRBuff == true then return false end
+          if not isTarget or afterAttack or champInfo.hasPBuff == true then
             --W
             local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
                   canW = canW and (not isTarget or gsoSpellCan.w) and gsoIsReady(_W, { q = 0, w = 1000, e = 250, r = 250 })
@@ -1780,6 +1781,7 @@ function OnLoad()
               local t = isTarget == true and target or gsoGetTarget(3000, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, false, false)
               if t and gsoCastSpellSkillShot(HK_W, mePos, t) then
                 gsoSpellCan.q = false
+                gsoSpellCan.e = false
                 gsoSpellCan.botrk = false
                 gsoSpellTimers.lw = GetTickCount()
                 return false
