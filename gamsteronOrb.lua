@@ -297,7 +297,7 @@ local gsoTimers = { lastAttackSend = 0, lastMoveSend = 0, secondsToAttack = 0, s
 local gsoState = { isAttacking = false, isMoving = false, isEvading = false, isChangingCursorPos = false, isBlindedByTeemo = false, canAttack = true, canMove = true, enabledAttack = true, enabledMove = true, enabledOrb = true, stopMoveCustomPos = false }
 local gsoExtra = { resetAttack = false, lastMovePos = myHero.pos, maxLatency = Game.Latency() * 0.001, minLatency = Game.Latency() * 0.001, lastTarget = nil, selectedTarget = nil, allyTeam = myHero.team, attackSpeed = 0, baseAttackSpeed = 0, baseWindUp = 0 }
 local gsoFarm = { allyActiveAttacks = {}, lastHitable = {}, almostLastHitable = {}, laneClearable = {}, lastHitID = 0, lastHitQID = 0, lastHitWID = 0, lastHitEID = 0, lastHitRID = 0 }
-local gsoObjects = { allyHeroes = {}, enemyHeroes_immortal = {}, enemyHeroes_attack = {}, enemyHeroes_spell = {}, allyMinions = {}, enemyMinions = {}, allyTurrets = {}, enemyTurrets = {} }
+local gsoObjects = { allyHeroes = {}, enemyHeroes_immortal = {}, enemyHeroes_attack = {}, enemyHeroes_spell = {}, allyMinions = {}, enemyMinions = {}, allyTurrets = {}, enemyTurrets = {}, comboTarget = nil }
 
 local gsoPriorities = {
     ["Aatrox"] = 3, ["Ahri"] = 2, ["Akali"] = 2, ["Alistar"] = 5, ["Amumu"] = 5, ["Anivia"] = 2, ["Annie"] = 2, ["Ashe"] = 1, ["AurelionSol"] = 2, ["Azir"] = 2,
@@ -1160,10 +1160,8 @@ local function gsoAttackMove(unit)
   end
 end
 
-
-
 local function gsoOrbwalkerLogic()
-  local aaTarget = nil
+  gsoObjects.comboTarget = gsoGetTarget(gsoMyHero.range + gsoMyHero.boundingRadius, gsoObjects.enemyHeroes_attack, gsoMyHero.pos, gsoAPDmg, true)
   local isCombo,isHarass,isLastHit,isLaneClear=gsoMode.isCombo(),gsoMode.isHarass(),gsoMode.isLastHit(),gsoMode.isLaneClear()
   if isCombo or isHarass or isLastHit or isLaneClear then
     if gsoBaseAASpeed == 0 then gsoBaseAASpeed=1/gsoMyHero.attackData.animationTime/gsoMyHero.attackSpeed;gsoExtra.baseAttackSpeed=gsoBaseAASpeed;end
@@ -1186,8 +1184,6 @@ local function gsoOrbwalkerLogic()
     end
   end
 end
-
-
 
 function OnTick()
   for i = 1, gsoGameHeroCount() do end
