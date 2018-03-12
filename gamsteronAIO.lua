@@ -1779,14 +1779,17 @@ function OnLoad()
           end
           if champInfo.hasRBuff == true then return false end
           if not isTarget or afterAttack or champInfo.hasPBuff == true then
+            local CanSpell = not isTarget or champInfo.hasPBuff == true
             --Q
             local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-                  canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 750, e = 350, r = 500 }) and (not isTarget or gsoSpellCan.q)
+                  canQ = canQ and ( CanSpell or gsoSpellCan.q ) and gsoIsReady(_Q, { q = 1000, w = 750, e = 350, r = 500 })
             if canQ then
               local qTarget = target
               gsoSpellData.q.range = 550 + gsoMyHero.boundingRadius
               if not isTarget then qTarget = gsoGetTarget(gsoSpellData.q.range, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, true) end
               if qTarget and gsoCastSpellTarget(HK_Q, gsoSpellData.q.range + qTarget.boundingRadius - 35, mePos, qTarget) then
+                gsoSpellCan.w = false
+                gsoSpellCan.e = false
                 gsoSpellCan.botrk = false
                 gsoSpellTimers.lq = gsoGetTickCount()
                 return false
@@ -1794,10 +1797,13 @@ function OnLoad()
             end
             --W
             local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
-                  canW = canW and (not isTarget or gsoSpellCan.w) and gsoIsReady(_W, { q = 350, w = 1000, e = 350, r = 500 })
+                  canW = canW and ( CanSpell or gsoSpellCan.w ) and gsoIsReady(_W, { q = 350, w = 1000, e = 350, r = 500 })
             if canW then
-              local t = isTarget == true and target or gsoGetTarget(3000, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, false, false)
+              local t = target
+              if isTarget == false then t = gsoGetTarget(3000, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, false, false) end
               if t and gsoCastSpellSkillShot(HK_W, mePos, t) then
+                gsoSpellCan.q = false
+                gsoSpellCan.e = false
                 gsoSpellCan.botrk = false
                 gsoSpellTimers.lw = GetTickCount()
                 return false
@@ -1805,11 +1811,13 @@ function OnLoad()
             end
             --E
             local canE = ( isCombo and gsoMeMenu.eset.combo:Value() ) or ( isHarass and gsoMeMenu.eset.harass:Value() )
-                  canE = canE and (not isTarget or gsoSpellCan.e) and gsoIsReady(_E, { q = 350, w = 750, e = 1000, r = 500 })
+                  canE = canE and ( CanSpell or gsoSpellCan.e ) and gsoIsReady(_E, { q = 350, w = 750, e = 1000, r = 500 })
             if canE then
               if gsoMeMenu.eset.onlyimmo:Value() then
                 local t = gsoGetImmobileEnemy(mePos, gsoObjects.enemyHeroes_spell, 750)
                 if t and gsoCastSpellSkillShot(HK_E, mePos, t.pos) then
+                  gsoSpellCan.q = false
+                  gsoSpellCan.w = false
                   gsoSpellCan.botrk = false
                   gsoSpellTimers.le = GetTickCount()
                   return false
