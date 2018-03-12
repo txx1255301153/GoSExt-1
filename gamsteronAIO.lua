@@ -806,8 +806,8 @@ function OnLoad()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           --R
@@ -889,6 +889,7 @@ function OnLoad()
             gsoSpellCan.botrk = false
           end
         end
+        gsoObjects.comboTarget = nil
       end)
       
       --[[ can move | attack ]]
@@ -968,8 +969,8 @@ function OnLoad()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           local enemyList = gsoObjects.enemyHeroes_spell
@@ -1029,6 +1030,7 @@ function OnLoad()
             end
           end
         end
+        gsoObjects.comboTarget = nil
       end)
       
       --[[ can move | attack ]]
@@ -1158,8 +1160,8 @@ function OnLoad()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           local enemyList = gsoObjects.enemyHeroes_spell
@@ -1234,8 +1236,8 @@ function OnLoad()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
           if canQ and isTarget and gsoIsReadyFast(_Q, { q = 1000, w = 0, e = 250, r = 250 }) and gsoCastSpell(HK_Q) then
             gsoSpellTimers.lq = GetTickCount()
@@ -1297,6 +1299,7 @@ function OnLoad()
             gsoQParticles[k] = nil
           end
         end
+        gsoObjects.comboTarget = nil
       end)
       
       --[[ can move | attack ]]
@@ -1491,6 +1494,7 @@ function OnLoad()
             end
           end
         end
+        gsoObjects.comboTarget = nil
       end)
       
     --[[ local functions ]]
@@ -1552,8 +1556,8 @@ function OnLoad()
         local isLastHit = gsoMode.isLastHit()
         local isLaneClear = gsoMode.isLaneClear()
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           if not isTarget or afterAttack then
@@ -1700,7 +1704,7 @@ function OnLoad()
       gsoSpellData.w = { delay = 0.75, range = 3000, width = 40, speed = 5000, sType = "line", col = false, mCol = false, hCol = false, out = true }
       gsoSpellData.e = { delay = 0.25, range = 750, width = 140, speed = 1650, sType = "circular", col = false, mCol = false, hCol = false, out = false }
       gsoSpellData.r = { delay = 0.25, range = 3500, width = 80, speed = 5000, sType = "line", col = false, mCol = false, hCol = false, out = true }
-      local t =0
+      
       gsoOrbwalker:OnTick(function()
         champInfo.hasPBuff = gsoHasBuff(gsoMyHero, "jhinpassivereload") == true
         local enemyList = gsoObjects.enemyHeroes_spell
@@ -1747,6 +1751,7 @@ function OnLoad()
           champInfo.hasRBuff = false
           gsoJhinRPos.canDraw = false
         end
+        gsoObjects.comboTarget = nil
       end)
       
       Callback.Add('Draw', function()
@@ -1764,18 +1769,9 @@ function OnLoad()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = false
-          local aaTargets = gsoObjects.enemyHeroes_attack
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local mePos = gsoMyHero.pos
-          local meRange = gsoMyHero.range + gsoMyHero.boundingRadius
-          for i = 1, #aaTargets do
-            local aaTarget = aaTargets[i]
-            if gsoDistance(mePos, aaTarget.pos) < meRange + aaTarget.boundingRadius then
-              isTarget = true
-              break
-            end
-          end
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local enemyList = gsoObjects.enemyHeroes_spell
           if GetTickCount() < gsoSpellTimers.lrk + 350 then
@@ -1783,6 +1779,19 @@ function OnLoad()
           end
           if champInfo.hasRBuff == true then return false end
           if not isTarget or afterAttack or champInfo.hasPBuff == true then
+            --Q
+            local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
+                  canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 750, e = 350, r = 500 }) and (not isTarget or gsoSpellCan.q)
+            if canQ then
+              local qTarget = target
+              gsoSpellData.q.range = 550 + gsoMyHero.boundingRadius
+              if not isTarget then qTarget = gsoGetTarget(gsoSpellData.q.range, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, true) end
+              if qTarget and gsoCastSpellTarget(HK_Q, gsoSpellData.q.range + qTarget.boundingRadius - 35, mePos, qTarget) then
+                gsoSpellCan.botrk = false
+                gsoSpellTimers.lq = gsoGetTickCount()
+                return false
+              end
+            end
             --W
             local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
                   canW = canW and (not isTarget or gsoSpellCan.w) and gsoIsReady(_W, { q = 350, w = 1000, e = 350, r = 500 })
@@ -1812,19 +1821,6 @@ function OnLoad()
                   gsoSpellTimers.le = GetTickCount()
                   return false
                 end
-              end
-            end
-            --Q
-            local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-                  canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 750, e = 350, r = 500 }) and (not isTarget or gsoSpellCan.q)
-            if canQ then
-              local qTarget = target
-              gsoSpellData.q.range = 550 + gsoMyHero.boundingRadius
-              if not isTarget then qTarget = gsoGetTarget(gsoSpellData.q.range, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, true) end
-              if qTarget and gsoCastSpellTarget(HK_Q, gsoSpellData.q.range + qTarget.boundingRadius - 35, mePos, qTarget) then
-                gsoSpellCan.botrk = false
-                gsoSpellTimers.lq = gsoGetTickCount()
-                return false
               end
             end
           end
@@ -1915,8 +1911,8 @@ function OnLoad()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           --E
@@ -1974,8 +1970,8 @@ function OnLoad()
         local isHarass = gsoMode.isHarass()
         local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
         if canQ and gsoIsReadyFast(_Q, { q = 650, w = 550, e = 75, r = 550 }) then
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local canCastQ = false
           local extraQ = 25 * myHero:GetSpellData(_Q).level
           local qRange = 575 + extraQ
@@ -2017,6 +2013,7 @@ function OnLoad()
             gsoSpellCan.botrk = false
           end
         end
+        gsoObjects.comboTarget = nil
       end)
       gsoOrbwalker:CanChangeAnimationTime(function()
         if gsoGetTickCount() < champInfo.lasQBuff + 350 or champInfo.hasQBuff then
@@ -2149,8 +2146,8 @@ function OnLoad()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           --W
           local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
@@ -2306,6 +2303,7 @@ function OnLoad()
             end
           end
         end
+        gsoObjects.comboTarget = nil
       end)
       
       --[[ can move | attack ]]
@@ -2387,8 +2385,8 @@ function OnLoad()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           if not isTarget or afterAttack then
@@ -2454,6 +2452,7 @@ function OnLoad()
           champInfo.hasRBuff = false
           gsoState.enabledAttack = true
         end
+        gsoObjects.comboTarget = nil
       end)
       
       --[[ can move | attack ]]
@@ -2581,8 +2580,8 @@ function OnLoad()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           local enemyList = gsoObjects.enemyHeroes_spell
@@ -2612,6 +2611,10 @@ function OnLoad()
           end
         end
         return true
+      end)
+      
+      gsoOrbwalker:OnTick(function()
+        gsoObjects.comboTarget = nil
       end)
     
       --[[ can move | attack ]]
@@ -2722,8 +2725,8 @@ function OnLoad()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           local enemyList = gsoObjects.enemyHeroes_spell
@@ -2778,6 +2781,10 @@ function OnLoad()
           end
         end
         return true
+      end)
+      
+      gsoOrbwalker:OnTick(function()
+        gsoObjects.comboTarget = nil
       end)
       
       --[[ can move | attack ]]
@@ -2892,8 +2899,8 @@ function OnLoad()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           --local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local beforeAttack = gsoGameTimer() > gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.5 )
           local mePos = gsoMyHero.pos
@@ -2977,6 +2984,7 @@ function OnLoad()
             end
           end
         end
+        gsoObjects.comboTarget = nil
       end)
       
       --[[ ATTACK SPEED ]]
@@ -3155,8 +3163,8 @@ function OnLoad()
           if num > -50 and num < 350 then
             stopifQBuff = true
           end
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local afterAttack = gsoGameTimer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           local enemyList = gsoObjects.enemyHeroes_spell
@@ -3279,6 +3287,7 @@ function OnLoad()
             end
           end
         end
+        gsoObjects.comboTarget = nil
       end)
       
       --[[ can move | attack ]]
@@ -3357,8 +3366,8 @@ function OnLoad()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = target ~= nil and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           local enemyList = gsoObjects.enemyHeroes_spell
@@ -3484,6 +3493,7 @@ function OnLoad()
         if not gsoState.enabledMove and not canQ and GetTickCount() > lastQ2 + 100 then
           gsoState.enabledMove = true
         end
+        gsoObjects.comboTarget = nil
       end)
       
       --[[ can move | attack ]]
@@ -3539,8 +3549,8 @@ function OnLoad()
         local isCombo = gsoMode.isCombo()
         local isHarass = gsoMode.isHarass()
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           local enemyList = gsoObjects.enemyHeroes_spell
@@ -3590,6 +3600,10 @@ function OnLoad()
           end
         end
         return true
+      end)
+      
+      gsoOrbwalker:OnTick(function()
+        gsoObjects.comboTarget = nil
       end)
       
       --[[ can move | attack ]]
@@ -3753,8 +3767,8 @@ function OnLoad()
           local isCombo = gsoMode.isCombo()
           local isHarass = gsoMode.isHarass()
           if isCombo or isHarass then
-            local target = gsoExtra.lastTarget
-            local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+            local target = gsoObjects.comboTarget
+            local isTarget = target ~= nil
             --W
             local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
                   canW = canW and isTarget and gsoIsReadyFast(_W, { q = 250, w = 1000, e = 100, r = 500 })
@@ -3775,8 +3789,8 @@ function OnLoad()
         local isHarass = gsoMode.isHarass()
         if gsoUseE() == true then return false end
         if isCombo or isHarass then
-          local target = gsoExtra.lastTarget
-          local isTarget = target and target.type == Obj_AI_Hero and gsoIsHeroValid(gsoMyHero.range + gsoMyHero.boundingRadius, target, true, true)
+          local target = gsoObjects.comboTarget
+          local isTarget = target ~= nil
           local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
           local mePos = gsoMyHero.pos
           --W
@@ -3851,6 +3865,7 @@ function OnLoad()
             end
           end
         end
+        gsoObjects.comboTarget = nil
       end)
       
       gsoOrbwalker:CanChangeAnimationTime(function()
