@@ -3863,10 +3863,12 @@ function OnLoad()
         local wDuration = gsoBuffDuration(gsoMyHero, "xayahw")
         champInfo.wEndTime = wDuration > 0 and gsoGameTimer() + wDuration or champInfo.wEndTime
         --Feathers
+        local featherName = "Xayah_Base_Passive_Dagger_indicator8s"
+        --local featherName = "Xayah_Base_Passive_Dagger_Mark8s"
         local mePos = gsoMyHero.pos
         for i = 1, Game.ParticleCount() do
           local particle = Game.Particle(i)
-          if particle and particle.name == "Xayah_Base_Passive_Dagger_Mark8s" and gsoDistance(mePos, particle.pos) < 2500 then
+          if particle and particle.name == featherName and gsoDistance(mePos, particle.pos) < 2500 then
             local particleID = particle.networkID
             if not xayahEPas[particleID] then
               xayahEPas[particleID] = { pos = particle.pos, endTime = gsoGameTimer() + 6 - gsoExtra.maxLatency, active = true }
