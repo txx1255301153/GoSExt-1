@@ -874,6 +874,13 @@ local function gsoOrbwalkerTimersLogic()
   else
     local aaSpeed = gsoAttackSpeed() * gsoBaseAASpeed
     local numAS   = aaSpeed >= 2.5 and 2.5 or aaSpeed
+    for i = 0, gsoMyHero.buffCount do
+      local buff = gsoMyHero:GetBuff(i)
+      if buff and buff.count > 0 and buff.name:lower():find("flowofbattleempowered") then
+        numAS = aaSpeed
+        break
+      end
+    end
     gsoExtra.attackSpeed = numAS
     local animT   = 1 / numAS
     local windUpT = animT * gsoBaseWindUp
