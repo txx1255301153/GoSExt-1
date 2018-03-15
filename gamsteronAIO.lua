@@ -4052,8 +4052,6 @@ function OnLoad()
         local wDuration = gsoBuffDuration(gsoMyHero, "xayahw")
         if wDuration > 0 then
           champInfo.wEndTime = Game.Timer() + wDuration
-        else
-          champInfo.wEndTime = 0
         end
         --Feathers
         local featherName = "Xayah_Base_Passive_Dagger_indicator8s"
