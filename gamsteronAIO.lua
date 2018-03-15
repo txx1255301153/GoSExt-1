@@ -274,7 +274,7 @@ function  __gsoTPred:__init()
       from = Vector(myHero.pos)
     end
     local IsFromMyHero = self.GetDistanceSqr(from, myHero.pos) < 50*50 and true or false
-    delay = delay + (0.07 + Game.Latency() / 2000)
+    delay = delay + (0.07 + Game.Latency() * 0.001)
     local Position, CastPosition = self.CalculateTargetPosition(unit, delay, radius, speed, from, spelltype)
     local HitChance = 1
     Waypoints = self.GetCurrentWayPoints(unit)
@@ -2776,7 +2776,7 @@ function OnLoad()
         end
         return false
       end
-      --Q IMMOBILE
+      --Q AUTO IMMOBILE
       local function castQImmobile()
         if gsoMeMenu.qset.immobile:Value() then
           local allyList = gsoObjects.allyHeroes
@@ -2800,7 +2800,7 @@ function OnLoad()
         end
         return false
       end
-      --W HEAL
+      --W AUTO HEAL
       local function castWHeal()
         if gsoMeMenu.wset.healally:Value() then
           local min = 10000
@@ -2863,6 +2863,22 @@ function OnLoad()
         end
         return false
       end
+      --E AUTO ALLY
+      local function castEAlly()
+        return false
+      end
+      --E COMBO
+      local function castECombo()
+        --[[
+        if gsoMeMenu.eset.combo:Value() and gsoMode.isCombo() then
+          local eTarget = target
+          if not isTarget then eTarget = gsoGetTarget(800, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false) end
+          if wTarget and gsoCastSpellTarget(HK_W, 875, gsoMyHero.pos, wTarget) then
+            return true
+          end
+        end--]]
+        return false
+      end
       --R SEMI MANUAL
       local function castSemiR()
         if gsoMeMenu.rset.semirnami.enabled:Value() then
@@ -2886,7 +2902,7 @@ function OnLoad()
         end
         return false
       end
-      --R IMMOBILE
+      --R AUTO IMMOBILE
       local function castRImmobile()
         if gsoMeMenu.rset.immobile:Value() then
           local allyList = gsoObjects.allyHeroes
@@ -2916,6 +2932,12 @@ function OnLoad()
         local target = gsoObjects.comboTarget; gsoObjects.comboTarget = nil
         local isTarget = target ~= nil
         local canCast = isTarget == false and Game.Timer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.maxLatency + 0.05 and gsoState.canMove == true
+        
+        --E
+        if gsoIsReady(_E, { q = 300, w = 300, e = 1000, r = 550 }) and (castEAlly() or castECombo()) then
+          gsoSpellTimers.le = GetTickCount()
+          return
+        end
         
         if canCast == true or ( gsoState.canMove == true and gsoState.canAttack == false ) then
           --W
