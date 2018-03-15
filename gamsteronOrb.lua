@@ -1175,7 +1175,7 @@ local function gsoOrbwalkerLogic()
       gsoAttackMove(gsoGetComboTarget())
     else
       gsoState.canAttack = gsoState.canAttack and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency + 0.05
-      gsoState.canMove = gsoState.canMove and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency 0.025
+      gsoState.canMove = gsoState.canMove and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency + 0.025
       if isHarass == true then
         gsoAttackMove(gsoGetHarassTarget())
       elseif isLastHit == true then
