@@ -2716,101 +2716,238 @@ function OnLoad()
       gsoOrbwalker.IsAP()
       
       --[[ menu ]]
-      local gsoMeMenu = gsoMenu:MenuElement({name = "Nami", id = "gsonami", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/teemo.png" })
+      local gsoMeMenu = gsoMenu:MenuElement({name = "Nami", id = "gsonami", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/namiSUh73d.png" })
         gsoMeMenu:MenuElement({name = "Q settings", id = "qset", type = MENU })
-            gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
-            gsoMeMenu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+          gsoMeMenu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+          gsoMeMenu.qset:MenuElement({id = "immobile", name = "Auto Immobile", value = true})
+          gsoMeMenu.qset:MenuElement({id = "immoallies", name = "Immobile - minimum allies near enemy", value = 1, min = 0, max = 4, step = 1})
+          gsoMeMenu.qset:MenuElement({id = "immoxallies", name = "Immobile - ally distance to enemy", value = 1000, min = 500, max = 2000, step = 1})
         gsoMeMenu:MenuElement({name = "W settings", id = "wset", type = MENU })
-            gsoMeMenu.wset:MenuElement({id = "mindist", name = "Min. distance to enemy", value = 850, min = 680, max = 1250, step = 10 })
-            gsoMeMenu.wset:MenuElement({id = "combo", name = "Combo", value = true})
-            gsoMeMenu.wset:MenuElement({id = "harass", name = "Harass", value = false})
+          gsoMeMenu.wset:MenuElement({id = "combo", name = "Combo - W on enemy (priority is healing)", value = true})
+          gsoMeMenu.wset:MenuElement({id = "healally", name = "Heal Ally", value = true})
+          gsoMeMenu.wset:MenuElement({id = "healallyb", name = "Heal Ally only if can bounce", value = true})
+          gsoMeMenu.wset:MenuElement({id = "xhealth", name = "X HP% - all allies (priority are allies from list)", value = 25, min = 0, max = 100, step = 1})
+          gsoMeMenu.wset:MenuElement({id = "xhealthlist", name = "X HP% - allies from list", value = 75, min = 0, max = 100, step = 1})
+          gsoMeMenu.wset:MenuElement({name = "list of allies:", id = "useon", type = MENU })
+        gsoMeMenu:MenuElement({name = "E settings", id = "eset", type = MENU })
+          gsoMeMenu.eset:MenuElement({id = "allyattack", name = "Only on ally attack on enemy", value = true})
+          gsoMeMenu.eset:MenuElement({name = "list of allies:", id = "useon", type = MENU })
         gsoMeMenu:MenuElement({name = "R settings", id = "rset", type = MENU })
-            gsoMeMenu.rset:MenuElement({id = "immo", name = "only if enemy isImmobile", value = true})
-            gsoMeMenu.rset:MenuElement({id = "combo", name = "Combo", value = true})
-            gsoMeMenu.rset:MenuElement({id = "harass", name = "Harass", value = false})
+          gsoMeMenu.rset:MenuElement({id = "immobile", name = "Auto Immobile", value = true})
+          gsoMeMenu.rset:MenuElement({id = "immodist", name = "Immobile - maximum distance", value = 1000, min = 500, max = 2700, step = 100})
+          gsoMeMenu.rset:MenuElement({id = "immoallies", name = "Immobile - minimum allies near enemy", value = 1, min = 0, max = 4, step = 1})
+          gsoMeMenu.rset:MenuElement({id = "immoxallies", name = "Immobile - ally distance to enemy", value = 1000, min = 500, max = 2000, step = 1})
+          gsoMeMenu.rset:MenuElement({name = "R Semi Manual", id = "semirnami", type = MENU })
+            gsoMeMenu.rset.semirnami:MenuElement({name = "Semi-Manual Key", id = "enabled", key = string.byte("T")})
+            gsoMeMenu.rset.semirnami:MenuElement({name = "Only enemies with HP < X%", id = "semilow", value = true})
+            gsoMeMenu.rset.semirnami:MenuElement({name = "X %", id = "semip", value = 100, min = 1, max = 100, step = 1 })
+            gsoMeMenu.rset.semirnami:MenuElement({name = "Semi-Manual Max. Range", id = "rrange", value = 1000, min = 500, max = 2700, step = 100 })
+            gsoMeMenu.rset.semirnami:MenuElement({name = "Use on:", id = "useon", type = MENU })
       
       --[[ draw ]]
       gsoSpellDraw = { q = true, qr = 875, w = true, wr = 725, e = true, er = 800, r = true, rr = 2750 }
       
       --[[ spell data ]]
-      gsoSpellData.r = { delay = 0.25, range = 0, width = 200, speed = 1000, sType = "circular", col = false, mCol = false, hCol = false, out = false }
+      --radius = 200, diameter = 400
+      gsoSpellData.q = { delay = 0.25, range = 875, width = 200, speed = 1750, sType = "circular", col = false, mCol = false, hCol = false, out = false }
+      --width = 250 + enemyBoundingRadius, full width = 500 + 2 * enemyBoundingRadius
+      gsoSpellData.w = { delay = 0.25, range = 725 }
+      gsoSpellData.e = { delay = 0, range = 800 }
+      gsoSpellData.r = { delay = 0.5, range = 2750, width = 250, speed = 850, sType = "line", col = false, mCol = false, hCol = false, out = true }
       
-      --[[ on move ]]
-      gsoOrbwalker:OnMove(function(args)
-        local isCombo = gsoMode.isCombo()
-        local isHarass = gsoMode.isHarass()
-        if isCombo or isHarass then
-          local target = gsoObjects.comboTarget
-          local isTarget = target ~= nil
-          local afterAttack = Game.Timer() < gsoTimers.lastAttackSend + ( gsoTimers.animationTime * 0.75 )
-          local mePos = gsoMyHero.pos
+      --[[ on enemy hero load ]]
+      gsoOrbwalker:OnEnemyHeroLoad(function(heroName)
+        gsoMeMenu.rset.semirnami.useon:MenuElement({id = heroName, name = heroName, value = true})
+      end)
+      
+      gsoOrbwalker:OnAllyHeroLoad(function(heroName)
+        gsoMeMenu.wset.useon:MenuElement({id = heroName, name = heroName, value = true})
+        gsoMeMenu.eset.useon:MenuElement({id = heroName, name = heroName, value = true})
+      end)
+      
+      --Q COMBO
+      local function castQCombo(target, isTarget)
+        if gsoMeMenu.qset.combo:Value() and gsoMode.isCombo() then
+          local qTarget = target
+          if not isTarget then qTarget = gsoGetTarget(875, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false) end
+          if qTarget and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, qTarget) then
+            return true
+          end
+        end
+        return false
+      end
+      --Q IMMOBILE
+      local function castQImmobile()
+        if gsoMeMenu.qset.immobile:Value() then
+          local allyList = gsoObjects.allyHeroes
           local enemyList = gsoObjects.enemyHeroes_spell
-          if not isTarget or afterAttack then
-            --Q
-            local canQ = ( isCombo and gsoMeMenu.qset.combo:Value() ) or ( isHarass and gsoMeMenu.qset.harass:Value() )
-                  canQ = canQ and gsoIsReady(_Q, { q = 1000, w = 0, e = 0, r = 750 }) and (not isTarget or gsoSpellCan.q)
-            if canQ then
-              local qTarget = target
-              if not isTarget then qTarget = gsoGetTarget(680, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false) end
-              if qTarget and gsoCastSpellTarget(HK_Q, 680, mePos, qTarget) then
-                gsoSpellCan.r = false
-                gsoSpellTimers.lq = gsoGetTickCount()
-                return false
-              end
-            end
-            --R
-            local canR = ( isCombo and gsoMeMenu.rset.combo:Value() ) or ( isHarass and gsoMeMenu.rset.harass:Value() )
-                  canR = canR and gsoIsReady(_R, { q = 350, w = 0, e = 0, r = 1000 }) and (not isTarget or gsoSpellCan.r)
-            if canR then
-              local rRange = 150 + ( 250 * gsoMyHero:GetSpellData(_R).level )
-              gsoSpellData.r.range = rRange
-              local onlyImmobile = gsoMeMenu.rset.immo:Value()
-              local rTarget = nil
-              if onlyImmobile then rTarget = gsoGetImmobileEnemy(mePos, enemyList, rRange) end
-              if not rTarget and not onlyImmobile then
-                local isTeemoTarget = isTarget and gsoDistance(mePos, target.pos) < rRange
-                if isTeemoTarget then
-                  rTarget = target
-                else
-                  rTarget = gsoGetTarget(rRange, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false)
+          for i = 1, #enemyList do
+            local hero = enemyList[i]
+            local heroPos = hero.pos
+            local countAllies = 0
+            if gsoDistance(heroPos, gsoMyHero.pos) < 875 then
+              for j = 1, #allyList do
+                local ally = allyList[j]
+                if ally ~= myHero and gsoDistance(ally.pos, heroPos) < gsoMeMenu.qset.immoxallies:Value() then
+                  countAllies = countAllies + 1
                 end
               end
-              if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget) then
-                gsoSpellCan.q = false
-                gsoSpellTimers.lr = gsoGetTickCount()
-                return false
-              end
-            end
-            --W
-            local canW = ( isCombo and gsoMeMenu.wset.combo:Value() ) or ( isHarass and gsoMeMenu.wset.harass:Value() )
-                  canW = canW and gsoIsReadyFast(_W, { q = 350, w = 1000, e = 0, r = 350 })
-            if canW then
-              for i = 1, #enemyList do
-                local hero = enemyList[i]
-                if gsoDistance(mePos, hero.pos) < gsoMeMenu.wset.mindist:Value() and gsoCastSpell(HK_W) then
-                  gsoSpellTimers.lw = GetTickCount()
-                  return false
-                end
+              if countAllies >= gsoMeMenu.qset.immoallies:Value() and gsoIsImmobile(hero, 0.5) and gsoCastSpellSkillShot(HK_Q, gsoMyHero.pos, hero.pos) then
+                return true
               end
             end
           end
         end
-        return true
-      end)
+        return false
+      end
+      --W HEAL
+      local function castWHeal()
+        if gsoMeMenu.wset.healally:Value() then
+          local min = 10000
+          local minList = 10000
+          local minObj = nil
+          local minListObj = nil
+          local allyList = gsoObjects.allyHeroes
+          local enemyListAll = gsoObjects.enemyHeroes_immortal
+          for i = 1, #allyList do
+            local ally = allyList[i]
+            local allyName = ally.charName
+            local hpPercent = ( ( ally.health + ( ally.hpRegen * 3 ) ) * 100 ) / ally.maxHealth
+            if gsoMeMenu.wset.useon[allyName] and gsoMeMenu.wset.useon[allyName]:Value() then
+              if hpPercent <= gsoMeMenu.wset.xhealthlist:Value() and hpPercent < minList then
+                minList = hpPercent
+                minListObj = ally
+              end
+            else
+              if hpPercent <= gsoMeMenu.wset.xhealth:Value() and hpPercent < min then
+                min = hpPercent
+                minObj = ally
+              end
+            end
+          end
+          if minListObj then
+            if gsoMeMenu.wset.healallyb:Value() then
+              for i = 1, #enemyListAll do
+                local enemy = enemyListAll[i]
+                if gsoDistance(minListObj.pos, enemy.pos) < 825 and gsoCastSpellTarget(HK_W, 875, gsoMyHero.pos, minListObj) then
+                  return true
+                end
+              end
+            elseif gsoCastSpellTarget(HK_W, 875, gsoMyHero.pos, minListObj) then
+              return true
+            end
+          end
+          if minObj then
+            if gsoMeMenu.wset.healallyb:Value() then
+              for i = 1, #enemyListAll do
+                local enemy = enemyListAll[i]
+                if gsoDistance(minObj.pos, enemy.pos) < 825 and gsoCastSpellTarget(HK_W, 875, gsoMyHero.pos, minObj) then
+                  return true
+                end
+              end
+            elseif gsoCastSpellTarget(HK_W, 875, gsoMyHero.pos, minObj) then
+              return true
+            end
+          end
+        end
+        return false
+      end
+      --W COMBO
+      local function castWCombo(target, isTarget)
+        if gsoMeMenu.wset.combo:Value() and gsoMode.isCombo() then
+          local wTarget = target
+          if not isTarget then wTarget = gsoGetTarget(875, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false) end
+          if wTarget and gsoCastSpellTarget(HK_W, 875, gsoMyHero.pos, wTarget) then
+            return true
+          end
+        end
+        return false
+      end
+      --R SEMI MANUAL
+      local function castSemiR()
+        if gsoMeMenu.rset.semirnami.enabled:Value() then
+          local rTargets = {}
+          local enemyList = gsoObjects.enemyHeroes_spell
+          for i = 1, #enemyList do
+            local hero = enemyList[i]
+            local heroName = hero.charName
+            local isFromList = gsoMeMenu.rset.semirnami.useon[heroName] and gsoMeMenu.rset.semirnami.useon[heroName]:Value()
+            local hpPercent = gsoMeMenu.rset.semirnami.semilow:Value() and gsoMeMenu.rset.semirnami.semip:Value() or 100
+            local isLowHP = isFromList and ( ( hero.health + ( hero.hpRegen * 3 ) ) * 100 ) / hero.maxHealth <= hpPercent
+            if isLowHP then
+              rTargets[#rTargets+1] = hero
+            end
+          end
+          local rrange = gsoMeMenu.rset.semirnami.rrange:Value()
+          local rTarget = gsoGetTarget(rrange, rTargets, gsoMyHero.pos, true, false)
+          if rTarget and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, rTarget) then
+            return true
+          end
+        end
+        return false
+      end
+      --R IMMOBILE
+      local function castRImmobile()
+        if gsoMeMenu.rset.immobile:Value() then
+          local allyList = gsoObjects.allyHeroes
+          local enemyList = gsoObjects.enemyHeroes_spell
+          for i = 1, #enemyList do
+            local hero = enemyList[i]
+            local heroPos = hero.pos
+            local countAllies = 0
+            if gsoDistance(heroPos, gsoMyHero.pos) < gsoMeMenu.rset.immodist:Value() then
+              for j = 1, #allyList do
+                local ally = allyList[j]
+                if ally ~= myHero and gsoDistance(ally.pos, heroPos) < gsoMeMenu.rset.immoxallies:Value() then
+                  countAllies = countAllies + 1
+                end
+              end
+              if countAllies >= gsoMeMenu.rset.immoallies:Value() and gsoIsImmobile(hero, 0.5) and gsoCastSpellSkillShot(HK_R, gsoMyHero.pos, hero.pos) then
+                return true
+              end
+            end
+          end
+        end
+        return false
+      end
       
       gsoOrbwalker:OnTick(function()
-        --W
-        local enemyList = gsoObjects.enemyHeroes_spell
-        for i = 1, #enemyList do
+        
+        local target = gsoObjects.comboTarget; gsoObjects.comboTarget = nil
+        local isTarget = target ~= nil
+        local canCast = isTarget == false and Game.Timer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.maxLatency + 0.05 and gsoState.canMove == true
+        
+        if canCast == true or ( gsoState.canMove == true and gsoState.canAttack == false ) then
+          --W
+          if gsoSpellCan.w and gsoIsReady(_W, { q = 300, w = 1000, e = 0, r = 550 }) and (castWHeal() or castWCombo(target, isTarget)) then
+            gsoSpellTimers.lw = GetTickCount()
+            gsoSpellCan.q = false
+            gsoSpellCan.r = false
+            return
+          end
           
+          --R
+          if gsoSpellCan.r and gsoIsReady(_R, { q = 300, w = 300, e = 0, r = 1000 }) and (castRImmobile() or castSemiR()) then
+            gsoSpellTimers.lr = GetTickCount()
+            gsoSpellCan.q = false
+            gsoSpellCan.w = false
+            return
+          end
+          
+          --Q
+          if gsoSpellCan.q and gsoIsReady(_Q, { q = 1000, w = 300, e = 0, r = 550 }) and (castQImmobile() or castQCombo(target, isTarget)) then
+            gsoSpellTimers.lq = GetTickCount()
+            gsoSpellCan.w = false
+            gsoSpellCan.r = false
+            return
+          end
         end
-        --E
-        gsoObjects.comboTarget = nil
+        
       end)
       
       --[[ can move | attack ]]
-      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 250, w = 0, e = 0, r = 250 }) end)
-      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 350, w = 0, e = 0, r = 350 }) end)
+      gsoOrbwalker:CanMove(function() return gsoCheckTimers({ q = 250, w = 250, e = 0, r = 500 }) end)
+      gsoOrbwalker:CanAttack(function() return gsoCheckTimers({ q = 300, w = 300, e = 0, r = 550 }) end)
       
       --[[ on issue ]]
       gsoOrbwalker:OnIssue(function(issue) if issue == 1 then gsoSpellCan.q = true; gsoSpellCan.w = true; gsoSpellCan.e = true; gsoSpellCan.r = true; gsoSpellCan.botrk = true; return true end end)
