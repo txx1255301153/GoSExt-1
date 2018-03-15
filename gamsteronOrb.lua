@@ -239,6 +239,7 @@ local gsoAPDmg = false
 local gsoLatencies = {}
 local gsoDelayedActions = {}
 local gsoEnemyHeroesNames = {}
+local gsoAllyHeroesNames = {}
 local gsoSetCursorPos = nil
 local gsoLastKey = 0
 local gsoBaseAASpeed = 0
@@ -349,6 +350,7 @@ local gsoOnMove = {}
 local gsoUnkillableMinion = {}
 local gsoCanChangeAnim = {}
 local gsoLoadHeroesToMenu = {}
+local gsoLoadAllyHeroesToMenu = {}
 local gsoOnIssue = {}
 local gsoOnTick = {}
 local function gsoSetMousePos() return nil end
@@ -563,6 +565,19 @@ local function gsoChampionsLoadLogic()
           elseif eName == "Karthus" then    gsoUndyingBuffs["KarthusDeathDefiedBuff"] = true
           end
         end
+      else
+        local aName = hero.charName
+        if aName and #aName > 0 then
+          local canContinue = true
+          for j = 1, #gsoAllyHeroesNames do
+            if gsoAllyHeroesNames[j] == aName then
+              canContinue = false
+            end
+          end
+          if canContinue == true then
+            gsoAllyHeroesNames[#gsoAllyHeroesNames+1] = aName
+          end
+        end
       end
     end
     if gsoGameTimer() > gsoLastFound + 2.5 and gsoGameTimer() < gsoLastFound + 5 then
@@ -570,6 +585,11 @@ local function gsoChampionsLoadLogic()
       for i = 1, #gsoLoadHeroesToMenu do
         for j = 1, #gsoEnemyHeroesNames do
           gsoLoadHeroesToMenu[i](gsoEnemyHeroesNames[j])
+        end
+      end
+      for i = 1, #gsoLoadAllyHeroesToMenu do
+        for j = 1, #gsoAllyHeroesNames do
+          gsoLoadAllyHeroesToMenu[i](gsoAllyHeroesNames[j])
         end
       end
     end
@@ -1376,6 +1396,9 @@ class "__gsoOrbwalker"
     end
     function __gsoOrbwalker:OnEnemyHeroLoad(func)
         gsoLoadHeroesToMenu[#gsoLoadHeroesToMenu+1] = func
+    end
+    function __gsoOrbwalker:OnAllyHeroLoad(func)
+        gsoLoadAllyHeroesToMenu[#gsoLoadAllyHeroesToMenu+1] = func
     end
     function __gsoOrbwalker:OnUnkillableMinion(func)
         gsoUnkillableMinion[#gsoUnkillableMinion+1] = func
