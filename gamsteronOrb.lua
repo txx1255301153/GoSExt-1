@@ -911,8 +911,6 @@ local function gsoOrbwalkerTimersLogic()
   gsoState.isEvading = ExtLibEvade and ExtLibEvade.Evading
   gsoState.canAttack = not gsoState.isChangingCursorPos and not gsoState.isBlindedByTeemo and not gsoState.isEvading and gsoState.enabledAttack and (gsoTimers.secondsToAttack == 0 or gsoExtra.resetAttack) and not isChatOpen
   gsoState.canMove = not gsoState.isChangingCursorPos and not gsoState.isEvading and gsoState.enabledMove and gsoTimers.secondsToMove == 0 and not isChatOpen
-  gsoState.canAttack = gsoState.canAttack and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency and gsoSetCursorPos == nil
-  gsoState.canMove = gsoState.canMove and gsoGameTimer() > gsoTimers.lastAttackSend + extraWindUp + gsoTimers.windUpTime + (0.5*gsoExtra.minLatency) and gsoSetCursorPos == nil
 end
 
 local function gsoAddUnits()
@@ -1175,12 +1173,16 @@ local function gsoOrbwalkerLogic()
     if gsoBaseWindUp == 0 then gsoBaseWindUp=gsoMyHero.attackData.windUpTime/gsoMyHero.attackData.animationTime;gsoExtra.baseWindUp=gsoBaseWindUp;end
     if isCombo == true then
       gsoAttackMove(gsoGetComboTarget())
-    elseif isHarass == true then
-      gsoAttackMove(gsoGetHarassTarget())
-    elseif isLastHit == true then
-      gsoAttackMove(gsoGetLastHitTarget())
-    elseif isLaneClear == true then
-      gsoAttackMove(gsoGetLaneClearTarget())
+    else
+      gsoState.canAttack = gsoState.canAttack and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency + 0.05
+      gsoState.canMove = gsoState.canMove and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency 0.025
+      if isHarass == true then
+        gsoAttackMove(gsoGetHarassTarget())
+      elseif isLastHit == true then
+        gsoAttackMove(gsoGetLastHitTarget())
+      elseif isLaneClear == true then
+        gsoAttackMove(gsoGetLaneClearTarget())
+      end
     end
   else
     gsoState.isMoving = false
