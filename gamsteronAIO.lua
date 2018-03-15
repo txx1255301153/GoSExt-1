@@ -3907,8 +3907,8 @@ function OnLoad()
             local xFeathers = 0
             local eWidth = 45 + enemyBB
             for k,v in pairs(xayahEPas) do
-              local vPos = v.pos
-              if v.active then
+              if v and v.active and v.pos and v.pos.x then
+                local vPos = v.pos
                 local point1, onLineSegment1 = gsoClosestPointOnLineSegment(enemyPos1, mePos1, vPos)
                 local point2, onLineSegment2 = gsoClosestPointOnLineSegment(enemyPos1, mePos2, vPos)
                 local isHitable = true
@@ -4068,12 +4068,12 @@ function OnLoad()
       end)
       
       gsoOrbwalker:CanChangeAnimationTime(function()
-        return champInfo.wEndTime-gsoGameTimer() > 0
+        return champInfo.wEndTime - Game.Timer() > 0
       end)
       
       --[[ custom attack speed ]]
       gsoOrbwalker:AttackSpeed(function()
-        local num = champInfo.wEndTime - gsoGameTimer()
+        local num = champInfo.wEndTime - Game.Timer()
         if num < champInfo.windUpOld and num > -2 then
           return champInfo.asNoW
         end
