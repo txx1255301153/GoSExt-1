@@ -2712,6 +2712,33 @@ function OnLoad()
     
     __Nami = function()
       
+      local eHeroes = {
+        ["Ashe"] = true,
+        ["Caitlyn"] = true,
+        ["Corki"] = true,
+        ["Draven"] = true,
+        ["Ezreal"] = true,
+        ["Jax"] = true,
+        ["Jinx"] = true,
+        ["Kalista"] = true,
+        ["Kaisa"] = true,
+        ["Kayle"] = true,
+        ["Kindred"] = true,
+        ["KogMaw"] = true,
+        ["Lucian"] = true,
+        ["MasterYi"] = true,
+        ["MissFortune"] = true,
+        ["Quinn"] = true,
+        ["Sivir"] = true,
+        ["Teemo"] = true,
+        ["Tristana"] = true,
+        ["Twitch"] = true,
+        ["Tryndamere"] = true,
+        ["Varus"] = true,
+        ["Vayne"] = true,
+        ["Xayah"] = true
+      }
+      
       --[[ set ap ]]
       gsoOrbwalker.IsAP()
       
@@ -2730,6 +2757,7 @@ function OnLoad()
           gsoMeMenu.wset:MenuElement({id = "xhealthlist", name = "X HP% - allies from list", value = 75, min = 0, max = 100, step = 1})
           gsoMeMenu.wset:MenuElement({name = "list of allies:", id = "useon", type = MENU })
         gsoMeMenu:MenuElement({name = "E settings", id = "eset", type = MENU })
+          gsoMeMenu.eset:MenuElement({id = "combo", name = "Combo - E on self", value = false})
           gsoMeMenu.eset:MenuElement({id = "allyattack", name = "Only on ally attack on enemy", value = true})
           gsoMeMenu.eset:MenuElement({name = "list of allies:", id = "useon", type = MENU })
         gsoMeMenu:MenuElement({name = "R settings", id = "rset", type = MENU })
@@ -2749,7 +2777,7 @@ function OnLoad()
       
       --[[ spell data ]]
       --radius = 200, diameter = 400
-      gsoSpellData.q = { delay = 0.25, range = 875, width = 200, speed = 1750, sType = "circular", col = false, mCol = false, hCol = false, out = false }
+      gsoSpellData.q = { delay = 0.5, range = 875, width = 200, speed = 1750, sType = "circular", col = false, mCol = false, hCol = false, out = false }
       --width = 250 + enemyBoundingRadius, full width = 500 + 2 * enemyBoundingRadius
       gsoSpellData.w = { delay = 0.25, range = 725 }
       gsoSpellData.e = { delay = 0, range = 800 }
@@ -2761,8 +2789,9 @@ function OnLoad()
       end)
       
       gsoOrbwalker:OnAllyHeroLoad(function(heroName)
+        local eBoolean = eHeroes[heroName] ~= nil
         gsoMeMenu.wset.useon:MenuElement({id = heroName, name = heroName, value = true})
-        gsoMeMenu.eset.useon:MenuElement({id = heroName, name = heroName, value = true})
+        gsoMeMenu.eset.useon:MenuElement({id = heroName, name = heroName, value = eBoolean})
       end)
       
       --Q COMBO
@@ -2807,21 +2836,24 @@ function OnLoad()
           local minList = 10000
           local minObj = nil
           local minListObj = nil
+          local mePos = gsoMyHero.pos
           local allyList = gsoObjects.allyHeroes
           local enemyListAll = gsoObjects.enemyHeroes_immortal
           for i = 1, #allyList do
             local ally = allyList[i]
             local allyName = ally.charName
             local hpPercent = ( ( ally.health + ( ally.hpRegen * 3 ) ) * 100 ) / ally.maxHealth
-            if gsoMeMenu.wset.useon[allyName] and gsoMeMenu.wset.useon[allyName]:Value() then
-              if hpPercent <= gsoMeMenu.wset.xhealthlist:Value() and hpPercent < minList then
-                minList = hpPercent
-                minListObj = ally
-              end
-            else
-              if hpPercent <= gsoMeMenu.wset.xhealth:Value() and hpPercent < min then
-                min = hpPercent
-                minObj = ally
+            if gsoDistance(ally.pos, mePos) < 720 then
+              if gsoMeMenu.wset.useon[allyName] and gsoMeMenu.wset.useon[allyName]:Value() then
+                if hpPercent <= gsoMeMenu.wset.xhealthlist:Value() and hpPercent < minList then
+                  minList = hpPercent
+                  minListObj = ally
+                end
+              else
+                if hpPercent <= gsoMeMenu.wset.xhealth:Value() and hpPercent < min then
+                  min = hpPercent
+                  minObj = ally
+                end
               end
             end
           end
@@ -2829,11 +2861,11 @@ function OnLoad()
             if gsoMeMenu.wset.healallyb:Value() then
               for i = 1, #enemyListAll do
                 local enemy = enemyListAll[i]
-                if gsoDistance(minListObj.pos, enemy.pos) < 825 and gsoCastSpellTarget(HK_W, 875, gsoMyHero.pos, minListObj) then
+                if gsoDistance(minListObj.pos, enemy.pos) < 790 and gsoCastSpellTarget(HK_W, 720, gsoMyHero.pos, minListObj) then
                   return true
                 end
               end
-            elseif gsoCastSpellTarget(HK_W, 875, gsoMyHero.pos, minListObj) then
+            elseif gsoCastSpellTarget(HK_W, 720, gsoMyHero.pos, minListObj) then
               return true
             end
           end
@@ -2841,11 +2873,11 @@ function OnLoad()
             if gsoMeMenu.wset.healallyb:Value() then
               for i = 1, #enemyListAll do
                 local enemy = enemyListAll[i]
-                if gsoDistance(minObj.pos, enemy.pos) < 825 and gsoCastSpellTarget(HK_W, 875, gsoMyHero.pos, minObj) then
+                if gsoDistance(minObj.pos, enemy.pos) < 790 and gsoCastSpellTarget(HK_W, 720, gsoMyHero.pos, minObj) then
                   return true
                 end
               end
-            elseif gsoCastSpellTarget(HK_W, 875, gsoMyHero.pos, minObj) then
+            elseif gsoCastSpellTarget(HK_W, 720, gsoMyHero.pos, minObj) then
               return true
             end
           end
@@ -2856,27 +2888,57 @@ function OnLoad()
       local function castWCombo(target, isTarget)
         if gsoMeMenu.wset.combo:Value() and gsoMode.isCombo() then
           local wTarget = target
-          if not isTarget then wTarget = gsoGetTarget(875, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false) end
-          if wTarget and gsoCastSpellTarget(HK_W, 875, gsoMyHero.pos, wTarget) then
+          if not isTarget then wTarget = gsoGetTarget(720, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false) end
+          if wTarget and gsoCastSpellTarget(HK_W, 720, gsoMyHero.pos, wTarget) then
             return true
-          end
+          elseif not wTarget then
+            local enemyList = gsoObjects.enemyHeroes_spell
+            local mePos = gsoMyHero.pos
+            for i = 1, #enemyList do
+              local enemy = enemyList[i]
+              if gsoDistance(mePos, enemy.pos) < 790 and gsoCastSpellTarget(HK_W, 720, gsoMyHero.pos, gsoMyHero) then
+                return true
+              end
+            end
+          end  
         end
         return false
       end
       --E AUTO ALLY
       local function castEAlly()
+        local allyList = gsoObjects.allyHeroes
+        local enemyList = gsoObjects.enemyHeroes_spell
+        local mePos = gsoMyHero.pos
+        for i = 1, #allyList do
+          local ally = allyList[i]
+          if gsoMeMenu.eset.useon[ally.charName] and gsoMeMenu.eset.useon[ally.charName]:Value() and gsoDistance(mePos, ally.pos) < 800 then
+            local aaData = ally.attackData
+            local endTime = aaData.endTime
+            local windUpTime = aaData.windUpTime
+            if endTime > Game.Timer() and endTime < Game.Timer() + (windUpTime * 0.75) then
+              for j = 1, #enemyList do
+                local enemy = enemyList[j]
+                if enemy.handle == aaData.target and gsoDistance(ally.pos, enemy.pos) < ally.range + ally.boundingRadius + enemy.boundingRadius and gsoCastSpellTarget(HK_E, 800, gsoMyHero.pos, ally) then
+                  return true
+                end
+              end
+            end
+          end
+        end
         return false
       end
       --E COMBO
       local function castECombo()
-        --[[
-        if gsoMeMenu.eset.combo:Value() and gsoMode.isCombo() then
-          local eTarget = target
-          if not isTarget then eTarget = gsoGetTarget(800, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, false) end
-          if wTarget and gsoCastSpellTarget(HK_W, 875, gsoMyHero.pos, wTarget) then
-            return true
+        if gsoMeMenu.eset.combo:Value() and gsoMode.isCombo() and gsoState.isAttacking then
+          local enemyList = gsoObjects.enemyHeroes_spell
+          local aaData = gsoMyHero.attackData
+          for i = 1, #enemyList do
+            local enemy = enemyList[i]
+            if enemy.handle == aaData.target and gsoDistance(gsoMyHero.pos, enemy.pos) < gsoMyHero.range + gsoMyHero.boundingRadius + enemy.boundingRadius and gsoCastSpellTarget(HK_E, 800, gsoMyHero.pos, gsoMyHero) then
+              return true
+            end
           end
-        end--]]
+        end
         return false
       end
       --R SEMI MANUAL
@@ -2941,10 +3003,8 @@ function OnLoad()
         
         if canCast == true or ( gsoState.canMove == true and gsoState.canAttack == false ) then
           --W
-          if gsoSpellCan.w and gsoIsReady(_W, { q = 300, w = 1000, e = 0, r = 550 }) and (castWHeal() or castWCombo(target, isTarget)) then
+          if gsoIsReady(_W, { q = 300, w = 1000, e = 0, r = 550 }) and (castWHeal() or castWCombo(target, isTarget)) then
             gsoSpellTimers.lw = GetTickCount()
-            gsoSpellCan.q = false
-            gsoSpellCan.r = false
             return
           end
           
@@ -2952,14 +3012,12 @@ function OnLoad()
           if gsoSpellCan.r and gsoIsReady(_R, { q = 300, w = 300, e = 0, r = 1000 }) and (castRImmobile() or castSemiR()) then
             gsoSpellTimers.lr = GetTickCount()
             gsoSpellCan.q = false
-            gsoSpellCan.w = false
             return
           end
           
           --Q
           if gsoSpellCan.q and gsoIsReady(_Q, { q = 1000, w = 300, e = 0, r = 550 }) and (castQImmobile() or castQCombo(target, isTarget)) then
             gsoSpellTimers.lq = GetTickCount()
-            gsoSpellCan.w = false
             gsoSpellCan.r = false
             return
           end
