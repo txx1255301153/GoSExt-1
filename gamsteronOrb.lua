@@ -454,6 +454,17 @@ local function gsoCalculateDmg(unit, spellData)
   end
   assert(false, "[234] CalculateDmg: spellData - expected array { dmgType = string(ap or ad or mixed or true), dmgAP = number or dmgAD = number or ( dmgAP = number and dmgAD = number ) or dmgTrue = number } !")
 end
+local function gsoGetPosition(unit, extraTime)
+  local pos = unit.pos
+  if unit.pathing.hasMovePath then
+    local latency = Game.Latency() * 0.001
+          latency = latency + extraTime
+    local moveLenght = unit.ms * latency
+    return pos + (unit.pathing.endPos - pos):Normalized() * moveLenght
+  else
+    return unit.pos
+  end
+end
 local function gsoGetTarget(range, enemyHeroes, sourcePos, dmgAP, bb)
   local selected = gsoExtra.selectedTarget
   local menuSelected = gsoMenu.ts.selected.enable:Value()
@@ -472,9 +483,12 @@ local function gsoGetTarget(range, enemyHeroes, sourcePos, dmgAP, bb)
     if bb == true then unitBB = unit.boundingRadius end
     local mePos = gsoMyHero.pos
     local unitPos = unit.pos
+    local unitPos2 = gsoGetPosition(unit, 0.07)
     local dist1 = gsoDistance(mePos, unitPos)
     local dist2 = gsoDistance(unitPos, gsoExtended(mePos, mePos, gsoExtra.lastMovePos, gsoMyHero.ms * move_t))
-    if dist1 < range + unitBB and dist2 < range + unitBB then
+    local dist3 = gsoDistance(mePos, unitPos2)
+    local dist4 = gsoDistance(unitPos2, gsoExtended(mePos, mePos, gsoExtra.lastMovePos, gsoMyHero.ms * move_t))
+    if dist1 < range + unitBB and dist2 < range + unitBB and dist3 < range + unitBB and dist4 < range + unitBB then
       if selectedID and unit.networkID == selectedID then
         return selected
       elseif mode == 1 then
