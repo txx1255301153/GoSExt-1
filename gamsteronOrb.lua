@@ -1068,20 +1068,8 @@ end
 
 local function gsoAttackMove(unit)
   if ExtLibEvade and ExtLibEvade.Evading then gsoState.isMoving=true;gsoState.isAttacking=false;gsoState.isEvading=true;return;end
-  if not unit and gsoState.canAttack and gsoMode.isCombo() then
-    local aaTarget = gsoExtra.lastTarget
-    if aaTarget and aaTarget.type == Obj_AI_Hero and not aaTarget.dead and aaTarget.isTargetable and aaTarget.valid and aaTarget.visible and not gsoIsImmortal(aaTarget, true) then
-      local move_lat = 1.5 * gsoExtra.maxLatency
-      local move_t = 0.15 + move_lat
-      local mePos = gsoMyHero.pos
-      local unitPos = aaTarget.pos
-      local dist1 = gsoDistance(mePos, unitPos)
-      local dist2 = gsoDistance(unitPos, gsoExtended(mePos, mePos, gsoExtra.lastMovePos, gsoMyHero.ms * move_t))
-      local aaRange = gsoMyHero.range + gsoMyHero.boundingRadius + aaTarget.boundingRadius
-      if dist1 < aaRange and dist2 < aaRange then
-        unit = aaTarget
-      end
-    end
+  if not unit and gsoState.canAttack and gsoState.canMove then
+    gsoState.canMove = Game.Timer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency + 0.07
   end
   for i = 1, #gsoCanMove do
     if gsoCanMove[i]() == false then
@@ -1193,16 +1181,12 @@ local function gsoOrbwalkerLogic()
     if gsoBaseWindUp == 0 then gsoBaseWindUp=gsoMyHero.attackData.windUpTime/gsoMyHero.attackData.animationTime;gsoExtra.baseWindUp=gsoBaseWindUp;end
     if isCombo == true then
       gsoAttackMove(gsoGetComboTarget())
-    else
-      gsoState.canAttack = gsoState.canAttack and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency + 0.05
-      gsoState.canMove = gsoState.canMove and gsoGameTimer() > gsoTimers.lastAttackSend + gsoTimers.windUpTime + gsoExtra.minLatency + 0.025
-      if isHarass == true then
-        gsoAttackMove(gsoGetHarassTarget())
-      elseif isLastHit == true then
-        gsoAttackMove(gsoGetLastHitTarget())
-      elseif isLaneClear == true then
-        gsoAttackMove(gsoGetLaneClearTarget())
-      end
+    elseif isHarass == true then
+      gsoAttackMove(gsoGetHarassTarget())
+    elseif isLastHit == true then
+      gsoAttackMove(gsoGetLastHitTarget())
+    elseif isLaneClear == true then
+      gsoAttackMove(gsoGetLaneClearTarget())
     end
   else
     gsoState.isMoving = false
