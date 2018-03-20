@@ -1946,8 +1946,6 @@ function OnLoad()
               gsoSpellData.q.range = 550 + gsoMyHero.boundingRadius
               if not isTarget then qTarget = gsoGetTarget(gsoSpellData.q.range, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, true, true) end
               if qTarget and gsoCastSpellTarget(HK_Q, gsoSpellData.q.range + qTarget.boundingRadius - 35, mePos, qTarget) then
-                gsoSpellCan.w = false
-                gsoSpellCan.e = false
                 gsoSpellCan.botrk = false
                 gsoSpellTimers.lq = gsoGetTickCount()
                 return false
@@ -1960,8 +1958,6 @@ function OnLoad()
               local t = target
               if isTarget == false then t = gsoGetTarget(3000, gsoObjects.enemyHeroes_spell, gsoMyHero.pos, false, false) end
               if t and gsoCastSpellSkillShot(HK_W, mePos, t) then
-                gsoSpellCan.q = false
-                gsoSpellCan.e = false
                 gsoSpellCan.botrk = false
                 gsoSpellTimers.lw = GetTickCount()
                 return false
@@ -1974,8 +1970,6 @@ function OnLoad()
               if gsoMeMenu.eset.onlyimmo:Value() then
                 local t = gsoGetImmobileEnemy(mePos, gsoObjects.enemyHeroes_spell, 750)
                 if t and gsoCastSpellSkillShot(HK_E, mePos, t.pos) then
-                  gsoSpellCan.q = false
-                  gsoSpellCan.w = false
                   gsoSpellCan.botrk = false
                   gsoSpellTimers.le = GetTickCount()
                   return false
