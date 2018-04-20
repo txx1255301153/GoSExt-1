@@ -47,6 +47,7 @@ class "__gsoTwitch"
                 self.menu:MenuElement({name = "E settings", id = "eset", type = MENU })
                         self.menu.eset:MenuElement({id = "combo", name = "Use E Combo", value = true})
                         self.menu.eset:MenuElement({id = "harass", name = "Use E Harass", value = false})
+                        self.menu.eset:MenuElement({id = "killsteal", name = "Use E KS", value = true})
                         self.menu.eset:MenuElement({id = "stacks", name = "X stacks", value = 6, min = 1, max = 6, step = 1 })
                         self.menu.eset:MenuElement({id = "enemies", name = "X enemies", value = 1, min = 1, max = 5, step = 1 })
         end
@@ -191,7 +192,7 @@ class "__gsoTwitch"
                                 return
                         end
                         --EKS
-                        if _G.gsoSDK.Spell:IsReady(_E, { q = 0, w = 0.25, e = 0.5, r = 0 } ) then
+                        if self.menu.eset.killsteal:Value() and _G.gsoSDK.Spell:IsReady(_E, { q = 0, w = 0.25, e = 0.5, r = 0 } ) then
                                 for i = 1, #enemyList do
                                         local hero = enemyList[i]
                                         local buffCount = gsoEBuffs[hero.networkID] and gsoEBuffs[hero.networkID].count or 0
