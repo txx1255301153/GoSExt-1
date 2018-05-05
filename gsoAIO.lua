@@ -1439,7 +1439,7 @@ class "__gsoSpell"
                   manualNum = 3
             end
             if manualNum > -1 and not self.DelayedSpell[manualNum] then
-                  local drawMenu = gsoSDK.Menu.gsoDrawCircle1
+                  local drawMenu = gsoSDK.Menu.gsodraw.circle1
                   if gsoSDK.Menu.orb.keys.combo:Value() or gsoSDK.Menu.orb.keys.harass:Value() or gsoSDK.Menu.orb.keys.lasthit:Value() or gsoSDK.Menu.orb.keys.laneclear:Value() or gsoSDK.Menu.orb.keys.flee:Value() then
                         self.DelayedSpell[manualNum] = {
                               function()
@@ -1459,78 +1459,78 @@ class "__gsoSpell"
             gsoSDK.Menu.gsodraw:MenuElement({name = "Spell Ranges", id = "circle1", type = MENU,
                   onclick = function()
                         if self.spellDraw.q then
-                              gsoSDK.Menu.gsoDrawCircle1.qrange:Hide(true)
-                              gsoSDK.Menu.gsoDrawCircle1.qrangecolor:Hide(true)
-                              gsoSDK.Menu.gsoDrawCircle1.qrangewidth:Hide(true)
+                              gsoSDK.Menu.gsodraw.circle1.qrange:Hide(true)
+                              gsoSDK.Menu.gsodraw.circle1.qrangecolor:Hide(true)
+                              gsoSDK.Menu.gsodraw.circle1.qrangewidth:Hide(true)
                         end
                         if self.spellDraw.w then
-                              gsoSDK.Menu.gsoDrawCircle1.wrange:Hide(true)
-                              gsoSDK.Menu.gsoDrawCircle1.wrangecolor:Hide(true)
-                              gsoSDK.Menu.gsoDrawCircle1.wrangewidth:Hide(true)
+                              gsoSDK.Menu.gsodraw.circle1.wrange:Hide(true)
+                              gsoSDK.Menu.gsodraw.circle1.wrangecolor:Hide(true)
+                              gsoSDK.Menu.gsodraw.circle1.wrangewidth:Hide(true)
                         end
                         if self.spellDraw.e then
-                              gsoSDK.Menu.gsoDrawCircle1.erange:Hide(true)
-                              gsoSDK.Menu.gsoDrawCircle1.erangecolor:Hide(true)
-                              gsoSDK.Menu.gsoDrawCircle1.erangewidth:Hide(true)
+                              gsoSDK.Menu.gsodraw.circle1.erange:Hide(true)
+                              gsoSDK.Menu.gsodraw.circle1.erangecolor:Hide(true)
+                              gsoSDK.Menu.gsodraw.circle1.erangewidth:Hide(true)
                         end
                         if self.spellDraw.r then
-                              gsoSDK.Menu.gsoDrawCircle1.rrange:Hide(true)
-                              gsoSDK.Menu.gsoDrawCircle1.rrangecolor:Hide(true)
-                              gsoSDK.Menu.gsoDrawCircle1.rrangewidth:Hide(true)
+                              gsoSDK.Menu.gsodraw.circle1.rrange:Hide(true)
+                              gsoSDK.Menu.gsodraw.circle1.rrangecolor:Hide(true)
+                              gsoSDK.Menu.gsodraw.circle1.rrangewidth:Hide(true)
                         end
                   end
             })
             if self.spellDraw.q then
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({name = "Q Range", id = "note5", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({name = "Q Range", id = "note5", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
                         onclick = function()
-                              gsoSDK.Menu.gsoDrawCircle1.qrange:Hide()
-                              gsoSDK.Menu.gsoDrawCircle1.qrangecolor:Hide()
-                              gsoSDK.Menu.gsoDrawCircle1.qrangewidth:Hide()
+                              gsoSDK.Menu.gsodraw.circle1.qrange:Hide()
+                              gsoSDK.Menu.gsodraw.circle1.qrangecolor:Hide()
+                              gsoSDK.Menu.gsodraw.circle1.qrangewidth:Hide()
                         end
                   })
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "qrange", name = "        Enabled", value = true})
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "qrangecolor", name = "        Color", color = DrawColor(255, 66, 134, 244)})
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "qrangewidth", name = "        Width", value = 1, min = 1, max = 10})
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "qrange", name = "        Enabled", value = true})
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "qrangecolor", name = "        Color", color = DrawColor(255, 66, 134, 244)})
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "qrangewidth", name = "        Width", value = 1, min = 1, max = 10})
             end
             if self.spellDraw.w then
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({name = "W Range", id = "note6", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({name = "W Range", id = "note6", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
                         onclick = function()
-                              gsoSDK.Menu.gsoDrawCircle1.wrange:Hide()
-                              gsoSDK.Menu.gsoDrawCircle1.wrangecolor:Hide()
-                              gsoSDK.Menu.gsoDrawCircle1.wrangewidth:Hide()
+                              gsoSDK.Menu.gsodraw.circle1.wrange:Hide()
+                              gsoSDK.Menu.gsodraw.circle1.wrangecolor:Hide()
+                              gsoSDK.Menu.gsodraw.circle1.wrangewidth:Hide()
                         end
                   })
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "wrange", name = "        Enabled", value = true})
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "wrangecolor", name = "        Color", color = DrawColor(255, 92, 66, 244)})
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "wrangewidth", name = "        Width", value = 1, min = 1, max = 10})
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "wrange", name = "        Enabled", value = true})
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "wrangecolor", name = "        Color", color = DrawColor(255, 92, 66, 244)})
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "wrangewidth", name = "        Width", value = 1, min = 1, max = 10})
             end
             if self.spellDraw.e then
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({name = "E Range", id = "note7", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({name = "E Range", id = "note7", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
                         onclick = function()
-                              gsoSDK.Menu.gsoDrawCircle1.erange:Hide()
-                              gsoSDK.Menu.gsoDrawCircle1.erangecolor:Hide()
-                              gsoSDK.Menu.gsoDrawCircle1.erangewidth:Hide()
+                              gsoSDK.Menu.gsodraw.circle1.erange:Hide()
+                              gsoSDK.Menu.gsodraw.circle1.erangecolor:Hide()
+                              gsoSDK.Menu.gsodraw.circle1.erangewidth:Hide()
                         end
                   })
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "erange", name = "        Enabled", value = true})
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "erangecolor", name = "        Color", color = DrawColor(255, 66, 244, 149)})
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "erangewidth", name = "        Width", value = 1, min = 1, max = 10})
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "erange", name = "        Enabled", value = true})
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "erangecolor", name = "        Color", color = DrawColor(255, 66, 244, 149)})
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "erangewidth", name = "        Width", value = 1, min = 1, max = 10})
             end
             if self.spellDraw.r then
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({name = "R Range", id = "note8", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({name = "R Range", id = "note8", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
                         onclick = function()
-                              gsoSDK.Menu.gsoDrawCircle1.rrange:Hide()
-                              gsoSDK.Menu.gsoDrawCircle1.rrangecolor:Hide()
-                              gsoSDK.Menu.gsoDrawCircle1.rrangewidth:Hide()
+                              gsoSDK.Menu.gsodraw.circle1.rrange:Hide()
+                              gsoSDK.Menu.gsodraw.circle1.rrangecolor:Hide()
+                              gsoSDK.Menu.gsodraw.circle1.rrangewidth:Hide()
                         end
                   })
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "rrange", name = "        Enabled", value = true})
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "rrangecolor", name = "        Color", color = DrawColor(255, 244, 182, 66)})
-                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "rrangewidth", name = "        Width", value = 1, min = 1, max = 10})
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "rrange", name = "        Enabled", value = true})
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "rrangecolor", name = "        Color", color = DrawColor(255, 244, 182, 66)})
+                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "rrangewidth", name = "        Width", value = 1, min = 1, max = 10})
             end
       end
       function __gsoSpell:Draw()
-            local drawMenu = gsoSDK.Menu.gsoDrawCircle1
+            local drawMenu = gsoSDK.Menu.gsodraw.circle1
             if self.spellDraw.q and drawMenu.qrange:Value() then
                   local qrange = self.spellDraw.qf and self.spellDraw.qf() or self.spellDraw.qr
                   DrawCircle(myHero.pos, qrange, drawMenu.qrangewidth:Value(), drawMenu.qrangecolor:Value())
