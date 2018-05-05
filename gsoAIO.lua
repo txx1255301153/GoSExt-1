@@ -14,6 +14,27 @@ local gsoSDK = {
       TS = nil,
       Orbwalker = nil
 }
+local myHero = myHero
+local GetTickCount = GetTickCount
+local MathSqrt = math.sqrt
+local DrawText = Draw.Text
+local GameTimer = Game.Timer
+local DrawColor = Draw.Color
+local DrawCircle = Draw.Circle
+local ControlKeyUp = Control.KeyUp
+local ControlKeyDown = Control.KeyDown
+local ControlIsKeyDown = Control.IsKeyDown
+local ControlMouseEvent = Control.mouse_event
+local ControlSetCursorPos = Control.SetCursorPos
+local GameCanUseSpell = Game.CanUseSpell
+local GameHeroCount = Game.HeroCount
+local GameHero = Game.Hero
+local GameMinionCount = Game.MinionCount
+local GameMinion = Game.Minion
+local GameTurretCount = Game.TurretCount
+local GameTurret = Game.Turret
+local GameIsChatOpen = Game.IsChatOpen
+local GameLatency = Game.Latency
 --[[
 ▒█▀▀█ █░░█ █▀▀█ █▀▀ █▀▀█ █▀▀█ 
 ▒█░░░ █░░█ █▄▄▀ ▀▀█ █░░█ █▄▄▀ 
@@ -31,33 +52,33 @@ class "__gsoCursor"
       function __gsoCursor:CreateDrawMenu(menu)
             gsoSDK.Menu.gsodraw:MenuElement({name = "Cursor Pos",  id = "cursor", type = MENU})
                   gsoSDK.Menu.gsodraw.cursor:MenuElement({name = "Enabled",  id = "enabled", value = true})
-                  gsoSDK.Menu.gsodraw.cursor:MenuElement({name = "Color",  id = "color", color = Draw.Color(255, 153, 0, 76)})
+                  gsoSDK.Menu.gsodraw.cursor:MenuElement({name = "Color",  id = "color", color = DrawColor(255, 153, 0, 76)})
                   gsoSDK.Menu.gsodraw.cursor:MenuElement({name = "Width",  id = "width", value = 3, min = 1, max = 10})
                   gsoSDK.Menu.gsodraw.cursor:MenuElement({name = "Radius",  id = "radius", value = 150, min = 1, max = 300})
       end
       function __gsoCursor:SetCursor(cPos, castPos, delay)
             self.ExtraSetCursor = castPos
             self.CursorReady = false
-            self.SetCursorPos = { EndTime = Game.Timer() + delay, Action = function() Control.SetCursorPos(cPos.x, cPos.y) end, Active = true }
+            self.SetCursorPos = { EndTime = GameTimer() + delay, Action = function() ControlSetCursorPos(cPos.x, cPos.y) end, Active = true }
       end
       function __gsoCursor:Tick()
             if self.SetCursorPos then
-                  if self.SetCursorPos.Active and Game.Timer() > self.SetCursorPos.EndTime then
+                  if self.SetCursorPos.Active and GameTimer() > self.SetCursorPos.EndTime then
                         self.SetCursorPos.Action()
                         self.SetCursorPos.Active = false
                         self.ExtraSetCursor = nil
-                  elseif not self.SetCursorPos.Active and Game.Timer() > self.SetCursorPos.EndTime + 0.025 then
+                  elseif not self.SetCursorPos.Active and GameTimer() > self.SetCursorPos.EndTime + 0.025 then
                         self.CursorReady = true
                         self.SetCursorPos = nil
                   end
             end
             if self.ExtraSetCursor then
-                  Control.SetCursorPos(self.ExtraSetCursor)
+                  ControlSetCursorPos(self.ExtraSetCursor)
             end
       end
       function __gsoCursor:Draw()
             if gsoSDK.Menu.gsodraw.cursor.enabled:Value() then
-                  Draw.Circle(mousePos, gsoSDK.Menu.gsodraw.cursor.radius:Value(), gsoSDK.Menu.gsodraw.cursor.width:Value(), gsoSDK.Menu.gsodraw.cursor.color:Value())
+                  DrawCircle(mousePos, gsoSDK.Menu.gsodraw.cursor.radius:Value(), gsoSDK.Menu.gsodraw.cursor.width:Value(), gsoSDK.Menu.gsodraw.cursor.color:Value())
             end
       end
 --[[
@@ -102,10 +123,10 @@ class "__gsoFarm"
                                     self.ActiveAttacks[k1][k2].FlyTime = v2.Ally.pos:DistanceTo(self:PredPos(v2.Speed, v2.Pos, v2.Enemy)) / v2.Speed
                               end
                               local projectileOnEnemy = 0.025 + gsoSDK.Utilities:GetMaxLatency()
-                              if Game.Timer() > v2.StartTime + self.ActiveAttacks[k1][k2].FlyTime - projectileOnEnemy or not v2.Enemy or v2.Enemy.dead then
+                              if GameTimer() > v2.StartTime + self.ActiveAttacks[k1][k2].FlyTime - projectileOnEnemy or not v2.Enemy or v2.Enemy.dead then
                                     self.ActiveAttacks[k1][k2] = nil
                               elseif ranged then
-                                    self.ActiveAttacks[k1][k2].Pos = v2.Ally.pos:Extended(v2.Enemy.pos, ( Game.Timer() - v2.StartTime ) * v2.Speed)
+                                    self.ActiveAttacks[k1][k2].Pos = v2.Ally.pos:Extended(v2.Enemy.pos, ( GameTimer() - v2.StartTime ) * v2.Speed)
                               end
                         end
                   end
@@ -122,7 +143,7 @@ class "__gsoFarm"
                   local almostLastHitable = lastHitable and false or self:MinionHpPredFast(enemyMinion, allyMinions, myHero.attackData.animationTime * 3) - damage < 0
                   if almostLastHitable then
                         self.ShouldWait = true
-                        self.ShouldWaitTime = Game.Timer()
+                        self.ShouldWaitTime = GameTimer()
                   end
                   return { LastHitable =  lastHitable, Unkillable = hpPred < 0, AlmostLastHitable = almostLastHitable, PredictedHP = hpPred, Minion = enemyMinion }
             elseif mode == "accuracy" then
@@ -132,7 +153,7 @@ class "__gsoFarm"
                   local almostLastHitable = lastHitable and false or self:MinionHpPredFast(enemyMinion, allyMinions, myHero.attackData.animationTime * 3) - damage < 0
                   if almostLastHitable then
                         self.ShouldWait = true
-                        self.ShouldWaitTime = Game.Timer()
+                        self.ShouldWaitTime = GameTimer()
                   end
                   return { LastHitable =  lastHitable, Unkillable = hpPred < 0, AlmostLastHitable = almostLastHitable, PredictedHP = hpPred, Minion = enemyMinion }
             end
@@ -145,7 +166,7 @@ class "__gsoFarm"
       end
       function __gsoFarm:CanLaneClearTime()
             local shouldWait = gsoSDK.Menu.ts.shouldwaittime:Value() * 0.001
-            return Game.Timer() > self.ShouldWaitTime + shouldWait
+            return GameTimer() > self.ShouldWaitTime + shouldWait
       end
       function __gsoFarm:MinionHpPredFast(unit, allyMinions, time)
             local unitHandle, unitPos, unitHealth = unit.handle, unit.pos, unit.health
@@ -155,8 +176,8 @@ class "__gsoFarm"
                         local minionDmg = (allyMinion.totalDamage*(1+allyMinion.bonusDamagePercent))-unit.flatDamageReduction
                         local flyTime = allyMinion.attackData.projectileSpeed > 0 and allyMinion.pos:DistanceTo(unitPos) / allyMinion.attackData.projectileSpeed or 0
                         local endTime = (allyMinion.attackData.endTime - allyMinion.attackData.animationTime) + flyTime + allyMinion.attackData.windUpTime
-                        endTime = endTime > Game.Timer() and endTime or endTime + allyMinion.attackData.animationTime + flyTime
-                        while endTime - Game.Timer() < time do
+                        endTime = endTime > GameTimer() and endTime or endTime + allyMinion.attackData.animationTime + flyTime
+                        while endTime - GameTimer() < time do
                               unitHealth = unitHealth - minionDmg
                               endTime = endTime + allyMinion.attackData.animationTime + flyTime
                         end
@@ -170,7 +191,7 @@ class "__gsoFarm"
                   for activeAttackID, activeAttack in pairs(self.ActiveAttacks[allyID]) do
                         if not activeAttack.Canceled and unitHandle == activeAttack.Enemy.handle then
                               local endTime = activeAttack.StartTime + activeAttack.FlyTime
-                              if endTime > Game.Timer() and endTime - Game.Timer() < time then
+                              if endTime > GameTimer() and endTime - GameTimer() < time then
                                     unitHealth = unitHealth - activeAttack.Dmg
                               end
                         end
@@ -181,7 +202,7 @@ class "__gsoFarm"
       function __gsoFarm:Tick(allyMinions, enemyMinions)
             for i = 1, #allyMinions do
                   local allyMinion = allyMinions[i]
-                  if allyMinion.attackData.endTime > Game.Timer() then
+                  if allyMinion.attackData.endTime > GameTimer() then
                         for j = 1, #enemyMinions do
                               local enemyMinion = enemyMinions[j]
                               if enemyMinion.handle == allyMinion.attackData.target then
@@ -189,16 +210,16 @@ class "__gsoFarm"
                                     if not self.ActiveAttacks[allyMinion.handle] then
                                           self.ActiveAttacks[allyMinion.handle] = {}
                                     end
-                                    if Game.Timer() < (allyMinion.attackData.endTime - allyMinion.attackData.windDownTime) + flyTime then
+                                    if GameTimer() < (allyMinion.attackData.endTime - allyMinion.attackData.windDownTime) + flyTime then
                                           if allyMinion.attackData.projectileSpeed > 0 then
-                                                if Game.Timer() > allyMinion.attackData.endTime - allyMinion.attackData.windDownTime then
+                                                if GameTimer() > allyMinion.attackData.endTime - allyMinion.attackData.windDownTime then
                                                       if not self.ActiveAttacks[allyMinion.handle][allyMinion.attackData.endTime] then
                                                             self.ActiveAttacks[allyMinion.handle][allyMinion.attackData.endTime] = {
                                                                   Canceled = false,
                                                                   Speed = allyMinion.attackData.projectileSpeed,
                                                                   StartTime = allyMinion.attackData.endTime - allyMinion.attackData.windDownTime,
                                                                   FlyTime = flyTime,
-                                                                  Pos = allyMinion.pos:Extended(enemyMinion.pos, allyMinion.attackData.projectileSpeed * ( Game.Timer() - ( allyMinion.attackData.endTime - allyMinion.attackData.windDownTime ) ) ),
+                                                                  Pos = allyMinion.pos:Extended(enemyMinion.pos, allyMinion.attackData.projectileSpeed * ( GameTimer() - ( allyMinion.attackData.endTime - allyMinion.attackData.windDownTime ) ) ),
                                                                   Ally = allyMinion,
                                                                   Enemy = enemyMinion,
                                                                   Dmg = (allyMinion.totalDamage*(1+allyMinion.bonusDamagePercent))-enemyMinion.flatDamageReduction
@@ -283,8 +304,8 @@ class "__gsoOB"
       end
       function __gsoOB:GetAllyHeroes(range, bb)
             local result = {}
-            for i = 1, Game.HeroCount() do
-                  local hero = Game.Hero(i)
+            for i = 1, GameHeroCount() do
+                  local hero = GameHero(i)
                   if hero and hero.team == myHero.team and self:IsUnitValid(hero, range, bb) then
                         result[#result+1] = hero
                   end
@@ -294,29 +315,29 @@ class "__gsoOB"
       function __gsoOB:GetEnemyHeroes(range, bb, state)
             local result = {}
             if state == "spell" then
-                  for i = 1, Game.HeroCount() do
-                        local hero = Game.Hero(i)
+                  for i = 1, GameHeroCount() do
+                        local hero = GameHero(i)
                         if hero and hero.team ~= myHero.team and self:IsUnitValid(hero, range, bb) and not self:IsHeroImmortal(hero, false) then
                               result[#result+1] = hero
                         end
                   end
             elseif state == "attack" then
-                  for i = 1, Game.HeroCount() do
-                        local hero = Game.Hero(i)
+                  for i = 1, GameHeroCount() do
+                        local hero = GameHero(i)
                         if hero and hero.team ~= myHero.team and self:IsUnitValid(hero, range, bb) and not self:IsHeroImmortal(hero, true) then
                               result[#result+1] = hero
                         end
                   end
             elseif state == "immortal" then
-                  for i = 1, Game.HeroCount() do
-                        local hero = Game.Hero(i)
+                  for i = 1, GameHeroCount() do
+                        local hero = GameHero(i)
                         if hero and hero.team ~= myHero.team and self:IsUnitValid(hero, range, bb) then
                               result[#result+1] = hero
                         end
                   end
             elseif state == "spell_invisible" then
-                  for i = 1, Game.HeroCount() do
-                        local hero = Game.Hero(i)
+                  for i = 1, GameHeroCount() do
+                        local hero = GameHero(i)
                         if hero and hero.team ~= myHero.team and self:IsUnitValid_invisible(hero, range, bb) then
                               result[#result+1] = hero
                         end
@@ -326,8 +347,8 @@ class "__gsoOB"
       end
       function __gsoOB:GetAllyTurrets(range, bb)
             local result = {}
-            for i = 1, Game.TurretCount() do
-                  local turret = Game.Turret(i)
+            for i = 1, GameTurretCount() do
+                  local turret = GameTurret(i)
                   if turret and turret.team == myHero.team and self:IsUnitValid(turret, range, bb)  then
                         result[#result+1] = turret
                   end
@@ -336,8 +357,8 @@ class "__gsoOB"
       end
       function __gsoOB:GetEnemyTurrets(range, bb)
             local result = {}
-            for i = 1, Game.TurretCount() do
-                  local turret = Game.Turret(i)
+            for i = 1, GameTurretCount() do
+                  local turret = GameTurret(i)
                   if turret and turret.team ~= myHero.team and self:IsUnitValid(turret, range, bb) and not turret.isImmortal then
                         result[#result+1] = turret
                   end
@@ -346,8 +367,8 @@ class "__gsoOB"
       end
       function __gsoOB:GetAllyMinions(range, bb)
             local result = {}
-            for i = 1, Game.MinionCount() do
-                  local minion = Game.Minion(i)
+            for i = 1, GameMinionCount() do
+                  local minion = GameMinion(i)
                   if minion and minion.team == myHero.team and self:IsUnitValid(minion, range, bb) then
                         result[#result+1] = minion
                   end
@@ -356,8 +377,8 @@ class "__gsoOB"
       end
       function __gsoOB:GetEnemyMinions(range, bb)
             local result = {}
-            for i = 1, Game.MinionCount() do
-                  local minion = Game.Minion(i)
+            for i = 1, GameMinionCount() do
+                  local minion = GameMinion(i)
                   if minion and minion.team ~= myHero.team and self:IsUnitValid(minion, range, bb) and not minion.isImmortal then
                         result[#result+1] = minion
                   end
@@ -365,12 +386,12 @@ class "__gsoOB"
             return result
       end
       function __gsoOB:Tick()
-            for i = 1, Game.HeroCount() do end
-            for i = 1, Game.TurretCount() do end
-            for i = 1, Game.MinionCount() do end
+            for i = 1, GameHeroCount() do end
+            for i = 1, GameTurretCount() do end
+            for i = 1, GameMinionCount() do end
             if self.LoadedChamps then return end
-            for i = 1, Game.HeroCount() do
-                  local hero = Game.Hero(i)
+            for i = 1, GameHeroCount() do
+                  local hero = GameHero(i)
                   local eName = hero.charName
                   if eName and #eName > 0 then
                         local isNewHero = true
@@ -383,7 +404,7 @@ class "__gsoOB"
                               end
                               if isNewHero then
                                     self.EnemyHeroes[#self.EnemyHeroes+1] = hero
-                                    self.LastFound = Game.Timer()
+                                    self.LastFound = GameTimer()
                                     if eName == "Kayle" then self.UndyingBuffs["JudicatorIntervention"] = true
                                     elseif eName == "Taric" then self.UndyingBuffs["TaricR"] = true
                                     elseif eName == "Kindred" then self.UndyingBuffs["kindredrnodeathbuff"] = true
@@ -410,7 +431,7 @@ class "__gsoOB"
                         end
                   end
             end
-            if Game.Timer() > self.LastFound + 2.5 and Game.Timer() < self.LastFound + 5 then
+            if GameTimer() > self.LastFound + 2.5 and GameTimer() < self.LastFound + 5 then
                   self.LoadedChamps = true
                   for i = 1, #self.AllyHeroes do
                         for j = 1, #self.AllyHeroLoad do
@@ -431,7 +452,7 @@ class "__gsoOB"
 ]]
 class "__gsoOrbwalker"
       function __gsoOrbwalker:__init()
-            self.LoadTime = Game.Timer()
+            self.LoadTime = GameTimer()
             self.IsTeemo = false
             self.IsBlindedByTeemo = false
             self.LastAttackLocal = 0
@@ -481,18 +502,18 @@ class "__gsoOrbwalker"
       function __gsoOrbwalker:CreateDrawMenu(menu)
             gsoSDK.Menu.gsodraw:MenuElement({name = "MyHero Attack Range", id = "me", type = MENU})
                   gsoSDK.Menu.gsodraw.me:MenuElement({name = "Enabled",  id = "enabled", value = true})
-                  gsoSDK.Menu.gsodraw.me:MenuElement({name = "Color",  id = "color", color = Draw.Color(150, 49, 210, 0)})
+                  gsoSDK.Menu.gsodraw.me:MenuElement({name = "Color",  id = "color", color = DrawColor(150, 49, 210, 0)})
                   gsoSDK.Menu.gsodraw.me:MenuElement({name = "Width",  id = "width", value = 1, min = 1, max = 10})
             gsoSDK.Menu.gsodraw:MenuElement({name = "Enemy Attack Range", id = "he", type = MENU})
                   gsoSDK.Menu.gsodraw.he:MenuElement({name = "Enabled",  id = "enabled", value = true})
-                  gsoSDK.Menu.gsodraw.he:MenuElement({name = "Color",  id = "color", color = Draw.Color(150, 255, 0, 0)})
+                  gsoSDK.Menu.gsodraw.he:MenuElement({name = "Color",  id = "color", color = DrawColor(150, 255, 0, 0)})
                   gsoSDK.Menu.gsodraw.he:MenuElement({name = "Width",  id = "width", value = 1, min = 1, max = 10})
       end
       function __gsoOrbwalker:GetAttackSpeed()
             return myHero.attackSpeed
       end
       function __gsoOrbwalker:GetAvgLatency()
-            local currentLatency = Game.Latency() * 0.001
+            local currentLatency = GameLatency() * 0.001
             local latency = gsoSDK.Utilities:GetMinLatency() + gsoSDK.Utilities:GetMaxLatency() + currentLatency
             return latency / 3
       end
@@ -590,20 +611,20 @@ class "__gsoOrbwalker"
       end
       function __gsoOrbwalker:WndMsg(msg, wParam)
             if wParam == HK_TCO then
-                  self.LastAttackLocal = Game.Timer()
+                  self.LastAttackLocal = GameTimer()
             end
       end
       function __gsoOrbwalker:Draw()
             if not gsoSDK.Menu.orb.enabledorb:Value() then return end
             if gsoSDK.Menu.gsodraw.me.enabled:Value() and myHero.pos:ToScreen().onScreen then
-                  Draw.Circle(myHero.pos, myHero.range + myHero.boundingRadius + 35, gsoSDK.Menu.gsodraw.me.width:Value(), gsoSDK.Menu.gsodraw.me.color:Value())
+                  DrawCircle(myHero.pos, myHero.range + myHero.boundingRadius + 35, gsoSDK.Menu.gsodraw.me.width:Value(), gsoSDK.Menu.gsodraw.me.color:Value())
             end
             if gsoSDK.Menu.gsodraw.he.enabled:Value() then
                   local enemyHeroes = gsoSDK.ObjectManager:GetEnemyHeroes(99999999, false, "immortal")
                   for i = 1, #enemyHeroes do
                         local enemy = enemyHeroes[i]
                         if enemy.pos:ToScreen().onScreen then
-                              Draw.Circle(enemy.pos, enemy.range + enemy.boundingRadius + 35, gsoSDK.Menu.gsodraw.he.width:Value(), gsoSDK.Menu.gsodraw.he.color:Value())
+                              DrawCircle(enemy.pos, enemy.range + enemy.boundingRadius + 35, gsoSDK.Menu.gsodraw.he.width:Value(), gsoSDK.Menu.gsodraw.he.color:Value())
                         end
                   end
             end
@@ -617,29 +638,29 @@ class "__gsoOrbwalker"
       function __gsoOrbwalker:Attack(unit)
             self.ResetAttack = false
             gsoSDK.Cursor:SetCursor(cursorPos, unit.pos, 0.06)
-            Control.SetCursorPos(unit.pos)
-            Control.KeyDown(HK_TCO)
-            Control.mouse_event(MOUSEEVENTF_RIGHTDOWN)
-            Control.mouse_event(MOUSEEVENTF_RIGHTUP)
-            Control.KeyUp(HK_TCO)
+            ControlSetCursorPos(unit.pos)
+            ControlKeyDown(HK_TCO)
+            ControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
+            ControlMouseEvent(MOUSEEVENTF_RIGHTUP)
+            ControlKeyUp(HK_TCO)
             self.LastMoveLocal = 0
-            self.LastAttackLocal  = Game.Timer()
+            self.LastAttackLocal  = GameTimer()
             self.LastTarget = unit
       end
       function __gsoOrbwalker:Move()
-            if Control.IsKeyDown(2) then self.LastMouseDown = Game.Timer() end
+            if ControlIsKeyDown(2) then self.LastMouseDown = GameTimer() end
             self.LastMovePos = mousePos
-            Control.mouse_event(MOUSEEVENTF_RIGHTDOWN)
-            Control.mouse_event(MOUSEEVENTF_RIGHTUP)
-            self.LastMoveLocal = Game.Timer() + gsoSDK.Menu.orb.humanizer:Value() * 0.001
+            ControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
+            ControlMouseEvent(MOUSEEVENTF_RIGHTUP)
+            self.LastMoveLocal = GameTimer() + gsoSDK.Menu.orb.humanizer:Value() * 0.001
       end
       function __gsoOrbwalker:MoveToPos(pos)
-            if Control.IsKeyDown(2) then self.LastMouseDown = Game.Timer() end
+            if ControlIsKeyDown(2) then self.LastMouseDown = GameTimer() end
             gsoSDK.Cursor:SetCursor(cursorPos, pos, 0.06)
-            Control.SetCursorPos(pos)
-            Control.mouse_event(MOUSEEVENTF_RIGHTDOWN)
-            Control.mouse_event(MOUSEEVENTF_RIGHTUP)
-            self.LastMoveLocal = Game.Timer() + gsoSDK.Menu.orb.humanizer:Value() * 0.001
+            ControlSetCursorPos(pos)
+            ControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
+            ControlMouseEvent(MOUSEEVENTF_RIGHTUP)
+            self.LastMoveLocal = GameTimer() + gsoSDK.Menu.orb.humanizer:Value() * 0.001
       end
       function __gsoOrbwalker:CanAttack()
             if not self.CanAttackC() then return false end
@@ -651,7 +672,7 @@ class "__gsoOrbwalker"
                   return true
             end
             local animDelay = gsoSDK.Menu.orb.animdelay:Value() * 0.001
-            if Game.Timer() < self.LastAttackLocal + self.AnimTime + self.LastAttackDiff + animDelay - 0.15 - self:GetAvgLatency() then
+            if GameTimer() < self.LastAttackLocal + self.AnimTime + self.LastAttackDiff + animDelay - 0.15 - self:GetAvgLatency() then
                   return false
             end
             return true
@@ -659,13 +680,13 @@ class "__gsoOrbwalker"
       function __gsoOrbwalker:CanMove()
             if not self.CanMoveC() then return false end
             if not gsoSDK.Spell:CheckSpellDelays(self.SpellMoveDelays) then return false end
-            local latency = math.min(gsoSDK.Utilities:GetMinLatency(), Game.Latency() * 0.001) * 0.75
+            local latency = math.min(gsoSDK.Utilities:GetMinLatency(), GameLatency() * 0.001) * 0.75
             latency = math.min(latency, gsoSDK.Utilities:GetUserLatency())
             local windUpDelay = gsoSDK.Menu.orb.windupdelay:Value() * 0.001
-            if Game.Timer() < self.LastAttackLocal + self.WindUpTime + self.LastAttackDiff - latency - 0.025 + windUpDelay then
+            if GameTimer() < self.LastAttackLocal + self.WindUpTime + self.LastAttackDiff - latency - 0.025 + windUpDelay then
                   return false
             end
-            if self.LastAttackLocal > self.LastAttackServer and Game.Timer() < self.LastAttackLocal + self.WindUpTime + self.LastAttackDiff - latency + 0.025 + windUpDelay then return false end
+            if self.LastAttackLocal > self.LastAttackServer and GameTimer() < self.LastAttackLocal + self.WindUpTime + self.LastAttackDiff - latency + 0.025 + windUpDelay then return false end
             return true
       end
       function __gsoOrbwalker:AttackMove(unit)
@@ -686,7 +707,7 @@ class "__gsoOrbwalker"
                         end
                         self.PostAttackBool = false
                   end
-                  if Game.Timer() > self.LastMoveLocal then
+                  if GameTimer() > self.LastMoveLocal then
                         local args = { Target = nil, Process = true }
                         for i = 1, #self.OnPreMoveC do
                               self.OnPreMoveC[i](args)
@@ -706,7 +727,7 @@ class "__gsoOrbwalker"
             end
       end
       function __gsoOrbwalker:Tick()
-            if not self.Loaded and Game.Timer() > self.LoadTime + 2.5 then
+            if not self.Loaded and GameTimer() > self.LoadTime + 2.5 then
                   self.Loaded = true
             end
             if not self.Loaded then return end
@@ -721,27 +742,27 @@ class "__gsoOrbwalker"
                   end
                   local serverStart = myHero.attackData.endTime - myHero.attackData.animationTime
                   self.LastAttackDiff = serverStart - self.LastAttackLocal
-                  self.LastAttackServer = Game.Timer()
+                  self.LastAttackServer = GameTimer()
                   self.AttackEndTime = myHero.attackData.endTime
                   if gsoSDK.Menu.orb.enabled:Value() then
                         if self.TestCount == 0 then
-                              self.TestStartTime = Game.Timer()
+                              self.TestStartTime = GameTimer()
                         end
                         self.TestCount = self.TestCount + 1
                         if self.TestCount == 5 then
-                              print("5 attacks in time: " .. tostring(Game.Timer() - self.TestStartTime) .. "[sec]")
+                              print("5 attacks in time: " .. tostring(GameTimer() - self.TestStartTime) .. "[sec]")
                               self.TestCount = 0
                               self.TestStartTime = 0
                         end
                   end
             end
             -- RESET ATTACK
-            if self.LastAttackLocal > self.LastAttackServer and Game.Timer() > self.LastAttackLocal + 0.15 + gsoSDK.Utilities:GetMaxLatency() then
+            if self.LastAttackLocal > self.LastAttackServer and GameTimer() > self.LastAttackLocal + 0.15 + gsoSDK.Utilities:GetMaxLatency() then
                   if gsoSDK.Menu.orb.enabled:Value() then
                         print("reset attack1")
                   end
                   self.LastAttackLocal = 0
-            elseif self.LastAttackLocal < self.LastAttackServer and Game.Timer() < self.LastAttackLocal + myHero.attackData.windUpTime and myHero.pathing.hasMovePath then
+            elseif self.LastAttackLocal < self.LastAttackServer and GameTimer() < self.LastAttackLocal + myHero.attackData.windUpTime and myHero.pathing.hasMovePath then
                   if gsoSDK.Menu.orb.enabled:Value() then
                         print("reset attack2")
                   end
@@ -751,7 +772,7 @@ class "__gsoOrbwalker"
             self:SetAttackTimers()
             -- CHECK IF CAN ORBWALK
             local isEvading = ExtLibEvade and ExtLibEvade.Evading
-            if not gsoSDK.Cursor:IsCursorReady() or Game.IsChatOpen() or isEvading then
+            if not gsoSDK.Cursor:IsCursorReady() or GameIsChatOpen() or isEvading then
                   return
             end
             -- ORBWALKER MODE
@@ -774,11 +795,11 @@ class "__gsoOrbwalker"
                         self:AttackMove()
                   end
             elseif gsoSDK.Menu.orb.keys.flee:Value() then
-                  if self.MovementEnabled and Game.Timer() > self.LastMoveLocal and self:CanMove() then
+                  if self.MovementEnabled and GameTimer() > self.LastMoveLocal and self:CanMove() then
                         self:Move()
                   end
-            elseif Game.Timer() < self.LastMouseDown + 1 then
-                  Control.mouse_event(MOUSEEVENTF_RIGHTDOWN)
+            elseif GameTimer() < self.LastMouseDown + 1 then
+                  ControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
                   self.LastMouseDown = 0
             end
       end
@@ -819,7 +840,7 @@ class "__gsoPrediction"
       function __gsoPrediction:VectorMovementCollision(startPoint1, endPoint1, v1, startPoint2, v2, delay)
           local sP1x, sP1y, eP1x, eP1y, sP2x, sP2y = startPoint1.x, startPoint1.z, endPoint1.x, endPoint1.z, startPoint2.x, startPoint2.z
           local d, e = eP1x-sP1x, eP1y-sP1y
-          local dist, t1, t2 = mathSqrt(d*d+e*e), nil, nil
+          local dist, t1, t2 = MathSqrt(d*d+e*e), nil, nil
           local S, K = dist~=0 and v1*d/dist or 0, dist~=0 and v1*e/dist or 0
           local function GetCollisionPoint(t) return t and {x = sP1x+S*t, y = sP1y+K*t} or nil end
           if delay and delay~=0 then sP1x, sP1y = sP1x+S*delay, sP1y+K*delay end
@@ -843,7 +864,7 @@ class "__gsoPrediction"
                   else --a*t*t+2*b*t+c=0
                       local sqr = b*b-a*c
                       if sqr>=0 then
-                          local nom = mathSqrt(sqr)
+                          local nom = MathSqrt(sqr)
                           local t = (-nom-b)/a
                           t1 = v2*t>=0 and t or nil
                           t = (nom-b)/a
@@ -876,7 +897,7 @@ class "__gsoPrediction"
           return (p1.x - p2.x) ^ 2 + ((p1.z or p1.y) - (p2.z or p2.y)) ^ 2
       end
       function __gsoPrediction:GetDistance(p1, p2)
-          return mathSqrt(self:GetDistanceSqr(p1, p2))
+          return MathSqrt(self:GetDistanceSqr(p1, p2))
       end
       function __gsoPrediction:GetWaypointsLength(Waypoints)
           local result = 0
@@ -1021,7 +1042,7 @@ class "__gsoPrediction"
               from = Vector(mePos)
           end
           local IsFromMyHero = self:GetDistanceSqr(from, mePos) < 50*50 and true or false
-          delay = delay + (0.07 + Game.Latency() / 2000)
+          delay = delay + (0.07 + GameLatency() / 2000)
           local Position, CastPosition = self:CalculateTargetPosition(unit, delay, radius, speed, from, spelltype)
           local HitChance = 1
           if (self:IsImmobile(unit, delay, radius, speed, from, spelltype)) then
@@ -1175,7 +1196,7 @@ class "__gsoSpell"
             elseif myHero.charName == "Ivern" then
                   self.spellDraw = { q = true, qr = 1075, w = true, wr = 1000, e = true, er = 750 + 120 }
             elseif myHero.charName == "Janna" then
-                  self.spellDraw = { q = true, qf = function() local qt = Game.Timer() - self.LastQk;if qt > 3 then return 1000 end local qrange = qt * 250;if qrange > 1750 then return 1750 end return qrange end, w = true, wr = 550 + 120, e = true, er = 800 + 120, r = true, rr = 725 }
+                  self.spellDraw = { q = true, qf = function() local qt = GameTimer() - self.LastQk;if qt > 3 then return 1000 end local qrange = qt * 250;if qrange > 1750 then return 1750 end return qrange end, w = true, wr = 550 + 120, e = true, er = 800 + 120, r = true, rr = 725 }
             elseif myHero.charName == "JarvanIV" then
                   self.spellDraw = { q = true, qr = 770, w = true, wr = 625, e = true, er = 860, r = true, rr = 650 + 120 }
             elseif myHero.charName == "Jax" then
@@ -1283,22 +1304,22 @@ class "__gsoSpell"
             return self:CalculateDmg(unit, spellData)
       end
       function __gsoSpell:CheckSpellDelays(delays)
-            if Game.Timer() < self.LastQ + delays.q or Game.Timer() < self.LastQk + delays.q then return false end
-            if Game.Timer() < self.LastW + delays.w or Game.Timer() < self.LastWk + delays.w then return false end
-            if Game.Timer() < self.LastE + delays.e or Game.Timer() < self.LastEk + delays.e then return false end
-            if Game.Timer() < self.LastR + delays.r or Game.Timer() < self.LastRk + delays.r then return false end
+            if GameTimer() < self.LastQ + delays.q or GameTimer() < self.LastQk + delays.q then return false end
+            if GameTimer() < self.LastW + delays.w or GameTimer() < self.LastWk + delays.w then return false end
+            if GameTimer() < self.LastE + delays.e or GameTimer() < self.LastEk + delays.e then return false end
+            if GameTimer() < self.LastR + delays.r or GameTimer() < self.LastRk + delays.r then return false end
             return true
       end
       function __gsoSpell:CustomIsReady(spell, cd)
             local passT
             if spell == _Q then
-                  passT = Game.Timer() - self.LastQk
+                  passT = GameTimer() - self.LastQk
             elseif spell == _W then
-                  passT = Game.Timer() - self.LastWk
+                  passT = GameTimer() - self.LastWk
             elseif spell == _E then
-                  passT = Game.Timer() - self.LastEk
+                  passT = GameTimer() - self.LastEk
             elseif spell == _R then
-                  passT = Game.Timer() - self.LastRk
+                  passT = GameTimer() - self.LastRk
             end
             local cdr = 1 - myHero.cdr
             cd = cd * cdr
@@ -1308,7 +1329,7 @@ class "__gsoSpell"
             return false
       end
       function __gsoSpell:IsReady(spell, delays)
-            return gsoSDK.Cursor.IsCursorReady() and self:CheckSpellDelays(delays) and Game.CanUseSpell(spell) == 0
+            return gsoSDK.Cursor.IsCursorReady() and self:CheckSpellDelays(delays) and GameCanUseSpell(spell) == 0
       end
       function __gsoSpell:CastSpell(spell, target, linear)
             if not spell then return false end
@@ -1318,51 +1339,51 @@ class "__gsoSpell"
             local isR = spell == _R
             if isQ then
                   spell = HK_Q
-                  if Game.Timer() < self.LastQ + 0.35 then
+                  if GameTimer() < self.LastQ + 0.35 then
                         return false
                   end
             elseif isW then
                   spell = HK_W
-                  if Game.Timer() < self.LastW + 0.35 then
+                  if GameTimer() < self.LastW + 0.35 then
                         return false
                   end
             elseif isE then
                   spell = HK_E
-                  if Game.Timer() < self.LastE + 0.35 then
+                  if GameTimer() < self.LastE + 0.35 then
                         return false
                   end
             elseif isR then
                   spell = HK_R
-                  if Game.Timer() < self.LastR + 0.35 then
+                  if GameTimer() < self.LastR + 0.35 then
                         return false
                   end
             end
             local result = false
             if not target then
-                  Control.KeyDown(spell)
-                  Control.KeyUp(spell)
+                  ControlKeyDown(spell)
+                  ControlKeyUp(spell)
                   result = true
             else
                   local castpos = target.x and target or target.pos
                   if linear then myHero.pos:Extended(castpos, 750) end
                   if castpos:ToScreen().onScreen then
                         gsoSDK.Cursor:SetCursor(cursorPos, castpos, 0.06)
-                        Control.SetCursorPos(castpos)
-                        Control.KeyDown(spell)
-                        Control.KeyUp(spell)
+                        ControlSetCursorPos(castpos)
+                        ControlKeyDown(spell)
+                        ControlKeyUp(spell)
                         gsoSDK.Orbwalker:ResetMove()
                         result = true
                   end
             end
             if result then
                   if isQ then
-                        self.LastQ = Game.Timer()
+                        self.LastQ = GameTimer()
                   elseif isW then
-                        self.LastW = Game.Timer()
+                        self.LastW = GameTimer()
                   elseif isE then
-                        self.LastE = Game.Timer()
+                        self.LastE = GameTimer()
                   elseif isR then
-                        self.LastR = Game.Timer()
+                        self.LastR = GameTimer()
                   end
             end
             return result
@@ -1376,25 +1397,25 @@ class "__gsoSpell"
             elseif spell == _R then
                   kNum = 3
             end
-            if Game.CanUseSpell(spell) == 0 then
+            if GameCanUseSpell(spell) == 0 then
                   for k,v in pairs(self.DelayedSpell) do
                         if k == kNum then
                               if gsoSDK.Cursor.IsCursorReady() then
                                     v[1]()
                                     gsoSDK.Cursor:SetCursor(cursorPos, nil, 0.05)
                                     if k == 0 then
-                                          self.LastQ = Game.Timer()
+                                          self.LastQ = GameTimer()
                                     elseif k == 1 then
-                                          self.LastW = Game.Timer()
+                                          self.LastW = GameTimer()
                                     elseif k == 2 then
-                                          self.LastE = Game.Timer()
+                                          self.LastE = GameTimer()
                                     elseif k == 3 then
-                                          self.LastR = Game.Timer()
+                                          self.LastR = GameTimer()
                                     end
                                     self.DelayedSpell[k] = nil
                                     break
                               end
-                              if Game.Timer() - v[2] > 0.125 then
+                              if GameTimer() - v[2] > 0.125 then
                                     self.DelayedSpell[k] = nil
                               end
                               break
@@ -1404,32 +1425,32 @@ class "__gsoSpell"
       end
       function __gsoSpell:WndMsg(msg, wParam)
             local manualNum = -1
-            if wParam == HK_Q and Game.Timer() > self.LastQk + 1 and Game.CanUseSpell(_Q) == 0 then
-                  self.LastQk = Game.Timer()
+            if wParam == HK_Q and GameTimer() > self.LastQk + 1 and GameCanUseSpell(_Q) == 0 then
+                  self.LastQk = GameTimer()
                   manualNum = 0
-            elseif wParam == HK_W and Game.Timer() > self.LastWk + 1 and Game.CanUseSpell(_W) == 0 then
-                  self.LastWk = Game.Timer()
+            elseif wParam == HK_W and GameTimer() > self.LastWk + 1 and GameCanUseSpell(_W) == 0 then
+                  self.LastWk = GameTimer()
                   manualNum = 1
-            elseif wParam == HK_E and Game.Timer() > self.LastEk + 1 and Game.CanUseSpell(_E) == 0 then
-                  self.LastEk = Game.Timer()
+            elseif wParam == HK_E and GameTimer() > self.LastEk + 1 and GameCanUseSpell(_E) == 0 then
+                  self.LastEk = GameTimer()
                   manualNum = 2
-            elseif wParam == HK_R and Game.Timer() > self.LastRk + 1 and Game.CanUseSpell(_R) == 0 then
-                  self.LastRk = Game.Timer()
+            elseif wParam == HK_R and GameTimer() > self.LastRk + 1 and GameCanUseSpell(_R) == 0 then
+                  self.LastRk = GameTimer()
                   manualNum = 3
             end
             if manualNum > -1 and not self.DelayedSpell[manualNum] then
-                  local drawMenu = gsoSDK.Menu.gsodraw.circle1
+                  local drawMenu = gsoSDK.Menu.gsoDrawCircle1
                   if gsoSDK.Menu.orb.keys.combo:Value() or gsoSDK.Menu.orb.keys.harass:Value() or gsoSDK.Menu.orb.keys.lasthit:Value() or gsoSDK.Menu.orb.keys.laneclear:Value() or gsoSDK.Menu.orb.keys.flee:Value() then
                         self.DelayedSpell[manualNum] = {
                               function()
-                                    Control.KeyDown(wParam)
-                                    Control.KeyUp(wParam)
-                                    Control.KeyDown(wParam)
-                                    Control.KeyUp(wParam)
-                                    Control.KeyDown(wParam)
-                                    Control.KeyUp(wParam)
+                                    ControlKeyDown(wParam)
+                                    ControlKeyUp(wParam)
+                                    ControlKeyDown(wParam)
+                                    ControlKeyUp(wParam)
+                                    ControlKeyDown(wParam)
+                                    ControlKeyUp(wParam)
                               end,
-                              Game.Timer()
+                              GameTimer()
                         }
                   end
             end
@@ -1438,93 +1459,93 @@ class "__gsoSpell"
             gsoSDK.Menu.gsodraw:MenuElement({name = "Spell Ranges", id = "circle1", type = MENU,
                   onclick = function()
                         if self.spellDraw.q then
-                              gsoSDK.Menu.gsodraw.circle1.qrange:Hide(true)
-                              gsoSDK.Menu.gsodraw.circle1.qrangecolor:Hide(true)
-                              gsoSDK.Menu.gsodraw.circle1.qrangewidth:Hide(true)
+                              gsoSDK.Menu.gsoDrawCircle1.qrange:Hide(true)
+                              gsoSDK.Menu.gsoDrawCircle1.qrangecolor:Hide(true)
+                              gsoSDK.Menu.gsoDrawCircle1.qrangewidth:Hide(true)
                         end
                         if self.spellDraw.w then
-                              gsoSDK.Menu.gsodraw.circle1.wrange:Hide(true)
-                              gsoSDK.Menu.gsodraw.circle1.wrangecolor:Hide(true)
-                              gsoSDK.Menu.gsodraw.circle1.wrangewidth:Hide(true)
+                              gsoSDK.Menu.gsoDrawCircle1.wrange:Hide(true)
+                              gsoSDK.Menu.gsoDrawCircle1.wrangecolor:Hide(true)
+                              gsoSDK.Menu.gsoDrawCircle1.wrangewidth:Hide(true)
                         end
                         if self.spellDraw.e then
-                              gsoSDK.Menu.gsodraw.circle1.erange:Hide(true)
-                              gsoSDK.Menu.gsodraw.circle1.erangecolor:Hide(true)
-                              gsoSDK.Menu.gsodraw.circle1.erangewidth:Hide(true)
+                              gsoSDK.Menu.gsoDrawCircle1.erange:Hide(true)
+                              gsoSDK.Menu.gsoDrawCircle1.erangecolor:Hide(true)
+                              gsoSDK.Menu.gsoDrawCircle1.erangewidth:Hide(true)
                         end
                         if self.spellDraw.r then
-                              gsoSDK.Menu.gsodraw.circle1.rrange:Hide(true)
-                              gsoSDK.Menu.gsodraw.circle1.rrangecolor:Hide(true)
-                              gsoSDK.Menu.gsodraw.circle1.rrangewidth:Hide(true)
+                              gsoSDK.Menu.gsoDrawCircle1.rrange:Hide(true)
+                              gsoSDK.Menu.gsoDrawCircle1.rrangecolor:Hide(true)
+                              gsoSDK.Menu.gsoDrawCircle1.rrangewidth:Hide(true)
                         end
                   end
             })
             if self.spellDraw.q then
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({name = "Q Range", id = "note5", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({name = "Q Range", id = "note5", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
                         onclick = function()
-                              gsoSDK.Menu.gsodraw.circle1.qrange:Hide()
-                              gsoSDK.Menu.gsodraw.circle1.qrangecolor:Hide()
-                              gsoSDK.Menu.gsodraw.circle1.qrangewidth:Hide()
+                              gsoSDK.Menu.gsoDrawCircle1.qrange:Hide()
+                              gsoSDK.Menu.gsoDrawCircle1.qrangecolor:Hide()
+                              gsoSDK.Menu.gsoDrawCircle1.qrangewidth:Hide()
                         end
                   })
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "qrange", name = "        Enabled", value = true})
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "qrangecolor", name = "        Color", color = Draw.Color(255, 66, 134, 244)})
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "qrangewidth", name = "        Width", value = 1, min = 1, max = 10})
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "qrange", name = "        Enabled", value = true})
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "qrangecolor", name = "        Color", color = DrawColor(255, 66, 134, 244)})
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "qrangewidth", name = "        Width", value = 1, min = 1, max = 10})
             end
             if self.spellDraw.w then
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({name = "W Range", id = "note6", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({name = "W Range", id = "note6", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
                         onclick = function()
-                              gsoSDK.Menu.gsodraw.circle1.wrange:Hide()
-                              gsoSDK.Menu.gsodraw.circle1.wrangecolor:Hide()
-                              gsoSDK.Menu.gsodraw.circle1.wrangewidth:Hide()
+                              gsoSDK.Menu.gsoDrawCircle1.wrange:Hide()
+                              gsoSDK.Menu.gsoDrawCircle1.wrangecolor:Hide()
+                              gsoSDK.Menu.gsoDrawCircle1.wrangewidth:Hide()
                         end
                   })
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "wrange", name = "        Enabled", value = true})
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "wrangecolor", name = "        Color", color = Draw.Color(255, 92, 66, 244)})
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "wrangewidth", name = "        Width", value = 1, min = 1, max = 10})
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "wrange", name = "        Enabled", value = true})
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "wrangecolor", name = "        Color", color = DrawColor(255, 92, 66, 244)})
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "wrangewidth", name = "        Width", value = 1, min = 1, max = 10})
             end
             if self.spellDraw.e then
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({name = "E Range", id = "note7", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({name = "E Range", id = "note7", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
                         onclick = function()
-                              gsoSDK.Menu.gsodraw.circle1.erange:Hide()
-                              gsoSDK.Menu.gsodraw.circle1.erangecolor:Hide()
-                              gsoSDK.Menu.gsodraw.circle1.erangewidth:Hide()
+                              gsoSDK.Menu.gsoDrawCircle1.erange:Hide()
+                              gsoSDK.Menu.gsoDrawCircle1.erangecolor:Hide()
+                              gsoSDK.Menu.gsoDrawCircle1.erangewidth:Hide()
                         end
                   })
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "erange", name = "        Enabled", value = true})
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "erangecolor", name = "        Color", color = Draw.Color(255, 66, 244, 149)})
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "erangewidth", name = "        Width", value = 1, min = 1, max = 10})
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "erange", name = "        Enabled", value = true})
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "erangecolor", name = "        Color", color = DrawColor(255, 66, 244, 149)})
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "erangewidth", name = "        Width", value = 1, min = 1, max = 10})
             end
             if self.spellDraw.r then
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({name = "R Range", id = "note8", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({name = "R Range", id = "note8", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
                         onclick = function()
-                              gsoSDK.Menu.gsodraw.circle1.rrange:Hide()
-                              gsoSDK.Menu.gsodraw.circle1.rrangecolor:Hide()
-                              gsoSDK.Menu.gsodraw.circle1.rrangewidth:Hide()
+                              gsoSDK.Menu.gsoDrawCircle1.rrange:Hide()
+                              gsoSDK.Menu.gsoDrawCircle1.rrangecolor:Hide()
+                              gsoSDK.Menu.gsoDrawCircle1.rrangewidth:Hide()
                         end
                   })
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "rrange", name = "        Enabled", value = true})
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "rrangecolor", name = "        Color", color = Draw.Color(255, 244, 182, 66)})
-                  gsoSDK.Menu.gsodraw.circle1:MenuElement({id = "rrangewidth", name = "        Width", value = 1, min = 1, max = 10})
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "rrange", name = "        Enabled", value = true})
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "rrangecolor", name = "        Color", color = DrawColor(255, 244, 182, 66)})
+                  gsoSDK.Menu.gsoDrawCircle1:MenuElement({id = "rrangewidth", name = "        Width", value = 1, min = 1, max = 10})
             end
       end
       function __gsoSpell:Draw()
-            local drawMenu = gsoSDK.Menu.gsodraw.circle1
+            local drawMenu = gsoSDK.Menu.gsoDrawCircle1
             if self.spellDraw.q and drawMenu.qrange:Value() then
                   local qrange = self.spellDraw.qf and self.spellDraw.qf() or self.spellDraw.qr
-                  Draw.Circle(myHero.pos, qrange, drawMenu.qrangewidth:Value(), drawMenu.qrangecolor:Value())
+                  DrawCircle(myHero.pos, qrange, drawMenu.qrangewidth:Value(), drawMenu.qrangecolor:Value())
             end
             if self.spellDraw.w and drawMenu.wrange:Value() then
                   local wrange = self.spellDraw.wf and self.spellDraw.wf() or self.spellDraw.wr
-                  Draw.Circle(myHero.pos, wrange, drawMenu.wrangewidth:Value(), drawMenu.wrangecolor:Value())
+                  DrawCircle(myHero.pos, wrange, drawMenu.wrangewidth:Value(), drawMenu.wrangecolor:Value())
             end
             if self.spellDraw.e and drawMenu.erange:Value() then
                   local erange = self.spellDraw.ef and self.spellDraw.ef() or self.spellDraw.er
-                  Draw.Circle(myHero.pos, erange, drawMenu.erangewidth:Value(), drawMenu.erangecolor:Value())
+                  DrawCircle(myHero.pos, erange, drawMenu.erangewidth:Value(), drawMenu.erangecolor:Value())
             end
             if self.spellDraw.r and drawMenu.rrange:Value() then
                   local rrange = self.spellDraw.rf and self.spellDraw.rf() or self.spellDraw.rr
-                  Draw.Circle(myHero.pos, rrange, drawMenu.rrangewidth:Value(), drawMenu.rrangecolor:Value())
+                  DrawCircle(myHero.pos, rrange, drawMenu.rrangewidth:Value(), drawMenu.rrangecolor:Value())
             end
       end
 --[[
@@ -1585,17 +1606,17 @@ class "__gsoTS"
       function __gsoTS:CreateDrawMenu(menu)
             gsoSDK.Menu.gsodraw:MenuElement({name = "Selected Target",  id = "selected", type = MENU})
                   gsoSDK.Menu.gsodraw.selected:MenuElement({name = "Enabled",  id = "enabled", value = true})
-                  gsoSDK.Menu.gsodraw.selected:MenuElement({name = "Color",  id = "color", color = Draw.Color(255, 204, 0, 0)})
+                  gsoSDK.Menu.gsodraw.selected:MenuElement({name = "Color",  id = "color", color = DrawColor(255, 204, 0, 0)})
                   gsoSDK.Menu.gsodraw.selected:MenuElement({name = "Width",  id = "width", value = 3, min = 1, max = 10})
                   gsoSDK.Menu.gsodraw.selected:MenuElement({name = "Radius",  id = "radius", value = 150, min = 1, max = 300})
             gsoSDK.Menu.gsodraw:MenuElement({name = "LastHitable Minion",  id = "lasthit", type = MENU})
                   gsoSDK.Menu.gsodraw.lasthit:MenuElement({name = "Enabled",  id = "enabled", value = true})
-                  gsoSDK.Menu.gsodraw.lasthit:MenuElement({name = "Color",  id = "color", color = Draw.Color(150, 255, 255, 255)})
+                  gsoSDK.Menu.gsodraw.lasthit:MenuElement({name = "Color",  id = "color", color = DrawColor(150, 255, 255, 255)})
                   gsoSDK.Menu.gsodraw.lasthit:MenuElement({name = "Width",  id = "width", value = 3, min = 1, max = 10})
                   gsoSDK.Menu.gsodraw.lasthit:MenuElement({name = "Radius",  id = "radius", value = 50, min = 1, max = 100})
             gsoSDK.Menu.gsodraw:MenuElement({name = "Almost LastHitable Minion",  id = "almostlasthit", type = MENU})
                   gsoSDK.Menu.gsodraw.almostlasthit:MenuElement({name = "Enabled",  id = "enabled", value = true})
-                  gsoSDK.Menu.gsodraw.almostlasthit:MenuElement({name = "Color",  id = "color", color = Draw.Color(150, 239, 159, 55)})
+                  gsoSDK.Menu.gsodraw.almostlasthit:MenuElement({name = "Color",  id = "color", color = DrawColor(150, 239, 159, 55)})
                   gsoSDK.Menu.gsodraw.almostlasthit:MenuElement({name = "Width",  id = "width", value = 3, min = 1, max = 10})
                   gsoSDK.Menu.gsodraw.almostlasthit:MenuElement({name = "Radius",  id = "radius", value = 50, min = 1, max = 100})
       end
@@ -1719,16 +1740,16 @@ class "__gsoTS"
       function __gsoTS:Draw()
             if gsoSDK.Menu.gsodraw.selected.enabled:Value() then
                   if self.SelectedTarget and not self.SelectedTarget.dead and self.SelectedTarget.isTargetable and self.SelectedTarget.visible and self.SelectedTarget.valid then
-                        Draw.Circle(self.SelectedTarget.pos, gsoSDK.Menu.gsodraw.selected.radius:Value(), gsoSDK.Menu.gsodraw.selected.width:Value(), gsoSDK.Menu.gsodraw.selected.color:Value())
+                        DrawCircle(self.SelectedTarget.pos, gsoSDK.Menu.gsodraw.selected.radius:Value(), gsoSDK.Menu.gsodraw.selected.width:Value(), gsoSDK.Menu.gsodraw.selected.color:Value())
                   end
             end
             if gsoSDK.Menu.gsodraw.lasthit.enabled:Value() or gsoSDK.Menu.gsodraw.almostlasthit.enabled:Value() then
                   for i = 1, #self.FarmMinions do
                         local minion = self.FarmMinions[i]
                         if minion.LastHitable and gsoSDK.Menu.gsodraw.lasthit.enabled:Value() then
-                              Draw.Circle(minion.Minion.pos, gsoSDK.Menu.gsodraw.lasthit.radius:Value(), gsoSDK.Menu.gsodraw.lasthit.width:Value(), gsoSDK.Menu.gsodraw.lasthit.color:Value())
+                              DrawCircle(minion.Minion.pos, gsoSDK.Menu.gsodraw.lasthit.radius:Value(), gsoSDK.Menu.gsodraw.lasthit.width:Value(), gsoSDK.Menu.gsodraw.lasthit.color:Value())
                         elseif minion.AlmostLastHitable and gsoSDK.Menu.gsodraw.almostlasthit.enabled:Value() then
-                              Draw.Circle(minion.Minion.pos, gsoSDK.Menu.gsodraw.almostlasthit.radius:Value(), gsoSDK.Menu.gsodraw.almostlasthit.width:Value(), gsoSDK.Menu.gsodraw.almostlasthit.color:Value())
+                              DrawCircle(minion.Minion.pos, gsoSDK.Menu.gsodraw.almostlasthit.radius:Value(), gsoSDK.Menu.gsodraw.almostlasthit.width:Value(), gsoSDK.Menu.gsodraw.almostlasthit.color:Value())
                         end
                   end
             end
@@ -1740,9 +1761,9 @@ class "__gsoTS"
 ]]
 class "__gsoUtilities"
       function __gsoUtilities:__init()
-            self.MinLatency = Game.Latency() * 0.001
-            self.MaxLatency = Game.Latency() * 0.001
-            self.Min = Game.Latency() * 0.001
+            self.MinLatency = GameLatency() * 0.001
+            self.MaxLatency = GameLatency() * 0.001
+            self.Min = GameLatency() * 0.001
             self.LAT = {}
             self.DA = {}
       end
@@ -1750,7 +1771,7 @@ class "__gsoUtilities"
             local cacheDA = {}
             for i = 1, #self.DA do
                   local t = self.DA[i]
-                  if Game.Timer() > t.StartTime + t.Delay then
+                  if GameTimer() > t.StartTime + t.Delay then
                         t.Func()
                   else
                         cacheDA[#cacheDA+1] = t
@@ -1761,15 +1782,15 @@ class "__gsoUtilities"
       function __gsoUtilities:Latencies()
             local lat1 = 0
             local lat2 = 50
-            local latency = Game.Latency() * 0.001
+            local latency = GameLatency() * 0.001
             if latency < self.Min then
                   self.Min = latency
             end
-            self.LAT[#self.LAT+1] = { endTime = Game.Timer() + 1.5, Latency = latency }
+            self.LAT[#self.LAT+1] = { endTime = GameTimer() + 1.5, Latency = latency }
             local cacheLatencies = {}
             for i = 1, #self.LAT do
                   local t = self.LAT[i]
-                  if Game.Timer() < t.endTime then
+                  if GameTimer() < t.endTime then
                         cacheLatencies[#cacheLatencies+1] = t
                         if t.Latency > lat1 then
                               lat1 = t.Latency
@@ -1788,7 +1809,7 @@ class "__gsoUtilities"
             self:Latencies()
       end
       function __gsoUtilities:AddAction(func, delay)
-            self.DA[#self.DA+1] = { StartTime = Game.Timer(), Func = func, Delay = delay }
+            self.DA[#self.DA+1] = { StartTime = GameTimer(), Func = func, Delay = delay }
       end
       function __gsoUtilities:GetMaxLatency()
             return self.MaxLatency
