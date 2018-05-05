@@ -14,6 +14,9 @@ local gsoSDK = {
       TS = nil,
       Orbwalker = nil
 }
+local Supported = {
+      ["Twitch"] = true
+}
 local myHero = myHero
 local GetTickCount = GetTickCount
 local MathSqrt = math.sqrt
@@ -47,7 +50,10 @@ class "__gsoCursor"
             self.SetCursorPos = nil
       end
       function __gsoCursor:IsCursorReady()
-            return self.CursorReady and not self.SetCursorPos and not self.ExtraSetCursor
+            if self.CursorReady and not self.SetCursorPos and not self.ExtraSetCursor then
+                  return true
+            end
+            return false
       end
       function __gsoCursor:CreateDrawMenu(menu)
             gsoSDK.Menu.gsodraw:MenuElement({name = "Cursor Pos",  id = "cursor", type = MENU})
@@ -1329,7 +1335,7 @@ class "__gsoSpell"
             return false
       end
       function __gsoSpell:IsReady(spell, delays)
-            return gsoSDK.Cursor.IsCursorReady() and self:CheckSpellDelays(delays) and GameCanUseSpell(spell) == 0
+            return gsoSDK.Cursor:IsCursorReady() and self:CheckSpellDelays(delays) and GameCanUseSpell(spell) == 0
       end
       function __gsoSpell:CastSpell(spell, target, linear)
             if not spell then return false end
@@ -1400,7 +1406,7 @@ class "__gsoSpell"
             if GameCanUseSpell(spell) == 0 then
                   for k,v in pairs(self.DelayedSpell) do
                         if k == kNum then
-                              if gsoSDK.Cursor.IsCursorReady() then
+                              if gsoSDK.Cursor:IsCursorReady() then
                                     v[1]()
                                     gsoSDK.Cursor:SetCursor(cursorPos, nil, 0.05)
                                     if k == 0 then
@@ -1877,13 +1883,257 @@ class "__gsoLoader"
             end)
       end
 --[[
-▀▀█▀▀ ▒█▀▀▀ ▒█▀▀▀█ ▀▀█▀▀ 
-░▒█░░ ▒█▀▀▀ ░▀▀▀▄▄ ░▒█░░ 
-░▒█░░ ▒█▄▄▄ ▒█▄▄▄█ ░▒█░░ 
+▀▀█▀▀ ▒█░░▒█ ▀█▀ ▀▀█▀▀ ▒█▀▀█ ▒█░▒█ 
+░▒█░░ ▒█▒█▒█ ▒█░ ░▒█░░ ▒█░░░ ▒█▀▀█ 
+░▒█░░ ▒█▄▀▄█ ▄█▄ ░▒█░░ ▒█▄▄█ ▒█░▒█ 
 ]]
-class "__gsoTest"
-      function __gsoTest:__init()
-            gsoSDK.Menu = MenuElement({name = "Gamsteron Test", id = "gamsteron", type = MENU })
+class "__gsoTwitch"
+      function __gsoTwitch:__init()
+            gsoSDK.Menu = MenuElement({name = "Gamsteron Twitch", id = "gsotwitch", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/twitch.png" })
             __gsoLoader()
+            self.HasQBuff = false
+            self.QBuffDuration = 0
+            self.HasQASBuff = false
+            self.QASBuffDuration = 0
+            self.Recall = true
+            self.EBuffs = {}
+            gsoSDK.Orbwalker:SetSpellMoveDelays( { q = 0, w = 0.2, e = 0.2, r = 0 } )
+            gsoSDK.Orbwalker:SetSpellAttackDelays( { q = 0, w = 0.33, e = 0.33, r = 0 } )
+            self:SetSpellData()
+            self:CreateMenu()
+            self:CreateDrawMenu()
+            self:AddDrawEvent()
+            self:AddTickEvent()
       end
-__gsoTest()
+      function __gsoTwitch:SetSpellData()
+            self.wData = { delay = 0.25, radius = 275, range = 950, speed = 1400, collision = false, sType = "circular" }
+      end
+      function __gsoTwitch:CreateMenu()
+            gsoSDK.Menu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+                  gsoSDK.Menu.qset:MenuElement({id = "recallkey", name = "Invisible Recall Key", key = string.byte("T"), value = false, toggle = true})
+                  gsoSDK.Menu.qset.recallkey:Value(false)
+                  gsoSDK.Menu.qset:MenuElement({id = "note1", name = "Note: Key should be diffrent than recall key", type = SPACE})
+            gsoSDK.Menu:MenuElement({name = "W settings", id = "wset", type = MENU })
+                  gsoSDK.Menu.wset:MenuElement({id = "stopq", name = "Stop if Q invisible", value = true})
+                  gsoSDK.Menu.wset:MenuElement({id = "stopwult", name = "Stop if R", value = false})
+                  gsoSDK.Menu.wset:MenuElement({id = "combo", name = "Use W Combo", value = true})
+                  gsoSDK.Menu.wset:MenuElement({id = "harass", name = "Use W Harass", value = false})
+            gsoSDK.Menu:MenuElement({name = "E settings", id = "eset", type = MENU })
+                  gsoSDK.Menu.eset:MenuElement({id = "combo", name = "Use E Combo", value = true})
+                  gsoSDK.Menu.eset:MenuElement({id = "harass", name = "Use E Harass", value = false})
+                  gsoSDK.Menu.eset:MenuElement({id = "killsteal", name = "Use E KS", value = true})
+                  gsoSDK.Menu.eset:MenuElement({id = "stacks", name = "X stacks", value = 6, min = 1, max = 6, step = 1 })
+                  gsoSDK.Menu.eset:MenuElement({id = "enemies", name = "X enemies", value = 1, min = 1, max = 5, step = 1 })
+      end
+      function __gsoTwitch:CreateDrawMenu()
+            gsoSDK.Menu.gsodraw:MenuElement({name = "Q Timer",  id = "qtimer", type = MENU})
+                  gsoSDK.Menu.gsodraw.qtimer:MenuElement({id = "enabled", name = "Enabled", value = true})
+                  gsoSDK.Menu.gsodraw.qtimer:MenuElement({id = "color", name = "Color ", color = Draw.Color(200, 65, 255, 100)})
+            gsoSDK.Menu.gsodraw:MenuElement({name = "Q Invisible Range",  id = "qinvisible", type = MENU})
+                  gsoSDK.Menu.gsodraw.qinvisible:MenuElement({id = "enabled", name = "Enabled", value = true})
+                  gsoSDK.Menu.gsodraw.qinvisible:MenuElement({id = "color", name = "Color ", color = Draw.Color(200, 255, 0, 0)})
+            gsoSDK.Menu.gsodraw:MenuElement({name = "Q Notification Range",  id = "qnotification", type = MENU})
+                  gsoSDK.Menu.gsodraw.qnotification:MenuElement({id = "enabled", name = "Enabled", value = true})
+                  gsoSDK.Menu.gsodraw.qnotification:MenuElement({id = "color", name = "Color ", color = Draw.Color(200, 188, 77, 26)})
+      end
+      --[[
+      gsoOrbwalker:AttackSpeed(function()
+            local num = gsoGameTimer() - champInfo.QASEndTime + gsoExtra.maxLatency
+            if num > -champInfo.windUpNoQ and num < 2 then
+                  return champInfo.asNoQ
+            end
+            return gsoMyHero.attackSpeed
+      end)
+      --]]
+      function __gsoTwitch:AddDrawEvent()
+            Callback.Add('Draw', function()
+                  local lastQ, lastQk, lastW, lastWk, lastE, lastEk, lastR, lastRk = gsoSDK.Spell:GetLastSpellTimers()
+                  if Game.Timer() < lastQk + 16 then
+                        local pos2D = myHero.pos:To2D()
+                        local posX = pos2D.x - 50
+                        local posY = pos2D.y
+                        local num1 = 1.35-(Game.Timer()-lastQk)
+                        local timerEnabled = gsoSDK.Menu.gsodraw.qtimer.enabled:Value()
+                        local timerColor = gsoSDK.Menu.gsodraw.qtimer.color:Value()
+                        if num1 > 0.001 then
+                              if timerEnabled then
+                                    local str1 = tostring(math.floor(num1*1000))
+                                    local str2 = ""
+                                    for i = 1, #str1 do
+                                          if #str1 <=2 then
+                                                str2 = 0
+                                                break
+                                          end
+                                          local char1 = i <= #str1-2 and str1:sub(i,i) or "0"
+                                          str2 = str2..char1
+                                    end
+                                    Draw.Text(str2, 50, posX+50, posY-15, timerColor)
+                              end
+                        elseif self.HasQBuff then
+                              local num2 = math.floor(1000*(self.QBuffDuration-Game.Timer()))
+                              if num2 > 1 then
+                                    if gsoSDK.Menu.gsodraw.qinvisible.enabled:Value() then
+                                          Draw.Circle(myHero.pos, 500, 1, gsoSDK.Menu.gsodraw.qinvisible.color:Value())
+                                    end
+                                    if gsoSDK.Menu.gsodraw.qnotification.enabled:Value() then
+                                          Draw.Circle(myHero.pos, 800, 1, gsoSDK.Menu.gsodraw.qnotification.color:Value())
+                                    end
+                                    if timerEnabled then
+                                          local str1 = tostring(num2)
+                                          local str2 = ""
+                                          for i = 1, #str1 do
+                                                if #str1 <=2 then
+                                                      str2 = 0
+                                                      break
+                                                end
+                                                local char1 = i <= #str1-2 and str1:sub(i,i) or "0"
+                                                str2 = str2..char1
+                                          end
+                                          Draw.Text(str2, 50, posX+50, posY-15, timerColor)
+                                    end
+                              end
+                        end
+                  end
+            end)
+      end
+      function __gsoTwitch:AddTickEvent()
+            Callback.Add('Tick', function()
+                  --[[q buff best orbwalker dps
+                  if gsoGetTickCount() - gsoSpellTimers.lqk < 500 and gsoGetTickCount() > champInfo.lastASCheck + 1000 then
+                  champInfo.asNoQ = gsoMyHero.attackSpeed
+                  champInfo.windUpNoQ = gsoTimers.windUpTime
+                  champInfo.lastASCheck = gsoGetTickCount()
+                  end--]]
+                  --[[disable attack
+                  local num = 1150 - (gsoGetTickCount() - (gsoSpellTimers.lqk + (gsoExtra.maxLatency*1000)))
+                  if num < (gsoTimers.windUpTime*1000)+50 and num > - 50 then
+                  return false
+                  end--]]
+                  --qrecall
+                  local lastQ, lastQk, lastW, lastWk, lastE, lastEk, lastR, lastRk = gsoSDK.Spell:GetLastSpellTimers()
+                  if gsoSDK.Menu.qset.recallkey:Value() == self.Recall then
+                        Control.KeyDown(HK_Q)
+                        Control.KeyUp(HK_Q)
+                        Control.KeyDown(string.byte("B"))
+                        Control.KeyUp(string.byte("B"))
+                        self.Recall = not self.Recall
+                  end
+                  --qbuff
+                  local qDuration = gsoSDK.Spell:GetBuffDuration(myHero, "globalcamouflage")--twitchhideinshadows
+                  self.HasQBuff = qDuration > 0
+                  self.QBuffDuration = qDuration > 0 and Game.Timer() + qDuration or 0
+                  --qasbuff
+                  local qasDuration = gsoSDK.Spell:GetBuffDuration(myHero, "twitchhideinshadowsbuff")
+                  self.HasQASBuff = qasDuration > 0
+                  self.QASBuffDuration = qasDuration > 0 and Game.Timer() + qasDuration or 0
+                  --handle e buffs
+                  local enemyList = gsoSDK.ObjectManager:GetEnemyHeroes(1200, false, "spell")
+                  for i = 1, #enemyList do
+                        local hero  = enemyList[i]
+                        local nID   = hero.networkID
+                        if not self.EBuffs[nID] then
+                              self.EBuffs[nID] = { count = 0, durT = 0 }
+                        end
+                        if not hero.dead then
+                              local hasB = false
+                              local cB = self.EBuffs[nID].count
+                              local dB = self.EBuffs[nID].durT
+                              for i = 0, hero.buffCount do
+                                    local buff = hero:GetBuff(i)
+                                    if buff and buff.count > 0 and buff.name:lower() == "twitchdeadlyvenom" then
+                                          hasB = true
+                                          if cB < 6 and buff.duration > dB then
+                                                self.EBuffs[nID].count = cB + 1
+                                                self.EBuffs[nID].durT = buff.duration
+                                          else
+                                                self.EBuffs[nID].durT = buff.duration
+                                          end
+                                          break
+                                    end
+                              end
+                              if not hasB then
+                                    self.EBuffs[nID].count = 0
+                                    self.EBuffs[nID].durT = 0
+                              end
+                        end
+                  end
+                  -- Combo / Harass
+                  if not gsoSDK.Orbwalker:CanMove() then
+                        return
+                  end
+                  --EKS
+                  if gsoSDK.Menu.eset.killsteal:Value() and gsoSDK.Spell:IsReady(_E, { q = 0, w = 0.25, e = 0.5, r = 0 } ) then
+                        for i = 1, #enemyList do
+                              local hero = enemyList[i]
+                              local buffCount = self.EBuffs[hero.networkID] and self.EBuffs[hero.networkID].count or 0
+                              if buffCount > 0 and myHero.pos:DistanceTo(hero.pos) < 1200 - 35 then
+                                    local elvl = myHero:GetSpellData(_E).level
+                                    local basedmg = 10 + ( elvl * 10 )
+                                    local perstack = ( 10 + (5*elvl) ) * buffCount
+                                    local bonusAD = myHero.bonusDamage * 0.25 * buffCount
+                                    local bonusAP = myHero.ap * 0.2 * buffCount
+                                    local edmg = basedmg + perstack + bonusAD + bonusAP
+                                    if gsoSDK.Spell:GetDamage(hero, { dmgType = "ad", dmgAD = edmg }) >= hero.health + (1.5*hero.hpRegen) and gsoSDK.Spell:CastSpell(HK_E) then
+                                          break
+                                    end
+                              end
+                        end
+                  end
+                  local isCombo = gsoSDK.Menu.orb.keys.combo:Value()
+                  local isHarass = gsoSDK.Menu.orb.keys.harass:Value()
+                  if isCombo or isHarass then
+                        local target = gsoSDK.TS:GetComboTarget()
+                        if target and gsoSDK.Orbwalker:CanAttack() then
+                              return
+                        end
+                        --W
+                        local isComboW = gsoSDK.Menu.orb.keys.combo:Value() and gsoSDK.Menu.wset.combo:Value()
+                        local isHarassW = gsoSDK.Menu.orb.keys.harass:Value() and gsoSDK.Menu.wset.harass:Value()
+                        local isKeyW = isComboW or isHarassW
+                        local stopWIfR = gsoSDK.Menu.wset.stopwult:Value() and Game.Timer() < lastRk + 5.45
+                        local stopWIfQ = gsoSDK.Menu.wset.stopq:Value() and self.HasQBuff
+                        if isKeyW and not stopWIfR and not stopWIfQ and gsoSDK.Spell:IsReady(_W, { q = 0, w = 0.5, e = 0.25, r = 0 } ) then
+                              if target then
+                                    WTarget = target
+                              else
+                                    WTarget = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(950, false, "spell"), false)
+                              end
+                              local castpos,HitChance, pos = gsoSDK.Prediction:GetBestCastPosition(WTarget, self.wData.delay, self.wData.radius, self.wData.range, self.wData.speed, myHero.pos, self.wData.collision, self.wData.sType)
+                              if HitChance > 0 and castpos:ToScreen().onScreen and myHero.pos:DistanceTo(castpos) < self.wData.range and WTarget.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_W, castpos) then
+                                    return
+                              end
+                        end
+                        --E
+                        local isComboE = gsoSDK.Menu.orb.keys.combo:Value() and gsoSDK.Menu.eset.combo:Value()
+                        local isHarassE = gsoSDK.Menu.orb.keys.harass:Value() and gsoSDK.Menu.eset.harass:Value()
+                        local isKeyE = isComboE or isHarassE
+                        if isKeyE and gsoSDK.Spell:IsReady(_E, { q = 0, w = 0.25, e = 0.5, r = 0 } ) then
+                              local countE = 0
+                              local xStacks = gsoSDK.Menu.eset.stacks:Value()
+                              local enemyList = gsoSDK.ObjectManager:GetEnemyHeroes(1200, false, "spell")
+                              for i = 1, #enemyList do
+                                    local hero = enemyList[i]
+                                    local buffCount = self.EBuffs[hero.networkID] and self.EBuffs[hero.networkID].count or 0
+                                    if hero and myHero.pos:DistanceTo(hero.pos) < 1200 - 35 and buffCount >= xStacks then
+                                          countE = countE + 1
+                                    end
+                              end
+                              if countE >= gsoSDK.Menu.eset.enemies:Value() and gsoSDK.Spell:CastSpell(HK_E) then
+                                    return
+                              end
+                        end
+                  end
+            end)
+      end
+--[[
+▒█░░░ ▒█▀▀▀█ ░█▀▀█ ▒█▀▀▄ 　 ░█▀▀█ ▒█░░░ ▒█░░░ 
+▒█░░░ ▒█░░▒█ ▒█▄▄█ ▒█░▒█ 　 ▒█▄▄█ ▒█░░░ ▒█░░░ 
+▒█▄▄█ ▒█▄▄▄█ ▒█░▒█ ▒█▄▄▀ 　 ▒█░▒█ ▒█▄▄█ ▒█▄▄█ 
+]]
+if myHero.charName == "Twitch" then
+      __gsoTwitch()
+else
+      gsoSDK.Menu = MenuElement({name = "Gamsteron Test", id = "gamsteron", type = MENU })
+      __gsoLoader()
+      print("this hero is not supported")
+end
