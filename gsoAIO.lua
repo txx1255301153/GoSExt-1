@@ -1867,6 +1867,14 @@ class "__gsoLoader"
                   gsoSDK.Spell:Draw()
                   gsoSDK.Orbwalker:Draw()
             end)
+            Callback.Add('GameEnd', function()
+                  gsoSDK.Orbwalker:EnableGosOrb()
+                  gsoSDK.Orbwalker:EnableIcOrb()
+            end)
+            Callback.Add('UnLoad', function()
+                  gsoSDK.Orbwalker:EnableGosOrb()
+                  gsoSDK.Orbwalker:EnableIcOrb()
+            end)
       end
 --[[
 ▀▀█▀▀ ▒█▀▀▀ ▒█▀▀▀█ ▀▀█▀▀ 
