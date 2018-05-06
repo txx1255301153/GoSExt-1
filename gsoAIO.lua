@@ -4,6 +4,9 @@
 ▒█▄▄█ ▒█▄▄▄█ ▒█▄▄█ ▒█░▒█ ▒█▄▄█ ▒█▄▄▄█ 
 ]]
 local gsoSDK = {
+      ChampTick = function() end,
+      ChampDraw = function() end,
+      ChampWndMsg = function(msg, wParam) end,
       Menu = nil,
       Spell = nil,
       Prediction = nil,
@@ -1860,11 +1863,13 @@ class "__gsoLoader"
                   gsoSDK.Farm:Tick(allyMinions, enemyMinions)
                   gsoSDK.TS:Tick()
                   gsoSDK.Orbwalker:Tick()
+                  gsoSDK.ChampTick()
             end)
             Callback.Add('WndMsg', function(msg, wParam)
                   gsoSDK.TS:WndMsg(msg, wParam)
                   gsoSDK.Orbwalker:WndMsg(msg, wParam)
                   gsoSDK.Spell:WndMsg(msg, wParam)
+                  gsoSDK.ChampWndMsg(msg, wParam)
             end)
             Callback.Add('Draw', function()
                   if not gsoSDK.Menu.gsodraw.enabled:Value() then return end
@@ -1872,6 +1877,7 @@ class "__gsoLoader"
                   gsoSDK.Cursor:Draw()
                   gsoSDK.Spell:Draw()
                   gsoSDK.Orbwalker:Draw()
+                  gsoSDK.ChampDraw()
             end)
             Callback.Add('GameEnd', function()
                   gsoSDK.Orbwalker:EnableGosOrb()
@@ -1946,7 +1952,7 @@ class "__gsoTwitch"
       end)
       --]]
       function __gsoTwitch:AddDrawEvent()
-            Callback.Add('Draw', function()
+            gsoSDK.ChampDraw = function()
                   local lastQ, lastQk, lastW, lastWk, lastE, lastEk, lastR, lastRk = gsoSDK.Spell:GetLastSpellTimers()
                   if Game.Timer() < lastQk + 16 then
                         local pos2D = myHero.pos:To2D()
@@ -1994,10 +2000,10 @@ class "__gsoTwitch"
                               end
                         end
                   end
-            end)
+            end
       end
       function __gsoTwitch:AddTickEvent()
-            Callback.Add('Tick', function()
+            gsoSDK.ChampTick = function()
                   --[[q buff best orbwalker dps
                   if gsoGetTickCount() - gsoSpellTimers.lqk < 500 and gsoGetTickCount() > champInfo.lastASCheck + 1000 then
                   champInfo.asNoQ = gsoMyHero.attackSpeed
@@ -2098,9 +2104,11 @@ class "__gsoTwitch"
                               else
                                     WTarget = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(950, false, "spell"), false)
                               end
-                              local castpos,HitChance, pos = gsoSDK.Prediction:GetBestCastPosition(WTarget, self.wData.delay, self.wData.radius, self.wData.range, self.wData.speed, myHero.pos, self.wData.collision, self.wData.sType)
-                              if HitChance > 0 and castpos:ToScreen().onScreen and myHero.pos:DistanceTo(castpos) < self.wData.range and WTarget.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_W, castpos) then
-                                    return
+                              if WTarget then
+                                    local castpos,HitChance, pos = gsoSDK.Prediction:GetBestCastPosition(WTarget, self.wData.delay, self.wData.radius, self.wData.range, self.wData.speed, myHero.pos, self.wData.collision, self.wData.sType)
+                                    if HitChance > 0 and castpos:ToScreen().onScreen and myHero.pos:DistanceTo(castpos) < self.wData.range and WTarget.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_W, castpos) then
+                                          return
+                                    end
                               end
                         end
                         --E
@@ -2123,7 +2131,7 @@ class "__gsoTwitch"
                               end
                         end
                   end
-            end)
+            end
       end
 --[[
 ▒█░░░ ▒█▀▀▀█ ░█▀▀█ ▒█▀▀▄ 　 ░█▀▀█ ▒█░░░ ▒█░░░ 
