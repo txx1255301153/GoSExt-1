@@ -17,9 +17,6 @@ local gsoSDK = {
       TS = nil,
       Orbwalker = nil
 }
-local Supported = {
-      ["Twitch"] = true
-}
 local myHero = myHero
 local GetTickCount = GetTickCount
 local MathSqrt = math.sqrt
@@ -1381,7 +1378,7 @@ class "__gsoSpell"
                   result = true
             else
                   local castpos = target.x and target or target.pos
-                  if linear then myHero.pos:Extended(castpos, 750) end
+                  if linear then castpos = myHero.pos:Extended(castpos, 750) end
                   if castpos:ToScreen().onScreen then
                         gsoSDK.Cursor:SetCursor(cursorPos, castpos, 0.06)
                         ControlSetCursorPos(castpos)
@@ -1403,6 +1400,22 @@ class "__gsoSpell"
                   end
             end
             return result
+      end
+      function __gsoSpell:ImmobileTime(unit)
+            local iT = 0
+            for i = 0, unit.buffCount do
+                  local buff = unit:GetBuff(i)
+                  if buff and buff.count > 0 then
+                        local bType = buff.type
+                        if bType == 5 or bType == 11 or bType == 29 or bType == 24 or buff.name == "recall" then
+                              local bDuration = buff.duration
+                              if bDuration > iT then
+                                    iT = bDuration
+                              end
+                        end
+                  end
+            end
+            return iT
       end
       function __gsoSpell:CastManualSpell(spell, delays)
             local kNum = 0
@@ -1731,6 +1744,32 @@ class "__gsoTS"
             if result ~= nil then
                   self.LastLCMinion = result
                   self.LastLCHandle = result.handle
+            end
+            return result
+      end
+      function __gsoTS:GetClosestEnemy(enemyList, maxDistance)
+            local result = nil
+            for i = 1, #enemyList do
+                  local hero = enemyList[i]
+                  local distance = myHero.pos:DistanceTo(hero.pos)
+                  if distance < maxDistance then
+                        maxDistance = distance
+                        result = hero
+                  end
+            end
+            return result
+      end
+      function __gsoTS:GetImmobileEnemy(enemyList, maxDistance)
+            local result = nil
+            local num = 0
+            for i = 1, #enemyList do
+                  local hero = enemyList[i]
+                  local distance = myHero.pos:DistanceTo(hero.pos)
+                  local iT = gsoSDK.Spell:ImmobileTime(hero)
+                  if distance < maxDistance and iT > num then
+                        num = iT
+                        result = hero
+                  end
             end
             return result
       end
@@ -2615,6 +2654,160 @@ class "__gsoKogMaw"
             end
       end
 --[[
+▒█░░▒█ ░█▀▀█ ▒█▀▀█ ▒█░▒█ ▒█▀▀▀█ 
+░▒█▒█░ ▒█▄▄█ ▒█▄▄▀ ▒█░▒█ ░▀▀▀▄▄ 
+░░▀▄▀░ ▒█░▒█ ▒█░▒█ ░▀▄▄▀ ▒█▄▄▄█ 
+]]
+class "__gsoVarus"
+      function __gsoVarus:__init()
+            self.HasQBuff = false
+            gsoSDK.Menu = MenuElement({name = "Gamsteron Varus", id = "gsovarus", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/gsovarussf3f.png" })
+            __gsoLoader()
+            gsoSDK.Orbwalker:SetSpellMoveDelays( { q = 0.2, w = 0, e = 0.2, r = 0.2 } )
+            gsoSDK.Orbwalker:SetSpellAttackDelays( { q = 0.33, w = 0, e = 0.33, r = 0.33 } )
+            self:SetSpellData()
+            self:CreateMenu()
+            self:AddTickEvent()
+      end
+      function __gsoVarus:SetSpellData()
+            self.qData = { delay = 0.25, radius = 70, range = 1650, speed = 1900, collision = false, sType = "line" }
+            self.eData = { delay = 0.5, radius = 235, range = 925, speed = 1500, collision = false, sType = "circular" }
+            self.rData = { delay = 0.25, radius = 120, range = 1075, speed = 1950, collision = false, sType = "line" }
+      end
+      function __gsoVarus:CreateMenu()
+            gsoSDK.Menu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+                  gsoSDK.Menu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+                  gsoSDK.Menu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+                  gsoSDK.Menu.qset:MenuElement({id = "onlystacks", name = "Only 3 stacks", value = false})
+            gsoSDK.Menu:MenuElement({name = "E settings", id = "eset", type = MENU })
+                  gsoSDK.Menu.eset:MenuElement({id = "combo", name = "Combo", value = true})
+                  gsoSDK.Menu.eset:MenuElement({id = "harass", name = "Harass", value = false})
+                  gsoSDK.Menu.eset:MenuElement({id = "onlystacks", name = "Only 3 stacks", value = false})
+            gsoSDK.Menu:MenuElement({name = "R settings", id = "rset", type = MENU })
+                  gsoSDK.Menu.rset:MenuElement({id = "combo", name = "Use R Combo", value = true})
+                  gsoSDK.Menu.rset:MenuElement({id = "harass", name = "Use R Harass", value = false})
+                  gsoSDK.Menu.rset:MenuElement({id = "rci", name = "Use R if enemy isImmobile", value = true})
+                  gsoSDK.Menu.rset:MenuElement({id = "rcd", name = "Use R if enemy distance < X", value = true})
+                  gsoSDK.Menu.rset:MenuElement({id = "rdist", name = "use R if enemy distance < X", value = 500, min = 250, max = 1000, step = 50})
+      end
+      function __gsoVarus:AddTickEvent()
+            gsoSDK.ChampTick = function()
+                  -- Check Q Buff
+                  self.HasQBuff = gsoSDK.Spell:HasBuff(myHero, "varusq")
+                  -- Disable / Enable Attack
+                  if self.HasQBuff then
+                        gsoSDK.Orbwalker.AttackEnabled = false
+                  else
+                        gsoSDK.Orbwalker.AttackEnabled = true
+                  end
+                  -- Is Attacking
+                  if not self.HasQBuff and not gsoSDK.Orbwalker:CanMove() then
+                        return
+                  end
+                  -- Get Mode
+                  local mode = gsoSDK.Orbwalker:GetMode()
+                  -- Can Attack
+                  local AATarget = gsoSDK.TS:GetComboTarget()
+                  if not self.HasQBuff and AATarget and mode ~= "None" and gsoSDK.Orbwalker:CanAttack() then
+                        return
+                  end
+                  -- Get Enemies
+                  local enemyList = gsoSDK.ObjectManager:GetEnemyHeroes(math.huge, false, "spell")
+                  --R
+                  local canR = (mode == "Combo" and gsoSDK.Menu.rset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.rset.harass:Value())
+                  if canR and gsoSDK.Spell:IsReady(_R, { q = 0.33, w = 0, e = 0.63, r = 0.5 } ) then
+                        if gsoSDK.Menu.rset.rcd:Value() then
+                              local t = gsoSDK.TS:GetClosestEnemy(enemyList, gsoSDK.Menu.rset.rdist:Value())
+                              if t then
+                                    local sd = self.rData
+                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
+                                    if HitChance > 0 and myHero.pos:DistanceTo(castpos) < sd.range and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_R, castpos, true) then
+                                          return
+                                    end
+                              end
+                        end
+                        if gsoSDK.Menu.rset.rci:Value() then
+                              local t = gsoSDK.TS:GetImmobileEnemy(enemyList, 900)
+                              if t and myHero.pos:DistanceTo(t.pos) < self.rData.range and gsoSDK.Spell:CastSpell(HK_R, t.pos, true) then
+                                    return
+                              end
+                        end
+                  end
+                  --E
+                  local canE = (mode == "Combo" and gsoSDK.Menu.eset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.eset.harass:Value())
+                  if canE and gsoSDK.Spell:IsReady(_E, { q = 0.33, w = 0, e = 0.63, r = 0.33 } ) then
+                        local onlyStacksE = gsoSDK.Menu.eset.onlystacks:Value()
+                        local eTargets = {}
+                        for i = 1, #enemyList do
+                              local hero = enemyList[i]
+                              local hasStacks = gsoSDK.Spell:GetBuffCount(hero, "varuswdebuff") == 3 or not onlyStacksE or myHero:GetSpellData(_W).level == 0
+                              if hasStacks and myHero.pos:DistanceTo(hero.pos) < 925 then
+                                    eTargets[#eTargets+1] = hero
+                              end
+                        end
+                        local t = gsoSDK.TS:GetTarget(eTargets, false)
+                        if t then
+                              local sd = self.eData
+                              local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
+                              if HitChance > 0 and myHero.pos:DistanceTo(castpos) < sd.range and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_E, castpos, false) then
+                                    return
+                              end
+                        end
+                  end
+                  -- Q
+                  local canQ = (mode == "Combo" and gsoSDK.Menu.qset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.qset.harass:Value())
+                  if canQ then
+                        -- Q1
+                        if not self.HasQBuff and gsoSDK.Spell:IsReady(_Q, { q = 0.5, w = 0, e = 0.63, r = 0.33 } ) then
+                              if ControlIsKeyDown(HK_Q) then
+                                    ControlKeyUp(HK_Q)
+                              end
+                              local onlyStacksQ = gsoSDK.Menu.qset.onlystacks:Value()
+                              for i = 1, #enemyList do
+                                    local hero = enemyList[i]
+                                    local hasStacks = gsoSDK.Spell:GetBuffCount(hero, "varuswdebuff") == 3 or not onlyStacksQ or myHero:GetSpellData(_W).level == 0
+                                    if hasStacks and myHero.pos:DistanceTo(hero.pos) < 1400 then
+                                          ControlKeyDown(HK_Q)
+                                          gsoSDK.Spell.LastQ = GameTimer()
+                                          return
+                                    end
+                              end
+                        -- Q2
+                        elseif self.HasQBuff and gsoSDK.Spell:IsReady(_Q, { q = 0.2, w = 0, e = 0.63, r = 0.33 } ) then
+                              local qTargets = {}
+                              local onlyStacksQ = gsoSDK.Menu.qset.onlystacks:Value()
+                              for i = 1, #enemyList do
+                                    local hero = enemyList[i]
+                                    local hasStacks = gsoSDK.Spell:GetBuffCount(hero, "varuswdebuff") == 3 or not onlyStacksQ or myHero:GetSpellData(_W).level == 0
+                                    if hasStacks and myHero.pos:DistanceTo(hero.pos) < 1650 then
+                                          qTargets[#qTargets+1] = hero
+                                    end
+                              end
+                              if #qTargets == 0 then
+                                    for i = 1, #enemyList do
+                                          local hero = enemyList[i]
+                                          if myHero.pos:DistanceTo(hero.pos) < 1650 then
+                                                qTargets[#qTargets+1] = hero
+                                          end
+                                    end
+                              end
+                              local qkey = gsoSDK.Spell.LastQk - 0.33
+                              local qTimer = GameTimer() - qkey
+                              local qExtraRange = qTimer < 2 and qTimer * 0.5 * 700 or 700
+                              local qRange = 925 + qExtraRange
+                              local t = gsoSDK.TS:GetTarget(qTargets, false)
+                              if t then
+                                    local sd = self.qData
+                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
+                                    if HitChance > 0 and myHero.pos:DistanceTo(castpos) < qRange and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_Q, castpos, true) then
+                                          return
+                                    end
+                              end
+                        end
+                  end
+            end
+      end
+--[[
 ▒█░░░ ▒█▀▀▀█ ░█▀▀█ ▒█▀▀▄ 　 ░█▀▀█ ▒█░░░ ▒█░░░ 
 ▒█░░░ ▒█░░▒█ ▒█▄▄█ ▒█░▒█ 　 ▒█▄▄█ ▒█░░░ ▒█░░░ 
 ▒█▄▄█ ▒█▄▄▄█ ▒█░▒█ ▒█▄▄▀ 　 ▒█░▒█ ▒█▄▄█ ▒█▄▄█ 
@@ -2625,6 +2818,8 @@ elseif myHero.charName == "Ezreal" then
       __gsoEzreal()
 elseif myHero.charName == "KogMaw" then
       __gsoKogMaw()
+elseif myHero.charName == "Varus" then
+      __gsoVarus()
 else
       gsoSDK.Menu = MenuElement({name = "Gamsteron Test", id = "gamsteron", type = MENU })
       __gsoLoader()
