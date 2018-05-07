@@ -2212,20 +2212,20 @@ class "__gsoEzreal"
       end
       function __gsoEzreal:SetLastHitable(enemyMinion, time, damage, mode, allyMinions)
             if mode == "fast" then
-                  local hpPred = self:MinionHpPredFast(enemyMinion, allyMinions, time)
+                  local hpPred = gsoSDK.Farm:MinionHpPredFast(enemyMinion, allyMinions, time)
                   local lastHitable = hpPred - damage < 0
                   if lastHitable then self.IsLastHitable = true end
-                  local almostLastHitable = lastHitable and false or self:MinionHpPredFast(enemyMinion, allyMinions, myHero.attackData.animationTime * 3) - damage < 0
+                  local almostLastHitable = lastHitable and false or gsoSDK.Farm:MinionHpPredFast(enemyMinion, allyMinions, myHero.attackData.animationTime * 3) - damage < 0
                   if almostLastHitable then
                         self.ShouldWait = true
                         self.ShouldWaitTime = GameTimer()
                   end
                   return { LastHitable =  lastHitable, Unkillable = hpPred < 0, AlmostLastHitable = almostLastHitable, PredictedHP = hpPred, Minion = enemyMinion }
             elseif mode == "accuracy" then
-                  local hpPred = self:MinionHpPredAccuracy(enemyMinion, time)
+                  local hpPred = gsoSDK.Farm:MinionHpPredAccuracy(enemyMinion, time)
                   local lastHitable = hpPred - damage < 0
                   if lastHitable then self.IsLastHitable = true end
-                  local almostLastHitable = lastHitable and false or self:MinionHpPredFast(enemyMinion, allyMinions, myHero.attackData.animationTime * 3) - damage < 0
+                  local almostLastHitable = lastHitable and false or gsoSDK.Farm:MinionHpPredFast(enemyMinion, allyMinions, myHero.attackData.animationTime * 3) - damage < 0
                   if almostLastHitable then
                         self.ShouldWait = true
                         self.ShouldWaitTime = GameTimer()
@@ -2262,7 +2262,7 @@ class "__gsoEzreal"
             end
             return false, nil
       end
-      function __gsoEzreal:QCastLaneClear()
+      function __gsoEzreal:QGetLaneClear()
             -- LastHit
             local success, castpos = self:QGetLastHit()
             if success then
@@ -2296,7 +2296,7 @@ class "__gsoEzreal"
             if IsLastHit then
                   return self:QGetLastHit()
             else
-                  return self:QCastLaneClear()
+                  return self:QGetLaneClear()
             end
       end
       function __gsoEzreal:AddTickEvent()
@@ -2349,8 +2349,10 @@ class "__gsoEzreal"
                               end
                         end
                         -- Lasthit / LaneClear
-                        if (gsoSDK.Menu.qset.lasthit:Value() and mode == "LastHit" and manaPercent > gsoSDK.Menu.qset.qlh:Value()) or (gsoSDK.Menu.qset.laneclear:Value() and mode == " Clear" and manaPercent > gsoSDK.Menu.qset.qlc:Value()) then
-                              local success, castpos = self:QFarm(mode == "LastHit")
+                        local isLH = gsoSDK.Menu.qset.lasthit:Value() and mode == "Lasthit" and manaPercent > gsoSDK.Menu.qset.qlh:Value()
+                        local isLC = gsoSDK.Menu.qset.laneclear:Value() and mode == "Clear" and manaPercent > gsoSDK.Menu.qset.qlc:Value()
+                        if isLH or isLC then
+                              local success, castpos = self:QFarm(isLH)
                               if success and gsoSDK.Spell:CastSpell(HK_Q, castpos, true) then
                                     return
                               end
