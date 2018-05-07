@@ -615,7 +615,7 @@ class "__gsoOrbwalker"
             elseif gsoSDK.Menu.orb.keys.flee:Value() then
                   return "Flee"
             else
-                  return ""
+                  return "None"
             end
       end
       function __gsoOrbwalker:WndMsg(msg, wParam)
@@ -1020,15 +1020,15 @@ class "__gsoPrediction"
           end
       end
       function __gsoPrediction:CheckMinionCollision(unit, Position, delay, radius, range, speed, from)
-          Position = Vector(Position)
-          from = from and Vector(from) or myHero.pos
-          for i = 1, #_gso.OB.enemyMinions do
-              local minion = _gso.OB.enemyMinions[i]
-              if minion and not minion.dead and minion.isTargetable and minion.visible and minion.valid and self:CheckCol(unit, minion, Position, delay, radius, range, speed, from, draw) then
-                  return true
-              end
-          end
-          return false
+            Position = Vector(Position)
+            from = from and Vector(from) or myHero.pos
+            for i = 1, GameMinionCount() do
+                  local minion = GameMinion(i)
+                  if minion and minion.team ~= myHero.team and not minion.dead and minion.isTargetable and minion.visible and minion.valid and self:CheckCol(unit, minion, Position, delay, radius, range, speed, from, draw) then
+                        return true
+                  end
+            end
+            return false
       end
       function __gsoPrediction:isSlowed(unit, delay, speed, from)
           for i = 1, unit.buffCount do
@@ -1397,7 +1397,7 @@ class "__gsoSpell"
             end
             return result
       end
-      function __gsoSpell:CastManualSpell(spell)
+      function __gsoSpell:CastManualSpell(spell, delays)
             local kNum = 0
             if spell == _W then
                   kNum = 1
@@ -1409,9 +1409,9 @@ class "__gsoSpell"
             if GameCanUseSpell(spell) == 0 then
                   for k,v in pairs(self.DelayedSpell) do
                         if k == kNum then
-                              if gsoSDK.Cursor:IsCursorReady() then
+                              if gsoSDK.Cursor:IsCursorReady() and self:CheckSpellDelays(delays) then
                                     v[1]()
-                                    gsoSDK.Cursor:SetCursor(cursorPos, nil, 0.05)
+                                    gsoSDK.Cursor:SetCursor(cursorPos, nil, 0.06)
                                     if k == 0 then
                                           self.LastQ = GameTimer()
                                     elseif k == 1 then
@@ -1448,7 +1448,6 @@ class "__gsoSpell"
                   manualNum = 3
             end
             if manualNum > -1 and not self.DelayedSpell[manualNum] then
-                  local drawMenu = gsoSDK.Menu.gsodraw.circle1
                   if gsoSDK.Menu.orb.keys.combo:Value() or gsoSDK.Menu.orb.keys.harass:Value() or gsoSDK.Menu.orb.keys.lasthit:Value() or gsoSDK.Menu.orb.keys.laneclear:Value() or gsoSDK.Menu.orb.keys.flee:Value() then
                         self.DelayedSpell[manualNum] = {
                               function()
@@ -1564,10 +1563,15 @@ class "__gsoSpell"
 ]]
 class "__gsoTS"
       function __gsoTS:__init()
+            -- Last LastHit Minion
+            self.LastHandle = 0
+            self.LastMinionLastHit = nil
+            -- Last LaneClear Minion
+            self.LastLCHandle = 0
+            self.LastLCMinion = nil
             self.SelectedTarget = nil
             self.LastSelTick = 0
             self.LastHeroTarget = nil
-            self.LastMinionLastHit = nil
             self.FarmMinions = {}
             self.Priorities = {
                   ["Aatrox"] = 3, ["Ahri"] = 2, ["Akali"] = 2, ["Alistar"] = 5, ["Amumu"] = 5, ["Anivia"] = 2, ["Annie"] = 2, ["Ashe"] = 1, ["AurelionSol"] = 2, ["Azir"] = 2,
@@ -1693,6 +1697,7 @@ class "__gsoTS"
             end
             if result ~= nil then
                   self.LastMinionLastHit = result
+                  self.LastHandle = result.handle
             end
             return result
       end
@@ -1715,6 +1720,10 @@ class "__gsoTS"
                               result = enemyMinion.Minion
                         end
                   end
+            end
+            if result ~= nil then
+                  self.LastLCMinion = result
+                  self.LastLCHandle = result.handle
             end
             return result
       end
@@ -2134,12 +2143,247 @@ class "__gsoTwitch"
             end
       end
 --[[
+▒█▀▀▀ ▒█▀▀▀█ ▒█▀▀█ ▒█▀▀▀ ░█▀▀█ ▒█░░░ 
+▒█▀▀▀ ░▄▄▄▀▀ ▒█▄▄▀ ▒█▀▀▀ ▒█▄▄█ ▒█░░░ 
+▒█▄▄▄ ▒█▄▄▄█ ▒█░▒█ ▒█▄▄▄ ▒█░▒█ ▒█▄▄█ 
+]]
+class "__gsoEzreal"
+      function __gsoEzreal:__init()
+            self.ShouldWaitTime = 0
+            self.ShouldWait = false
+            self.FarmMinions = {}
+            gsoSDK.Menu = MenuElement({name = "Gamsteron Ezreal", id = "gsoezreal", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ezreal.png" })
+            __gsoLoader()
+            self.res = Game.Resolution()
+            self.resX = self.res.x
+            self.resY = self.res.y
+            gsoSDK.Orbwalker:SetSpellMoveDelays( { q = 0.2, w = 0.2, e = 0.2, r = 1 } )
+            gsoSDK.Orbwalker:SetSpellAttackDelays( { q = 0.33, w = 0.33, e = 0.33, r = 1.13 } )
+            self:SetSpellData()
+            self:CreateMenu()
+            self:CreateDrawMenu()
+            self:AddDrawEvent()
+            self:AddTickEvent()
+      end
+      function __gsoEzreal:SetSpellData()
+            self.qData = { delay = 0.25, radius = 60, range = 1150, speed = 2000, collision = true, sType = "line" }
+            self.wData = { delay = 0.25, radius = 80, range = 1150, speed = 1550, collision = false, sType = "line" }
+      end
+      function __gsoEzreal:CreateMenu()
+            gsoSDK.Menu:MenuElement({name = "Auto Q", id = "autoq", type = MENU })
+                  gsoSDK.Menu.autoq:MenuElement({id = "enable", name = "Enable", value = true, key = string.byte("T"), toggle = true})
+                  gsoSDK.Menu.autoq:MenuElement({id = "mana", name = "Q Auto min. mana percent", value = 50, min = 0, max = 100, step = 1 })
+                  gsoSDK.Menu.autoq:MenuElement({id = "hitchance", name = "Hitchance", value = 1, drop = { "normal", "high" } })
+            gsoSDK.Menu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+                  gsoSDK.Menu.qset:MenuElement({id = "hitchance", name = "Hitchance", value = 1, drop = { "normal", "high" } })
+                  gsoSDK.Menu.qset:MenuElement({id = "combo", name = "Combo", value = true})
+                  gsoSDK.Menu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+                  gsoSDK.Menu.qset:MenuElement({id = "laneclear", name = "LaneClear", value = false})
+                  gsoSDK.Menu.qset:MenuElement({id = "lasthit", name = "LastHit", value = true})
+                  gsoSDK.Menu.qset:MenuElement({id = "qlh", name = "Q LastHit min. mana percent", value = 10, min = 0, max = 100, step = 1 })
+                  gsoSDK.Menu.qset:MenuElement({id = "qlc", name = "Q LaneClear min. mana percent", value = 50, min = 0, max = 100, step = 1 })
+            gsoSDK.Menu:MenuElement({name = "W settings", id = "wset", type = MENU })
+                  gsoSDK.Menu.wset:MenuElement({id = "hitchance", name = "Hitchance", value = 1, drop = { "normal", "high" } })
+                  gsoSDK.Menu.wset:MenuElement({id = "combo", name = "Combo", value = true})
+                  gsoSDK.Menu.wset:MenuElement({id = "harass", name = "Harass", value = false})
+      end
+      function __gsoEzreal:CreateDrawMenu()
+            gsoSDK.Menu.gsodraw:MenuElement({name = "Auto Q", id = "autoq", type = MENU })
+                  gsoSDK.Menu.gsodraw.autoq:MenuElement({id = "enabled", name = "Enabled", value = true})
+                  gsoSDK.Menu.gsodraw.autoq:MenuElement({id = "size", name = "Text Size", value = 25, min = 1, max = 64, step = 1 })
+                  gsoSDK.Menu.gsodraw.autoq:MenuElement({id = "custom", name = "Custom Position", value = false})
+                  gsoSDK.Menu.gsodraw.autoq:MenuElement({id = "posX", name = "Text Position Width", value = self.resX * 0.5 - 150, min = 1, max = self.resX, step = 1 })
+                  gsoSDK.Menu.gsodraw.autoq:MenuElement({id = "posY", name = "Text Position Height", value = self.resY * 0.5, min = 1, max = self.resY, step = 1 })
+      end
+      function __gsoEzreal:AddDrawEvent()
+            gsoSDK.ChampDraw = function()
+                  if gsoSDK.Menu.gsodraw.autoq.enabled:Value() then
+                        local mePos = myHero.pos:To2D()
+                        local isCustom = gsoSDK.Menu.gsodraw.autoq.custom:Value()
+                        local posX = isCustom and gsoSDK.Menu.gsodraw.autoq.posX:Value() or mePos.x - 50
+                        local posY = isCustom and gsoSDK.Menu.gsodraw.autoq.posY:Value() or mePos.y
+                        if gsoSDK.Menu.autoq.enable:Value() then
+                              DrawText("Auto Q Enabled", gsoSDK.Menu.gsodraw.autoq.size:Value(), posX, posY, DrawColor(255, 000, 255, 000)) 
+                        else
+                              DrawText("Auto Q Disabled", gsoSDK.Menu.gsodraw.autoq.size:Value(), posX, posY, DrawColor(255, 255, 000, 000)) 
+                        end
+                  end
+            end
+      end
+      function __gsoEzreal:SetLastHitable(enemyMinion, time, damage, mode, allyMinions)
+            if mode == "fast" then
+                  local hpPred = self:MinionHpPredFast(enemyMinion, allyMinions, time)
+                  local lastHitable = hpPred - damage < 0
+                  if lastHitable then self.IsLastHitable = true end
+                  local almostLastHitable = lastHitable and false or self:MinionHpPredFast(enemyMinion, allyMinions, myHero.attackData.animationTime * 3) - damage < 0
+                  if almostLastHitable then
+                        self.ShouldWait = true
+                        self.ShouldWaitTime = GameTimer()
+                  end
+                  return { LastHitable =  lastHitable, Unkillable = hpPred < 0, AlmostLastHitable = almostLastHitable, PredictedHP = hpPred, Minion = enemyMinion }
+            elseif mode == "accuracy" then
+                  local hpPred = self:MinionHpPredAccuracy(enemyMinion, time)
+                  local lastHitable = hpPred - damage < 0
+                  if lastHitable then self.IsLastHitable = true end
+                  local almostLastHitable = lastHitable and false or self:MinionHpPredFast(enemyMinion, allyMinions, myHero.attackData.animationTime * 3) - damage < 0
+                  if almostLastHitable then
+                        self.ShouldWait = true
+                        self.ShouldWaitTime = GameTimer()
+                  end
+                  return { LastHitable =  lastHitable, Unkillable = hpPred < 0, AlmostLastHitable = almostLastHitable, PredictedHP = hpPred, Minion = enemyMinion }
+            end
+      end
+      function __gsoEzreal:QFarmTick()
+            if self.ShouldWait and GameTimer() > self.ShouldWaitTime + 0.25 then self.ShouldWait = false end
+            local QDmg = ((25 * myHero:GetSpellData(_Q).level) - 10) + (1.1 * myHero.totalDamage) + (0.4 * myHero.ap)
+            local enemyMinions = gsoSDK.ObjectManager:GetEnemyMinions(1120, false)
+            local allyMinions = gsoSDK.ObjectManager:GetAllyMinions(1500, false)
+            local lastHitMode = gsoSDK.Menu.ts.lasthitmode:Value() == 1 and "accuracy" or "fast"
+            local FarmMinionsCache = {}
+            for i = 1, #enemyMinions do
+                  local enemyMinion = enemyMinions[i]
+                  local FlyTime = myHero.pos:DistanceTo(enemyMinion.pos) / 2000
+                  FarmMinionsCache[#FarmMinionsCache+1] = self:SetLastHitable(enemyMinion, FlyTime, QDmg, lastHitMode, allyMinions)
+            end
+            self.FarmMinions = FarmMinionsCache
+      end
+      function __gsoEzreal:QGetLastHit()
+            for i = 1, #self.FarmMinions do
+                  local enemyMinion = self.FarmMinions[i]
+                  if enemyMinion.LastHitable then
+                        local unit = enemyMinion.Minion
+                        if unit ~= gsoSDK.TS.LastMinionLastHit and unit.handle ~= gsoSDK.TS.LastHandle then
+                              local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(unit, self.qData.delay, self.qData.radius, self.qData.range, self.qData.speed, myHero.pos, self.qData.collision, self.qData.sType)
+                              if enemyMinion.LastHitable and HitChance > 0 and myHero.pos:DistanceTo(castpos) < self.qData.range and unit.pos:DistanceTo(castpos) < 500 then
+                                    return true, castpos
+                              end
+                        end
+                  end
+            end
+            return false, nil
+      end
+      function __gsoEzreal:QCastLaneClear()
+            -- LastHit
+            local success, castpos = self:QGetLastHit()
+            if success then
+                  return success, castpos
+            end
+            -- Check If Can LaneClear
+            if self.ShouldWait then return false, nil end
+            -- Enemy Heroes
+            local enemyHeroes = gsoSDK.ObjectManager:GetEnemyHeroes(1150, false, "spell")
+            for i = 1, #enemyHeroes do
+                  local unit = enemyHeroes[i]
+                  local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(unit, self.qData.delay, self.qData.radius, self.qData.range, self.qData.speed, myHero.pos, self.qData.collision, self.qData.sType)
+                  if HitChance > 0 and myHero.pos:DistanceTo(castpos) < self.qData.range and unit.pos:DistanceTo(castpos) < 500 then
+                        return true, castpos
+                  end
+            end
+            -- LaneClear
+            for i = 1, #self.FarmMinions do
+                  local enemyMinion = self.FarmMinions[i]
+                  local unit = enemyMinion.Minion
+                  if unit ~= gsoSDK.TS.LastLCMinion and unit.handle ~= gsoSDK.TS.LastLCHandle then
+                        local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(unit, self.qData.delay, self.qData.radius, self.qData.range, self.qData.speed, myHero.pos, self.qData.collision, self.qData.sType)
+                        if HitChance > 0 and myHero.pos:DistanceTo(castpos) < self.qData.range and unit.pos:DistanceTo(castpos) < 500 then
+                              return true, castpos
+                        end
+                  end
+            end
+            return false, nil
+      end
+      function __gsoEzreal:QFarm(IsLastHit)
+            if IsLastHit then
+                  return self:QGetLastHit()
+            else
+                  return self:QCastLaneClear()
+            end
+      end
+      function __gsoEzreal:AddTickEvent()
+            gsoSDK.ChampTick = function()
+                  -- Q Farm Tick
+                  if gsoSDK.Menu.autoq.enable:Value() then
+                        self:QFarmTick()
+                  end
+                  -- E manual
+                  gsoSDK.Spell:CastManualSpell(_E, { q = 0.33, w = 0.33, e = 0.5, r = 1.13 })
+                  -- Is Attacking
+                  if not gsoSDK.Orbwalker:CanMove() then
+                        return
+                  end
+                  -- Get Mode
+                  local mode = gsoSDK.Orbwalker:GetMode()
+                  -- Can Attack
+                  local AATarget = gsoSDK.TS:GetComboTarget()
+                  if AATarget and mode ~= "None" and gsoSDK.Orbwalker:CanAttack() then
+                        return
+                  end
+                  -- Q
+                  if gsoSDK.Spell:IsReady(_Q, { q = 0.5, w = 0.33, e = 0.33, r = 1.13 } ) then
+                        -- Get Mana Percent
+                        local manaPercent = 100 * myHero.mana / myHero.maxMana
+                        -- Auto
+                        if mode == "None" and gsoSDK.Menu.autoq.enable:Value() and manaPercent > gsoSDK.Menu.autoq.mana:Value() then
+                              local enemyHeroes = gsoSDK.ObjectManager:GetEnemyHeroes(1150, false, "spell")
+                              for i = 1, #enemyHeroes do
+                                    local unit = enemyHeroes[i]
+                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(unit, self.qData.delay, self.qData.radius, self.qData.range, self.qData.speed, myHero.pos, self.qData.collision, self.qData.sType)
+                                    if HitChance > gsoSDK.Menu.autoq.hitchance:Value()-1 and myHero.pos:DistanceTo(castpos) < self.qData.range and unit.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_Q, castpos, true) then
+                                          return
+                                    end
+                              end
+                        end
+                        -- Combo / Harass
+                        if (mode == "Combo" and gsoSDK.Menu.qset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.qset.harass:Value()) then
+                              local QTarget
+                              if AATarget then
+                                    QTarget = AATarget
+                              else
+                                    QTarget = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(1150, false, "spell"), false)
+                              end
+                              if QTarget then
+                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(QTarget, self.qData.delay, self.qData.radius, self.qData.range, self.qData.speed, myHero.pos, self.qData.collision, self.qData.sType)
+                                    if HitChance > gsoSDK.Menu.qset.hitchance:Value()-1 and myHero.pos:DistanceTo(castpos) < self.qData.range and QTarget.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_Q, castpos, true) then
+                                          return
+                                    end
+                              end
+                        end
+                        -- Lasthit / LaneClear
+                        if (gsoSDK.Menu.qset.lasthit:Value() and mode == "LastHit" and manaPercent > gsoSDK.Menu.qset.qlh:Value()) or (gsoSDK.Menu.qset.laneclear:Value() and mode == " Clear" and manaPercent > gsoSDK.Menu.qset.qlc:Value()) then
+                              local success, castpos = self:QFarm(mode == "LastHit")
+                              if success and gsoSDK.Spell:CastSpell(HK_Q, castpos, true) then
+                                    return
+                              end
+                        end
+                  end
+                  -- W
+                  if gsoSDK.Spell:IsReady(_W, { q = 0.33, w = 0.5, e = 0.33, r = 1.13 } ) then
+                        if (mode == "Combo" and gsoSDK.Menu.wset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.wset.harass:Value()) then
+                              local WTarget
+                              if AATarget then
+                                    WTarget = AATarget
+                              else
+                                    WTarget = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(1000, false, "spell"), false)
+                              end
+                              if WTarget then
+                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(WTarget, self.wData.delay, self.wData.radius, self.wData.range, self.wData.speed, myHero.pos, self.wData.collision, self.wData.sType)
+                                    if HitChance > gsoSDK.Menu.wset.hitchance:Value()-1 and myHero.pos:DistanceTo(castpos) < self.wData.range and WTarget.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_W, castpos, true) then
+                                          return
+                                    end
+                              end
+                        end
+                  end
+            end
+      end
+--[[
 ▒█░░░ ▒█▀▀▀█ ░█▀▀█ ▒█▀▀▄ 　 ░█▀▀█ ▒█░░░ ▒█░░░ 
 ▒█░░░ ▒█░░▒█ ▒█▄▄█ ▒█░▒█ 　 ▒█▄▄█ ▒█░░░ ▒█░░░ 
 ▒█▄▄█ ▒█▄▄▄█ ▒█░▒█ ▒█▄▄▀ 　 ▒█░▒█ ▒█▄▄█ ▒█▄▄█ 
 ]]
 if myHero.charName == "Twitch" then
       __gsoTwitch()
+elseif myHero.charName == "Ezreal" then
+      __gsoEzreal()
 else
       gsoSDK.Menu = MenuElement({name = "Gamsteron Test", id = "gamsteron", type = MENU })
       __gsoLoader()
