@@ -2524,9 +2524,11 @@ class "__gsoKogMaw"
                               end
                               local t = gsoSDK.TS:GetTarget(rTargets, true)
                               local sd = self.rData
-                              local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
-                              if HitChance > 0 and myHero.pos:DistanceTo(castpos) < sd.range and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_R, castpos, false) then
-                                    return
+                              if t then
+                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
+                                    if HitChance > 0 and myHero.pos:DistanceTo(castpos) < sd.range and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_R, castpos, false) then
+                                          return
+                                    end
                               end
                         end
                         -- SEMI MANUAL
@@ -2546,9 +2548,11 @@ class "__gsoKogMaw"
                               end
                               local t = gsoSDK.TS:GetTarget(rTargets, true)
                               local sd = self.rData
-                              local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
-                              if HitChance > 0 and myHero.pos:DistanceTo(castpos) < sd.range and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_R, castpos, false) then
-                                    return
+                              if t then
+                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
+                                    if HitChance > 0 and myHero.pos:DistanceTo(castpos) < sd.range and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_R, castpos, false) then
+                                          return
+                                    end
                               end
                         end
                         -- Combo / Harass
@@ -2577,9 +2581,11 @@ class "__gsoKogMaw"
                                           t = gsoSDK.TS:GetTarget(rTargets, true)
                                     end
                                     local sd = self.rData
-                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
-                                    if HitChance > 0 and myHero.pos:DistanceTo(castpos) < sd.range and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_R, castpos, false) then
-                                          return
+                                    if t then
+                                          local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
+                                          if HitChance > 0 and myHero.pos:DistanceTo(castpos) < sd.range and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_R, castpos, false) then
+                                                return
+                                          end
                                     end
                               end
                         end
