@@ -2560,12 +2560,15 @@ class "__gsoKogMaw"
                               local stopRIfW = gsoSDK.Menu.wset.stopr:Value() and self.HasWBuff
                               if not stopRIfW and rStacks and manaPercent > gsoSDK.Menu.rset.rmana:Value() then
                                     local onlyLowR = gsoSDK.Menu.rset.onlylow:Value()
+                                    local AATarget2
                                     if onlyLowR and AATarget and ( AATarget.health * 100 ) / AATarget.maxHealth > 39 then
-                                          AATarget = nil
+                                          AATarget2 = nil
+                                    else
+                                          AATarget2 = AATarget
                                     end
                                     local t
-                                    if AATarget then
-                                          t = AATarget
+                                    if AATarget2 then
+                                          t = AATarget2
                                     else
                                           local rTargets = {}
                                           if onlyLowR then
