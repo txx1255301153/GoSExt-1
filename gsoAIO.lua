@@ -2302,7 +2302,7 @@ class "__gsoEzreal"
       function __gsoEzreal:AddTickEvent()
             gsoSDK.ChampTick = function()
                   -- Q Farm Tick
-                  if gsoSDK.Menu.autoq.enable:Value() then
+                  if gsoSDK.Menu.qset.lasthit:Value() or gsoSDK.Menu.qset.laneclear:Value() then
                         self:QFarmTick()
                   end
                   -- E manual
