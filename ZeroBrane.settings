@@ -1,0 +1,32 @@
+--[[--
+  Use this file to specify **System** preferences.
+  Review [examples](+C:\Users\PC\Downloads\ZeroBraneStudio\cfg\user-sample.lua) or check [online documentation](http://studio.zerobrane.com/documentation.html) for details.
+--]]--
+
+editor.fontsize = 12
+editor.usewrap = false
+editor.fontname = "Inconsolata"
+editor.tabwidth = 2
+outline.showcompact = true
+filetree.fontsize = 12
+filetree.fontname = "Times New Roman"
+
+styles = loadfile('cfg/tomorrow.lua')('TomorrowNightEighties')
+stylesoutshell = styles -- apply the same scheme to Output/Console windows
+styles.auxwindow = styles.text -- apply text colors to auxiliary windows
+styles.calltip = styles.text -- apply text colors to tooltips
+
+--[[--
+  Use this file to specify **User** preferences.
+  Review [examples](+C:\Users\PC\Downloads\ZeroBraneStudio\cfg\user-sample.lua) or check [online documentation](http://studio.zerobrane.com/documentation.html) for details.
+--]]--
+
+acandtip.nodynwords = false
+editor.indentguide = false
+editor.tabwidth = 6;
+
+styles.indicator.fncall = {st = wxstc.wxSTC_INDIC_HIDDEN };
+styles.indicator.varlocal = {st = wxstc.wxSTC_INDIC_HIDDEN };
+styles.indicator.varglobal = {st = wxstc.wxSTC_INDIC_HIDDEN };
+styles.indicator.varmasking = {fg = {255,0,0}};
+styles.indicator.varmasked = {fg = {255,0,0}};
