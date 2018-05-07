@@ -2399,12 +2399,13 @@ class "__gsoKogMaw"
             self:SetSpellData()
             self:CreateMenu()
             self:AddTickEvent()
-            gsoSDK.Orbwalker:OnPreAttack(function()
+            gsoSDK.Orbwalker:OnPreAttack(function(args)
                   local mode = gsoSDK.Orbwalker:GetMode()
                   local canW = (mode == "Combo" and gsoSDK.Menu.wset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.wset.harass:Value())
                   if canW and gsoSDK.Spell:IsReady(_W, { q = 0.33, w = 0.5, e = 0.33, r = 0.33 } ) then
                         local enemyList = gsoSDK.ObjectManager:GetEnemyHeroes(610 + ( 20 * myHero:GetSpellData(_W).level ) + myHero.boundingRadius - 35, true, "attack")
                         if #enemyList > 0 and gsoSDK.Spell:CastSpell(HK_W) then
+                              args.Process = false
                               return
                         end
                   end
