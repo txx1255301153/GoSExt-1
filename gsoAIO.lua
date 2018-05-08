@@ -1808,6 +1808,8 @@ class "__gsoTwitch"
       end
       function __gsoTwitch:CreateMenu()
             gsoSDK.Menu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+                  gsoSDK.Menu.qset:MenuElement({id = "combo", name = "Use Q Combo", value = false})
+                  gsoSDK.Menu.qset:MenuElement({id = "harass", name = "Use Q Harass", value = false})
                   gsoSDK.Menu.qset:MenuElement({id = "recallkey", name = "Invisible Recall Key", key = string.byte("T"), value = false, toggle = true})
                   gsoSDK.Menu.qset.recallkey:Value(false)
                   gsoSDK.Menu.qset:MenuElement({id = "note1", name = "Note: Key should be diffrent than recall key", type = SPACE})
@@ -1984,6 +1986,14 @@ class "__gsoTwitch"
                         local target = gsoSDK.TS:GetComboTarget()
                         if target and gsoSDK.Orbwalker:CanAttack() then
                               return
+                        end
+                        -- Q
+                        local isComboQ = isCombo and gsoSDK.Menu.qset.combo:Value()
+                        local isHarassQ = isHarass and gsoSDK.Menu.qset.harass:Value()
+                        if isComboQ or isHarassQ then
+                              if target and gsoSDK.Spell:IsReady(_Q, { q = 0.5, w = 0.33, e = 0.33, r = 0.1 } ) and gsoSDK.Spell:CastSpell(HK_Q) then
+                                    return
+                              end
                         end
                         --W
                         local isComboW = gsoSDK.Menu.orb.keys.combo:Value() and gsoSDK.Menu.wset.combo:Value()
@@ -2572,6 +2582,7 @@ class "__gsoVarus"
                               if ControlIsKeyDown(HK_Q) then
                                     ControlKeyUp(HK_Q)
                               end
+                              -- W
                               local canW = (mode == "Combo" and gsoSDK.Menu.wset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.wset.harass:Value())
                               if canW and gsoSDK.Spell:IsReady(_W, { q = 0.33, w = 0.5, e = 0.63, r = 0.33 } ) then
                                     local whp = gsoSDK.Menu.wset.whp:Value()
