@@ -2636,6 +2636,171 @@ class "__gsoVarus"
             end
       end
 --[[
+▒█▀▀█ ▒█▀▀█ ░█▀▀█ ▒█▄░▒█ ▒█▀▀▄ 
+▒█▀▀▄ ▒█▄▄▀ ▒█▄▄█ ▒█▒█▒█ ▒█░▒█ 
+▒█▄▄█ ▒█░▒█ ▒█░▒█ ▒█░░▀█ ▒█▄▄▀ 
+]]
+class "__gsoBrand"
+      function __gsoBrand:__init()
+            gsoSDK.Menu = MenuElement({name = "Gamsteron Brand", id = "gsobrand", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/x1xxbrandx3xx.png" })
+            __gsoLoader()
+            gsoSDK.Orbwalker:SetSpellMoveDelays( { q = 0.2, w = 0.2, e = 0.2, r = 0.2 } )
+            gsoSDK.Orbwalker:SetSpellAttackDelays( { q = 0.33, w = 0.33, e = 0.33, r = 0.33 } )
+            self:SetSpellData()
+            self:CreateMenu()
+            self:AddTickEvent()
+            gsoSDK.Orbwalker:CanAttackEvent(function()
+                  -- LastHit, LaneClear
+                  if not gsoSDK.Menu.orb.keys.combo:Value() and not gsoSDK.Menu.orb.keys.harass:Value() then
+                        return true
+                  end
+                  -- W
+                  local wDis = gsoSDK.Menu.wset.disaa:Value()
+                  local wLvl = wDis and myHero:GetSpellData(_W).level or 0
+                  local isWReady = wLvl > 0 and GameCanUseSpell(_W) == 0
+                  local almostWReady = wLvl > 0 and myHero.mana > myHero:GetSpellData(_W).mana and myHero:GetSpellData(_W).currentCd < 1
+                  local w = isWReady or almostWReady
+                  -- E
+                  local eDis = gsoSDK.Menu.eset.disaa:Value()
+                  local eLvl = eDis and myHero:GetSpellData(_E).level or 0
+                  local isEReady = eLvl > 0 and GameCanUseSpell(_E) == 0
+                  local almostEReady = eLvl > 0 and myHero.mana > myHero:GetSpellData(_E).mana and myHero:GetSpellData(_E).currentCd < 1
+                  local e = isEReady or almostEReady
+                  if w or e then
+                        return false
+                  end
+                  return true
+            end)
+      end
+      function __gsoBrand:SetSpellData()
+            self.qData = { delay = 0.25, radius = 60, range = 1050, speed = 1600, collision = true, sType = "line" }
+            self.wData = { delay = 0.85, radius = 250, range = 900, speed = math.huge, collision = false, sType = "circular" }
+      end
+      function __gsoBrand:CreateMenu()
+            gsoSDK.Menu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+                  gsoSDK.Menu.qset:MenuElement({name = "Auto", id = "auto", type = MENU })
+                        gsoSDK.Menu.qset.auto:MenuElement({id = "stun", name = "Auto Stun", value = true})
+                        gsoSDK.Menu.qset.auto:MenuElement({id = "hitchance", name = "Hitchance", value = 2, drop = { "normal", "high" } })
+                  gsoSDK.Menu.qset:MenuElement({name = "Combo / Harass", id = "comhar", type = MENU })
+                        gsoSDK.Menu.qset.comhar:MenuElement({id = "combo", name = "Combo", value = true})
+                        gsoSDK.Menu.qset.comhar:MenuElement({id = "harass", name = "Harass", value = false})
+                        gsoSDK.Menu.qset.comhar:MenuElement({id = "stun", name = "Only if will stun", value = true})
+                        gsoSDK.Menu.qset.comhar:MenuElement({id = "hitchance", name = "Hitchance", value = 1, drop = { "normal", "high" } })
+            gsoSDK.Menu:MenuElement({name = "W settings", id = "wset", type = MENU })
+                  gsoSDK.Menu.wset:MenuElement({id = "disaa", name = "Disable attack if ready or almostReady", value = true})
+                  gsoSDK.Menu.wset:MenuElement({name = "Auto", id = "auto", type = MENU })
+                        gsoSDK.Menu.wset.auto:MenuElement({id = "enabled", name = "Enabled", value = true})
+                        gsoSDK.Menu.wset.auto:MenuElement({id = "hitchance", name = "Hitchance", value = 2, drop = { "normal", "high" } })
+                  gsoSDK.Menu.wset:MenuElement({name = "Combo / Harass", id = "comhar", type = MENU })
+                        gsoSDK.Menu.wset.comhar:MenuElement({id = "combo", name = "Combo", value = true})
+                        gsoSDK.Menu.wset.comhar:MenuElement({id = "harass", name = "Harass", value = false})
+                        gsoSDK.Menu.wset.comhar:MenuElement({id = "hitchance", name = "Hitchance", value = 1, drop = { "normal", "high" } })
+            gsoSDK.Menu:MenuElement({name = "E settings", id = "eset", type = MENU })
+                  gsoSDK.Menu.eset:MenuElement({id = "disaa", name = "Disable attack if ready or almostReady", value = true})
+                  gsoSDK.Menu.eset:MenuElement({id = "combo", name = "Combo", value = true})
+                  gsoSDK.Menu.eset:MenuElement({id = "harass", name = "Harass", value = false})
+            gsoSDK.Menu:MenuElement({name = "R settings", id = "rset", type = MENU })
+                  gsoSDK.Menu.rset:MenuElement({id = "combo", name = "Use R Combo", value = true})
+                  gsoSDK.Menu.rset:MenuElement({id = "harass", name = "Use R Harass", value = false})
+                  gsoSDK.Menu.rset:MenuElement({id = "xenemies", name = ">= X enemies near target", value = 2, min = 1, max = 4, step = 1})
+                  gsoSDK.Menu.rset:MenuElement({id = "xrange", name = "< X distance enemies to target", value = 300, min = 100, max = 600, step = 50})
+      end
+      function __gsoBrand:AddTickEvent()
+            gsoSDK.ChampTick = function()
+                  -- Is Attacking
+                  if not gsoSDK.Orbwalker:CanMove() then
+                        return
+                  end
+                  -- Get Mode
+                  local mode = gsoSDK.Orbwalker:GetMode()
+                  -- Get Enemies
+                  local enemyList = gsoSDK.ObjectManager:GetEnemyHeroes(math.huge, false, "spell")
+                  -- Q
+                  if gsoSDK.Spell:IsReady(_Q, { q = 0.5, w = 0.33, e = 0.33, r = 0.33 } ) then
+                        -- Combo Harass
+                        if (mode == "Combo" and gsoSDK.Menu.qset.comhar.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.qset.comhar.harass:Value()) then
+                              local onlyStun = gsoSDK.Menu.qset.comhar.stun:Value()
+                              local QTargets = {}
+                              for i = 1, #enemyList do
+                                    local unit = enemyList[i]
+                                    if myHero.pos:DistanceTo(unit.pos) < 1050 then
+                                          local hasBuff = gsoSDK.Spell:GetBuffDuration(unit, "brandablaze") > 0.35
+                                          if hasBuff and gsoSDK.Spell:CastSpell(HK_Q, unit, myHero.pos, self.qData, gsoSDK.Menu.qset.comhar.hitchance:Value()) then
+                                                return
+                                          elseif not hasBuff and not onlyStun then
+                                                QTargets[#QTargets+1] = unit
+                                          end
+                                    end
+                              end
+                              for i = 1, #QTargets do
+                                    local unit = QTargets[i]
+                                    if gsoSDK.Spell:CastSpell(HK_Q, unit, myHero.pos, self.qData, gsoSDK.Menu.qset.comhar.hitchance:Value()) then
+                                          return
+                                    end
+                              end
+                        -- Auto
+                        elseif gsoSDK.Menu.qset.auto.stun:Value() then
+                              for i = 1, #enemyList do
+                                    local unit = enemyList[i]
+                                    if myHero.pos:DistanceTo(unit.pos) < 1050 and gsoSDK.Spell:GetBuffDuration(unit, "brandablaze") > 0.35 and gsoSDK.Spell:CastSpell(HK_Q, unit, myHero.pos, self.qData, gsoSDK.Menu.qset.auto.hitchance:Value()) then
+                                          return
+                                    end
+                              end
+                        end
+                  end
+                  -- W
+                  if gsoSDK.Spell:IsReady(_W, { q = 0.33, w = 0.5, e = 0.33, r = 0.33 } ) then
+                        -- Combo / Harass
+                        if (mode == "Combo" and gsoSDK.Menu.wset.comhar.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.wset.comhar.harass:Value()) then
+                              for i = 1, 5 do
+                                    local t = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(1300 - (100 * i), false, "spell"), true)
+                                    if t and gsoSDK.Spell:CastSpell(HK_W, t, myHero.pos, self.wData, gsoSDK.Menu.wset.comhar.hitchance:Value()) then
+                                          return
+                                    end
+                              end
+                        -- Auto
+                        elseif gsoSDK.Menu.wset.auto.enabled:Value() then
+                              for i = 1, #enemyList do
+                                    local unit = enemyList[i]
+                                    if myHero.pos:DistanceTo(unit.pos) < 1100 and gsoSDK.Spell:CastSpell(HK_W, unit, myHero.pos, self.wData, gsoSDK.Menu.wset.auto.hitchance:Value()) then
+                                          return
+                                    end
+                              end
+                        end
+                  end
+                  -- E
+                  if gsoSDK.Spell:IsReady(_E, { q = 0.33, w = 0.33, e = 0.5, r = 0.33 } ) then
+                        if (mode == "Combo" and gsoSDK.Menu.eset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.eset.harass:Value()) then
+                              local t = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(650, false, "spell"), true) --E range = 670
+                              if t and gsoSDK.Spell:CastSpell(HK_E, t) then
+                                    return
+                              end
+                        end
+                  end
+                  -- R
+                  if gsoSDK.Spell:IsReady(_R, { q = 0.33, w = 0.33, e = 0.5, r = 0.33 } ) then
+                        if (mode == "Combo" and gsoSDK.Menu.rset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.rset.harass:Value()) then
+                              local rTargets = gsoSDK.ObjectManager:GetEnemyHeroes(730, false, "spell") --R range = 750
+                              local xRange = gsoSDK.Menu.rset.xrange:Value()
+                              local xEnemies = gsoSDK.Menu.rset.xenemies:Value()
+                              for i = 1, #rTargets do
+                                    local count = 0
+                                    local t = rTargets[i]
+                                    for j = 1, #rTargets do
+                                          local tt = rTargets[j]
+                                          if t ~= tt and t.pos:DistanceTo(tt.pos) < xRange then
+                                                count = count + 1
+                                          end
+                                    end
+                                    if count >= xEnemies and gsoSDK.Spell:CastSpell(HK_R, t) then
+                                          return
+                                    end
+                              end
+                        end
+                  end
+            end
+      end
+--[[
 ▒█░░░ ▒█▀▀▀█ ░█▀▀█ ▒█▀▀▄ 　 ░█▀▀█ ▒█░░░ ▒█░░░ 
 ▒█░░░ ▒█░░▒█ ▒█▄▄█ ▒█░▒█ 　 ▒█▄▄█ ▒█░░░ ▒█░░░ 
 ▒█▄▄█ ▒█▄▄▄█ ▒█░▒█ ▒█▄▄▀ 　 ▒█░▒█ ▒█▄▄█ ▒█▄▄█ 
@@ -2648,6 +2813,8 @@ elseif myHero.charName == "KogMaw" then
       __gsoKogMaw()
 elseif myHero.charName == "Varus" then
       __gsoVarus()
+elseif myHero.charName == "Brand" then
+      __gsoBrand()
 else
       gsoSDK.Menu = MenuElement({name = "Gamsteron Test", id = "gamsteron", type = MENU })
       __gsoLoader()
