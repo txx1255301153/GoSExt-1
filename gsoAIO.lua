@@ -9,7 +9,6 @@ local gsoSDK = {
       ChampWndMsg = function(msg, wParam) end,
       Menu = nil,
       Spell = nil,
-      Prediction = nil,
       Utilities = nil,
       Cursor = nil,
       ObjectManager = nil,
@@ -272,6 +271,7 @@ class "__gsoOB"
             self.EnemyHeroes = {}
             self.AllyHeroLoad = {}
             self.EnemyHeroLoad = {}
+            self.Units = { EnemyMinions = {} }
             self.UndyingBuffs = { ["zhonyasringshield"] = true }
       end
       function __gsoOB:OnAllyHeroLoad(func)
@@ -395,6 +395,7 @@ class "__gsoOB"
             for i = 1, GameHeroCount() do end
             for i = 1, GameTurretCount() do end
             for i = 1, GameMinionCount() do end
+            self.Units.EnemyMinions = self:GetEnemyMinions(2000, false)
             if self.LoadedChamps then return end
             for i = 1, GameHeroCount() do
                   local hero = GameHero(i)
@@ -820,305 +821,13 @@ class "__gsoOrbwalker"
             end
       end
 --[[
-▒█▀▀█ ▒█▀▀█ ▒█▀▀▀ ▒█▀▀▄ ▀█▀ ▒█▀▀█ ▀▀█▀▀ ▀█▀ ▒█▀▀▀█ ▒█▄░▒█ 
-▒█▄▄█ ▒█▄▄▀ ▒█▀▀▀ ▒█░▒█ ▒█░ ▒█░░░ ░▒█░░ ▒█░ ▒█░░▒█ ▒█▒█▒█ 
-▒█░░░ ▒█░▒█ ▒█▄▄▄ ▒█▄▄▀ ▄█▄ ▒█▄▄█ ░▒█░░ ▄█▄ ▒█▄▄▄█ ▒█░░▀█ 
-]]
-class "__gsoPrediction"
-      function __gsoPrediction:CutWaypoints(Waypoints, distance, unit)
-          local result = {}
-          local remaining = distance
-          if distance > 0 then
-              for i = 1, #Waypoints -1 do
-                  local A, B = Waypoints[i], Waypoints[i + 1]
-                  if A and B then 
-                      local dist = self:GetDistance(A, B)
-                      if dist >= remaining then
-                          result[1] = Vector(A) + remaining * (Vector(B) - Vector(A)):Normalized()
-                          for j = i + 1, #Waypoints do
-                              result[j - i + 1] = Waypoints[j]
-                          end
-                          remaining = 0
-                          break
-                      else
-                          remaining = remaining - dist
-                      end
-                  end
-              end
-          else
-              local A, B = Waypoints[1], Waypoints[2]
-              result = Waypoints
-              result[1] = Vector(A) - distance * (Vector(B) - Vector(A)):Normalized()
-          end
-
-          return result
-      end
-      function __gsoPrediction:VectorMovementCollision(startPoint1, endPoint1, v1, startPoint2, v2, delay)
-          local sP1x, sP1y, eP1x, eP1y, sP2x, sP2y = startPoint1.x, startPoint1.z, endPoint1.x, endPoint1.z, startPoint2.x, startPoint2.z
-          local d, e = eP1x-sP1x, eP1y-sP1y
-          local dist, t1, t2 = MathSqrt(d*d+e*e), nil, nil
-          local S, K = dist~=0 and v1*d/dist or 0, dist~=0 and v1*e/dist or 0
-          local function GetCollisionPoint(t) return t and {x = sP1x+S*t, y = sP1y+K*t} or nil end
-          if delay and delay~=0 then sP1x, sP1y = sP1x+S*delay, sP1y+K*delay end
-          local r, j = sP2x-sP1x, sP2y-sP1y
-          local c = r*r+j*j
-          if dist>0 then
-              if v1 == math.huge then
-                  local t = dist/v1
-                  t1 = v2*t>=0 and t or nil
-              elseif v2 == math.huge then
-                  t1 = 0
-              else
-                  local a, b = S*S+K*K-v2*v2, -r*S-j*K
-                  if a==0 then 
-                      if b==0 then --c=0->t variable
-                          t1 = c==0 and 0 or nil
-                      else --2*b*t+c=0
-                          local t = -c/(2*b)
-                          t1 = v2*t>=0 and t or nil
-                      end
-                  else --a*t*t+2*b*t+c=0
-                      local sqr = b*b-a*c
-                      if sqr>=0 then
-                          local nom = MathSqrt(sqr)
-                          local t = (-nom-b)/a
-                          t1 = v2*t>=0 and t or nil
-                          t = (nom-b)/a
-                          t2 = v2*t>=0 and t or nil
-                      end
-                  end
-              end
-          elseif dist==0 then
-              t1 = 0
-          end
-          return t1, GetCollisionPoint(t1), t2, GetCollisionPoint(t2), dist
-      end
-      function __gsoPrediction:GetCurrentWayPoints(object)
-          local result = {}
-          local objectPos = object.pos
-          if object.pathing.hasMovePath then
-              local objectPath = object.pathing
-              table.insert(result, Vector(objectPos.x,objectPos.y, objectPos.z))
-              for i = objectPath.pathIndex, objectPath.pathCount do
-                  path = object:GetPath(i)
-                  table.insert(result, Vector(path.x, path.y, path.z))
-              end
-          else
-              table.insert(result, object and Vector(objectPos.x,objectPos.y, objectPos.z) or Vector(objectPos.x,objectPos.y, objectPos.z))
-          end
-          return result
-      end
-      function __gsoPrediction:GetDistanceSqr(p1, p2)
-          if not p1 or not p2 then return 999999999 end
-          return (p1.x - p2.x) ^ 2 + ((p1.z or p1.y) - (p2.z or p2.y)) ^ 2
-      end
-      function __gsoPrediction:GetDistance(p1, p2)
-          return MathSqrt(self:GetDistanceSqr(p1, p2))
-      end
-      function __gsoPrediction:GetWaypointsLength(Waypoints)
-          local result = 0
-          for i = 1, #Waypoints -1 do
-              result = result + self:GetDistance(Waypoints[i], Waypoints[i + 1])
-          end
-          return result
-      end
-      function __gsoPrediction:CanMove(unit, delay)
-          for i = 1, unit.buffCount do
-              local buff = unit:GetBuff(i);
-              if buff.count > 0 and buff.duration>=delay then
-                  if (buff.type == 5 or buff.type == 8 or buff.type == 21 or buff.type == 22 or buff.type == 24 or buff.type == 11) then
-                      return false -- block everything
-                  end
-              end
-          end
-          return true
-      end
-      function __gsoPrediction:IsImmobile(unit, delay, radius, speed, from, spelltype)
-          local unitPos = unit.pos
-          local ExtraDelay = speed == math.huge and 0 or from and unit and unitPos and (self:GetDistance(from, unitPos) / speed)
-          if (self:CanMove(unit, delay + ExtraDelay) == false) then
-              return true
-          end
-          return false
-      end
-      function __gsoPrediction:CalculateTargetPosition(unit, delay, radius, speed, from, spelltype)
-          local Waypoints = {}
-          local unitPos = unit.pos
-          local Position, CastPosition = Vector(unitPos), Vector(unitPos)
-          local t
-          Waypoints = self:GetCurrentWayPoints(unit)
-          local Waypointslength = self:GetWaypointsLength(Waypoints)
-          local movementspeed = unit.pathing.isDashing and unit.pathing.dashSpeed or unit.ms
-          if #Waypoints == 1 then
-              Position, CastPosition = Vector(Waypoints[1].x, Waypoints[1].y, Waypoints[1].z), Vector(Waypoints[1].x, Waypoints[1].y, Waypoints[1].z)
-              return Position, CastPosition
-          elseif (Waypointslength - delay * movementspeed + radius) >= 0 then
-              local tA = 0
-              Waypoints = self:CutWaypoints(Waypoints, delay * movementspeed - radius)
-              if speed ~= math.huge then
-                  for i = 1, #Waypoints - 1 do
-                      local A, B = Waypoints[i], Waypoints[i+1]
-                      if i == #Waypoints - 1 then
-                          B = Vector(B) + radius * Vector(B - A):Normalized()
-                      end
-
-                      local t1, p1, t2, p2, D = self:VectorMovementCollision(A, B, movementspeed, Vector(from.x,from.y,from.z), speed)
-                      local tB = tA + D / movementspeed
-                      t1, t2 = (t1 and tA <= t1 and t1 <= (tB - tA)) and t1 or nil, (t2 and tA <= t2 and t2 <= (tB - tA)) and t2 or nil
-                      t = t1 and t2 and math.min(t1, t2) or t1 or t2
-                      if t then
-                          CastPosition = t==t1 and Vector(p1.x, 0, p1.y) or Vector(p2.x, 0, p2.y)
-                          break
-                      end
-                      tA = tB
-                  end
-              else
-                  t = 0
-                  CastPosition = Vector(Waypoints[1].x, Waypoints[1].y, Waypoints[1].z)
-              end
-              if t then
-                  if (self:GetWaypointsLength(Waypoints) - t * movementspeed - radius) >= 0 then
-                      Waypoints = self:CutWaypoints(Waypoints, radius + t * movementspeed)
-                      Position = Vector(Waypoints[1].x, Waypoints[1].y, Waypoints[1].z)
-                  else
-                      Position = CastPosition
-                  end
-              elseif unit.type ~= myHero.type then
-                  CastPosition = Vector(Waypoints[#Waypoints].x, Waypoints[#Waypoints].y, Waypoints[#Waypoints].z)
-                  Position = CastPosition
-              end
-          elseif unit.type ~= myHero.type then
-              CastPosition = Vector(Waypoints[#Waypoints].x, Waypoints[#Waypoints].y, Waypoints[#Waypoints].z)
-              Position = CastPosition
-          end
-          return Position, CastPosition
-      end
-      function __gsoPrediction:VectorPointProjectionOnLineSegment(v1, v2, v)
-          local cx, cy, ax, ay, bx, by = v.x, (v.z or v.y), v1.x, (v1.z or v1.y), v2.x, (v2.z or v2.y)
-          local rL = ((cx - ax) * (bx - ax) + (cy - ay) * (by - ay)) / ((bx - ax) ^ 2 + (by - ay) ^ 2)
-          local pointLine = { x = ax + rL * (bx - ax), y = ay + rL * (by - ay) }
-          local rS = rL < 0 and 0 or (rL > 1 and 1 or rL)
-          local isOnSegment = rS == rL
-          local pointSegment = isOnSegment and pointLine or { x = ax + rS * (bx - ax), y = ay + rS * (by - ay) }
-          return pointSegment, pointLine, isOnSegment
-      end
-      function __gsoPrediction:CheckCol(unit, minion, Position, delay, radius, range, speed, from, draw)
-          if unit.networkID == minion.networkID then 
-              return false
-          end
-          local waypoints = self:GetCurrentWayPoints(minion)
-          local minionPos = minion.pos
-          local MPos, CastPosition = #waypoints == 1 and Vector(minionPos) or self:CalculateTargetPosition(minion, delay, radius, speed, from, "line")
-          if from and MPos and self:GetDistanceSqr(from, MPos) <= (range)^2 and self:GetDistanceSqr(from, minionPos) <= (range + 100)^2 then
-              local buffer = (#waypoints > 1) and 8 or 0 
-              if minion.type == myHero.type then
-                  buffer = buffer + minion.boundingRadius
-              end
-              if #waypoints > 1 then
-                  local proj1, pointLine, isOnSegment = self:VectorPointProjectionOnLineSegment(from, Position, Vector(MPos))
-                  if proj1 and isOnSegment and (self:GetDistanceSqr(MPos, proj1) <= (minion.boundingRadius + radius + buffer) ^ 2) then
-                      return true
-                  end
-              end
-              local proj2, pointLine, isOnSegment = self:VectorPointProjectionOnLineSegment(from, Position, Vector(minionPos))
-              if proj2 and isOnSegment and (self:GetDistanceSqr(minionPos, proj2) <= (minion.boundingRadius + radius + buffer) ^ 2) then
-                  return true
-              end
-          end
-      end
-      function __gsoPrediction:CheckMinionCollision(unit, Position, delay, radius, range, speed, from)
-            Position = Vector(Position)
-            from = from and Vector(from) or myHero.pos
-            for i = 1, GameMinionCount() do
-                  local minion = GameMinion(i)
-                  if minion and minion.team ~= myHero.team and not minion.dead and minion.isTargetable and minion.visible and minion.valid and self:CheckCol(unit, minion, Position, delay, radius, range, speed, from, draw) then
-                        return true
-                  end
-            end
-            return false
-      end
-      function __gsoPrediction:isSlowed(unit, delay, speed, from)
-          for i = 1, unit.buffCount do
-              local buff = unit:GetBuff(i);
-              if from and buff.count > 0 and buff.duration>=(delay + self:GetDistance(unit.pos, from) / speed) then
-                  if (buff.type == 10) then
-                      return true
-                  end
-              end
-          end
-          return false
-      end
-      function __gsoPrediction:GetBestCastPosition(unit, delay, radius, range, speed, from, collision, spelltype)
-          range = range and range - 4 or math.huge
-          radius = radius == 0 and 1 or radius - 4
-          speed = speed and speed or math.huge
-          local mePos = myHero.pos
-          local hePos = unit.pos
-          if not from then
-              from = Vector(mePos)
-          end
-          local IsFromMyHero = self:GetDistanceSqr(from, mePos) < 50*50 and true or false
-          delay = delay + (0.07 + GameLatency() / 2000)
-          local Position, CastPosition = self:CalculateTargetPosition(unit, delay, radius, speed, from, spelltype)
-          local HitChance = 1
-          if (self:IsImmobile(unit, delay, radius, speed, from, spelltype)) then
-              HitChance = 5
-          end
-          Waypoints = self:GetCurrentWayPoints(unit)
-          if (#Waypoints == 1) then
-              HitChance = 2
-          end
-          if self:isSlowed(unit, delay, speed, from) then
-              HitChance = 2
-          end
-          if (unit.activeSpell and unit.activeSpell.valid) then
-              HitChance = 2
-          end
-          if self:GetDistance(mePos, hePos) < 250 then
-              HitChance = 2
-              Position, CastPosition = self:CalculateTargetPosition(unit, delay*0.5, radius, speed*2, from, spelltype)
-              Position = CastPosition
-          end
-          local angletemp = Vector(from):AngleBetween(Vector(hePos), Vector(CastPosition))
-          if angletemp > 60 then
-              HitChance = 1
-          elseif angletemp < 30 then
-              HitChance = 2
-          end
-          --[[Out of range]]
-          if IsFromMyHero then
-              if (spelltype == "line" and self:GetDistanceSqr(from, Position) >= range * range) then
-                  HitChance = 0
-              end
-              if (spelltype == "circular" and (self:GetDistanceSqr(from, Position) >= (range + radius)*(range + radius))) then
-                  HitChance = 0
-              end
-              if from and Position and (self:GetDistanceSqr(from, Position) > range * range) then
-                  HitChance = 0
-              end
-          end
-          radius = radius*2
-          if collision and HitChance > 0 then
-              if collision and self:CheckMinionCollision(unit, hePos, delay, radius, range, speed, from) then
-                  HitChance = -1
-              elseif self:CheckMinionCollision(unit, Position, delay, radius, range, speed, from) then
-                  HitChance = -1
-              elseif self:CheckMinionCollision(unit, CastPosition, delay, radius, range, speed, from) then
-                  HitChance = -1
-              end
-          end
-          if not CastPosition or not Position then
-              HitChance = -1
-          end
-          return CastPosition, HitChance, Position
-      end
---[[
 ▒█▀▀▀█ █▀▀█ █▀▀ █░░ █░░ 
 ░▀▀▀▄▄ █░░█ █▀▀ █░░ █░░ 
 ▒█▄▄▄█ █▀▀▀ ▀▀▀ ▀▀▀ ▀▀▀ 
 ]]
 class "__gsoSpell"
       function __gsoSpell:__init()
+            self.Waypoints = {}
             self.LastQ = 0
             self.LastQk = 0
             self.LastW = 0
@@ -1347,35 +1056,120 @@ class "__gsoSpell"
       function __gsoSpell:IsReady(spell, delays)
             return gsoSDK.Cursor:IsCursorReady() and self:CheckSpellDelays(delays) and GameCanUseSpell(spell) == 0
       end
-      function __gsoSpell:CastSpell(spell, target, linear)
-            if not spell then return false end
-            local isQ = spell == _Q
-            local isW = spell == _W
-            local isE = spell == _E
-            local isR = spell == _R
-            if isQ then
-                  spell = HK_Q
-                  if GameTimer() < self.LastQ + 0.35 then
-                        return false
+      function __gsoSpell:GetWaypoints(unit)
+            local path = unit.pathing
+            if path.hasMovePath then
+                  local result = {}
+                  local pathCount = path.pathCount
+                  for i = 0, pathCount do
+                        result[#result+1] = unit:GetPath(i)
                   end
-            elseif isW then
-                  spell = HK_W
-                  if GameTimer() < self.LastW + 0.35 then
-                        return false
-                  end
-            elseif isE then
-                  spell = HK_E
-                  if GameTimer() < self.LastE + 0.35 then
-                        return false
-                  end
-            elseif isR then
-                  spell = HK_R
-                  if GameTimer() < self.LastR + 0.35 then
-                        return false
+                  return { IsMoving = true, Path = result, Tick = GameTimer() }
+            else
+                  return { IsMoving = false, Path = unit.pos, Tick = GameTimer() }
+            end
+      end
+      function __gsoSpell:SaveWaypoints(enemyList)
+            for i = 1, #enemyList do
+                  local unit = enemyList[i]
+                  local unitID = unit.networkID
+                  if not self.Waypoints[unitID] then self.Waypoints[unitID] = {} end
+                  if not self.Waypoints[unitID].current then
+                        self.Waypoints[unitID].current = self:GetWaypoints(unit)
+                  else
+                        local currentWaypoints = self:GetWaypoints(unit)
+                        local currentWaypointsT = self.Waypoints[unitID].current
+                        if currentWaypointsT.IsMoving == currentWaypoints.IsMoving then
+                              if not currentWaypointsT.IsMoving then
+                                    if currentWaypointsT.Path == currentWaypoints.Path then return end
+                              else
+                                    local count = #currentWaypoints.Path
+                                    local countT = #currentWaypointsT.Path
+                                    if count == countT then
+                                          local canReturn = true
+                                          for i = 1, countT do
+                                                if currentWaypointsT.Path[i] ~= currentWaypoints.Path[i] then
+                                                      canReturn = false
+                                                      break
+                                                end
+                                          end
+                                          if canReturn then
+                                                return
+                                          end
+                                    end
+                              end
+                        end
+                        self.Waypoints[unitID].current = currentWaypoints
                   end
             end
+      end
+      function __gsoSpell:CanMove(unit, delay)
+            for i = 1, unit.buffCount do
+                  local buff = unit:GetBuff(i);
+                  if buff.count > 0 and buff.duration >= delay then
+                        if (buff.type == 5 or buff.type == 8 or buff.type == 21 or buff.type == 22 or buff.type == 24 or buff.type == 11) then
+                              return false
+                        end
+                  end
+            end
+            return true
+      end
+      function __gsoSpell:IsImmobile(unit, delay, radius, speed, from, spelltype)
+            local ExtraDelay = from:DistanceTo(unit.pos) / speed
+            if not self:CanMove(unit, delay + ExtraDelay) then
+                  return true
+            end
+            return false
+      end
+      function __gsoSpell:isSlowed(unit, delay, speed, from)
+            for i = 1, unit.buffCount do
+                  local buff = unit:GetBuff(i)
+                  if from and buff.count > 0 and buff.type == 10 and buff.duration >= delay + from:DistanceTo(unit.pos) / speed then
+                        return true
+                  end
+            end
+            return false
+      end
+      function __gsoSpell:ClosestPointOnLineSegment(p, p1, p2)
+            --local px,pz,py = p.x, p.z, p.y
+            --local ax,az,ay = p1.x, p1.z, p1.y
+            --local bx,bz,by = p2.x, p2.z, p2.y
+            local px,pz = p.x, p.z
+            local ax,az = p1.x, p1.z
+            local bx,bz = p2.x, p2.z
+            local bxax = bx - ax
+            local bzaz = bz - az
+            --local byay = by - by
+            --local t = ((px - ax) * bxax + (pz - az) * bzaz + (py - ay) * byay) / (bxax * bxax + bzaz * bzaz + byay * byay)
+            local t = ((px - ax) * bxax + (pz - az) * bzaz) / (bxax * bxax + bzaz * bzaz)
+            if t < 0 then
+                  return p1, false
+            elseif t > 1 then
+                  return p2, false
+            else
+                  return { x = ax + t * bxax, z = az + t * bzaz }, true
+                  --return Vector({ x = ax + t * bxax, z = az + t * bzaz, y = ay + t * byay }), true
+            end
+      end
+      function __gsoSpell:IsMinionCollision(unit, width)
+            local enemyMinions = gsoSDK.ObjectManager.Units.EnemyMinions
+            for i = 1, #enemyMinions do
+                  local minion = enemyMinions[i]
+                  if minion ~= unit then
+                        local minionPos = minion.pos
+                        local point,onLineSegment = self:ClosestPointOnLineSegment(minionPos, unit.pos, myHero.pos)
+                        local distanceToPoint = minionPos:DistanceTo(Vector(point))
+                        local bbox = minion.boundingRadius
+                        if onLineSegment and distanceToPoint < width +  bbox then
+                              return true
+                        end
+                  end
+            end
+            return false
+      end
+      function __gsoSpell:CastSpell(spell, unit, from, spellData, HitChance)
             local result = false
-            if not target then
+            if not unit then
                   ControlKeyDown(spell)
                   ControlKeyUp(spell)
                   result = true
@@ -1383,11 +1177,55 @@ class "__gsoSpell"
                   if GameTimer() < gsoSDK.Orbwalker.LastMoveTime + 0.05 then
                         return false
                   end
-                  local castpos = target.x and target or target.pos
-                  if linear then castpos = myHero.pos:Extended(castpos, 750) end
-                  if castpos:ToScreen().onScreen then
-                        gsoSDK.Cursor:SetCursor(cursorPos, castpos, 0.06)
-                        ControlSetCursorPos(castpos)
+                  local CastPos
+                  if from and spellData and HitChance then
+                        local range = spellData.range
+                        local radius = spellData.radius
+                        local speed = spellData.speed
+                        local delay = spellData.delay
+                        local sType = spellData.sType
+                        local collision = spellData.collision
+                        if sType == "line" then
+                              range = range - (radius * 0.5)
+                        end
+                        if collision and unit:GetCollision(radius, speed, delay) > 0 then
+                              return false
+                        end
+                        local hitChance = 1
+                        local lastWP = GameTimer() - self.Waypoints[unit.networkID].current.Tick
+                        local longWP = lastWP > 1.5 and lastWP < 5
+                        local isCastingSpell = unit.activeSpell and unit.activeSpell.valid
+                        if lastWP < 0.2 or longWP then
+                              hitChance = 2
+                        end
+                        if self:IsImmobile(unit, delay, radius, speed, from, sType) or self:isSlowed(unit, delay, speed, from) or isCastingSpell then
+                              hitChance = 2
+                              CastPos = unit.pos
+                        elseif unit.pathing.hasMovePath then
+                              CastPos = unit:GetPrediction(speed,delay):Extended(unit.pos, radius * 0.5)
+                              local angletemp = from:AngleBetween(unit.pos, CastPos)
+                              if angletemp < 33 then
+                                    hitChance = 2
+                              end
+                        end
+                        if not CastPos or not CastPos:ToScreen().onScreen then
+                              return false
+                        end
+                        if from:DistanceTo(CastPos) > range then
+                              return false
+                        end
+                        if hitChance >= HitChance then
+                              gsoSDK.Cursor:SetCursor(cursorPos, CastPos, 0.06)
+                              ControlSetCursorPos(CastPos)
+                              ControlKeyDown(spell)
+                              ControlKeyUp(spell)
+                              gsoSDK.Orbwalker:ResetMove()
+                              result = true
+                        end
+                  else
+                        CastPos = unit.pos
+                        gsoSDK.Cursor:SetCursor(cursorPos, CastPos, 0.06)
+                        ControlSetCursorPos(CastPos)
                         ControlKeyDown(spell)
                         ControlKeyUp(spell)
                         gsoSDK.Orbwalker:ResetMove()
@@ -1395,13 +1233,13 @@ class "__gsoSpell"
                   end
             end
             if result then
-                  if isQ then
+                  if spell == HK_Q then
                         self.LastQ = GameTimer()
-                  elseif isW then
+                  elseif spell == HK_W then
                         self.LastW = GameTimer()
-                  elseif isE then
+                  elseif spell == HK_E then
                         self.LastE = GameTimer()
-                  elseif isR then
+                  elseif spell == HK_R then
                         self.LastR = GameTimer()
                   end
             end
@@ -1591,10 +1429,8 @@ class "__gsoTS"
       function __gsoTS:__init()
             -- Last LastHit Minion
             self.LastHandle = 0
-            self.LastMinionLastHit = nil
             -- Last LaneClear Minion
             self.LastLCHandle = 0
-            self.LastLCMinion = nil
             self.SelectedTarget = nil
             self.LastSelTick = 0
             self.LastHeroTarget = nil
@@ -1698,9 +1534,6 @@ class "__gsoTS"
       function __gsoTS:GetLastHeroTarget()
             return self.LastHeroTarget
       end
-      function __gsoTS:GetLastMinionLastHit()
-            return self.LastMinionLastHit
-      end
       function __gsoTS:GetFarmMinions()
             return self.FarmMinions
       end
@@ -1722,7 +1555,6 @@ class "__gsoTS"
                   end
             end
             if result ~= nil then
-                  self.LastMinionLastHit = result
                   self.LastHandle = result.handle
             end
             return result
@@ -1748,7 +1580,6 @@ class "__gsoTS"
                   end
             end
             if result ~= nil then
-                  self.LastLCMinion = result
                   self.LastLCHandle = result.handle
             end
             return result
@@ -1899,7 +1730,6 @@ class "__gsoLoader"
       function __gsoLoader:__init()
             -- LOAD LIBS
             gsoSDK.Spell = __gsoSpell()
-            gsoSDK.Prediction = __gsoPrediction()
             gsoSDK.Utilities = __gsoUtilities()
             gsoSDK.Cursor = __gsoCursor()
             gsoSDK.ObjectManager = __gsoOB()
@@ -1917,6 +1747,7 @@ class "__gsoLoader"
             gsoSDK.Orbwalker:CreateDrawMenu()
             Callback.Add('Tick', function()
                   gsoSDK.ObjectManager:Tick()
+                  gsoSDK.Spell:SaveWaypoints(gsoSDK.ObjectManager:GetEnemyHeroes(10000, false, "spell"))
                   gsoSDK.Utilities:Tick()
                   gsoSDK.Cursor:Tick()
                   local enemyMinions = gsoSDK.ObjectManager:GetEnemyMinions(1500, false)
@@ -1973,7 +1804,7 @@ class "__gsoTwitch"
             self:AddTickEvent()
       end
       function __gsoTwitch:SetSpellData()
-            self.wData = { delay = 0.25, radius = 275, range = 950, speed = 1400, collision = false, sType = "circular" }
+            self.wData = { delay = 0.25, radius = 150, range = 950, speed = 1400, collision = false, sType = "circular" }
       end
       function __gsoTwitch:CreateMenu()
             gsoSDK.Menu:MenuElement({name = "Q settings", id = "qset", type = MENU })
@@ -1985,6 +1816,7 @@ class "__gsoTwitch"
                   gsoSDK.Menu.wset:MenuElement({id = "stopwult", name = "Stop if R", value = false})
                   gsoSDK.Menu.wset:MenuElement({id = "combo", name = "Use W Combo", value = true})
                   gsoSDK.Menu.wset:MenuElement({id = "harass", name = "Use W Harass", value = false})
+                  gsoSDK.Menu.wset:MenuElement({id = "hitchance", name = "Hitchance", value = 1, drop = { "normal", "high" } })
             gsoSDK.Menu:MenuElement({name = "E settings", id = "eset", type = MENU })
                   gsoSDK.Menu.eset:MenuElement({id = "combo", name = "Use E Combo", value = true})
                   gsoSDK.Menu.eset:MenuElement({id = "harass", name = "Use E Harass", value = false})
@@ -2165,11 +1997,8 @@ class "__gsoTwitch"
                               else
                                     WTarget = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(950, false, "spell"), false)
                               end
-                              if WTarget then
-                                    local castpos,HitChance, pos = gsoSDK.Prediction:GetBestCastPosition(WTarget, self.wData.delay, self.wData.radius, self.wData.range, self.wData.speed, myHero.pos, self.wData.collision, self.wData.sType)
-                                    if HitChance > 0 and castpos:ToScreen().onScreen and myHero.pos:DistanceTo(castpos) < self.wData.range and WTarget.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_W, castpos) then
-                                          return
-                                    end
+                              if WTarget and gsoSDK.Spell:CastSpell(HK_W, WTarget, myHero.pos, self.wData, gsoSDK.Menu.wset.hitchance:Value()) then
+                                    return
                               end
                         end
                         --E
@@ -2201,6 +2030,7 @@ class "__gsoTwitch"
 ]]
 class "__gsoEzreal"
       function __gsoEzreal:__init()
+            self.FarmTimer = 0
             self.ShouldWaitTime = 0
             self.ShouldWait = false
             self.FarmMinions = {}
@@ -2262,6 +2092,77 @@ class "__gsoEzreal"
                   end
             end
       end
+      function __gsoEzreal:AddTickEvent()
+            gsoSDK.ChampTick = function()
+                  -- Q Farm Tick
+                  if gsoSDK.Menu.qset.lasthit:Value() or gsoSDK.Menu.qset.laneclear:Value() then
+                        self:QFarmTick()
+                  end
+                  -- Enable Attack
+                  if not gsoSDK.Orbwalker.AttackEnabled and GameTimer() > self.FarmTimer + 0.77 then
+                        gsoSDK.Orbwalker.AttackEnabled = true
+                  end
+                  -- E manual
+                  gsoSDK.Spell:CastManualSpell(_E, { q = 0.33, w = 0.33, e = 0.5, r = 1.13 })
+                  -- Is Attacking
+                  if not gsoSDK.Orbwalker:CanMove() then
+                        return
+                  end
+                  -- Get Mode
+                  local mode = gsoSDK.Orbwalker:GetMode()
+                  -- Can Attack
+                  local AATarget = gsoSDK.TS:GetComboTarget()
+                  if AATarget and mode ~= "None" and gsoSDK.Orbwalker:CanAttack() then
+                        return
+                  end
+                  -- Q
+                  if gsoSDK.Spell:IsReady(_Q, { q = 0.5, w = 0.33, e = 0.33, r = 1.13 } ) then
+                        -- Get Mana Percent
+                        local manaPercent = 100 * myHero.mana / myHero.maxMana
+                        -- Auto
+                        if mode == "None" and gsoSDK.Menu.autoq.enable:Value() and manaPercent > gsoSDK.Menu.autoq.mana:Value() then
+                              local enemyHeroes = gsoSDK.ObjectManager:GetEnemyHeroes(1150, false, "spell")
+                              for i = 1, #enemyHeroes do
+                                    local unit = enemyHeroes[i]
+                                    if unit and gsoSDK.Spell:CastSpell(HK_Q, unit, myHero.pos, self.qData, gsoSDK.Menu.autoq.hitchance:Value()) then
+                                          return
+                                    end
+                              end
+                        end
+                        -- Combo / Harass
+                        if (mode == "Combo" and gsoSDK.Menu.qset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.qset.harass:Value()) then
+                              local QTarget
+                              if AATarget then
+                                    QTarget = AATarget
+                              else
+                                    QTarget = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(1150, false, "spell"), false)
+                              end
+                              if QTarget and gsoSDK.Spell:CastSpell(HK_Q, QTarget, myHero.pos, self.qData, gsoSDK.Menu.qset.hitchance:Value()) then
+                                    return
+                              end
+                        end
+                        -- Lasthit / LaneClear
+                        if self:QFarm(mode, manaPercent) then
+                              return
+                        end
+                  end
+                  -- W
+                  if gsoSDK.Spell:IsReady(_W, { q = 0.33, w = 0.5, e = 0.33, r = 1.13 } ) then
+                        if (mode == "Combo" and gsoSDK.Menu.wset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.wset.harass:Value()) then
+                              local WTarget
+                              if AATarget then
+                                    WTarget = AATarget
+                              else
+                                    WTarget = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(1000, false, "spell"), false)
+                              end
+                              if WTarget and gsoSDK.Spell:CastSpell(HK_W, WTarget, myHero.pos, self.wData, gsoSDK.Menu.wset.hitchance:Value()) then
+                                    return
+                              end
+                        end
+                  end
+            end
+      end
+      -- START -> farm
       function __gsoEzreal:SetLastHitable(enemyMinion, time, damage, mode, allyMinions)
             if mode == "fast" then
                   local hpPred = gsoSDK.Farm:MinionHpPredFast(enemyMinion, allyMinions, time)
@@ -2299,136 +2200,46 @@ class "__gsoEzreal"
             end
             self.FarmMinions = FarmMinionsCache
       end
-      function __gsoEzreal:QGetLastHit()
-            for i = 1, #self.FarmMinions do
-                  local enemyMinion = self.FarmMinions[i]
-                  if enemyMinion.LastHitable then
+      function __gsoEzreal:QFarm(mode, manaPercent)
+            local isLH = gsoSDK.Menu.qset.lasthit:Value() and mode == "Lasthit"
+            local isLC = gsoSDK.Menu.qset.laneclear:Value() and mode == "Clear"
+            local lastHit = isLH or isLC
+            if lastHit and manaPercent > gsoSDK.Menu.qset.qlh:Value() then
+                  for i = 1, #self.FarmMinions do
+                        local enemyMinion = self.FarmMinions[i]
+                        if enemyMinion.LastHitable then
+                              local unit = enemyMinion.Minion
+                              if unit.handle ~= gsoSDK.TS.LastHandle and not unit.pathing.hasMovePath and not gsoSDK.Spell:IsMinionCollision(unit, self.qData.radius * 0.5) and not unit.dead and gsoSDK.Spell:CastSpell(HK_Q, unit) then
+                                    gsoSDK.Orbwalker.AttackEnabled = false
+                                    self.FarmTimer = GameTimer()
+                                    return true
+                              end
+                        end
+                  end
+            end
+            if isLC and not self.ShouldWait and manaPercent > gsoSDK.Menu.qset.qlc:Value() then
+                  -- Enemy Heroes
+                  local enemyHeroes = gsoSDK.ObjectManager:GetEnemyHeroes(1150, false, "spell")
+                  for i = 1, #enemyHeroes do
+                        local unit = enemyHeroes[i]
+                        if unit and gsoSDK.Spell:CastSpell(HK_Q, unit, myHero.pos, self.qData, gsoSDK.Menu.qset.hitchance:Value()) then
+                              return true
+                        end
+                  end
+                  -- LaneClear
+                  for i = 1, #self.FarmMinions do
+                        local enemyMinion = self.FarmMinions[i]
                         local unit = enemyMinion.Minion
-                        if unit ~= gsoSDK.TS.LastMinionLastHit and unit.handle ~= gsoSDK.TS.LastHandle then
-                              local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(unit, self.qData.delay, self.qData.radius, self.qData.range, self.qData.speed, myHero.pos, self.qData.collision, self.qData.sType)
-                              if enemyMinion.LastHitable and HitChance > 0 and myHero.pos:DistanceTo(castpos) < self.qData.range and unit.pos:DistanceTo(castpos) < 500 then
-                                    return true, castpos
-                              end
+                        if unit.handle ~= gsoSDK.TS.LastLCHandle and not unit.pathing.hasMovePath and not gsoSDK.Spell:IsMinionCollision(unit, self.qData.radius * 0.5) and not unit.dead and gsoSDK.Spell:CastSpell(HK_Q, unit) then
+                              gsoSDK.Orbwalker.AttackEnabled = false
+                              self.FarmTimer = GameTimer()
+                              return true
                         end
                   end
             end
-            return false, nil
+            return false
       end
-      function __gsoEzreal:QGetLaneClear()
-            -- LastHit
-            local success, castpos = self:QGetLastHit()
-            if success then
-                  return success, castpos
-            end
-            -- Check If Can LaneClear
-            if self.ShouldWait then return false, nil end
-            -- Enemy Heroes
-            local enemyHeroes = gsoSDK.ObjectManager:GetEnemyHeroes(1150, false, "spell")
-            for i = 1, #enemyHeroes do
-                  local unit = enemyHeroes[i]
-                  local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(unit, self.qData.delay, self.qData.radius, self.qData.range, self.qData.speed, myHero.pos, self.qData.collision, self.qData.sType)
-                  if HitChance > 0 and myHero.pos:DistanceTo(castpos) < self.qData.range and unit.pos:DistanceTo(castpos) < 500 then
-                        return true, castpos
-                  end
-            end
-            -- LaneClear
-            for i = 1, #self.FarmMinions do
-                  local enemyMinion = self.FarmMinions[i]
-                  local unit = enemyMinion.Minion
-                  if unit ~= gsoSDK.TS.LastLCMinion and unit.handle ~= gsoSDK.TS.LastLCHandle then
-                        local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(unit, self.qData.delay, self.qData.radius, self.qData.range, self.qData.speed, myHero.pos, self.qData.collision, self.qData.sType)
-                        if HitChance > 0 and myHero.pos:DistanceTo(castpos) < self.qData.range and unit.pos:DistanceTo(castpos) < 500 then
-                              return true, castpos
-                        end
-                  end
-            end
-            return false, nil
-      end
-      function __gsoEzreal:QFarm(IsLastHit)
-            if IsLastHit then
-                  return self:QGetLastHit()
-            else
-                  return self:QGetLaneClear()
-            end
-      end
-      function __gsoEzreal:AddTickEvent()
-            gsoSDK.ChampTick = function()
-                  -- Q Farm Tick
-                  if gsoSDK.Menu.qset.lasthit:Value() or gsoSDK.Menu.qset.laneclear:Value() then
-                        self:QFarmTick()
-                  end
-                  -- E manual
-                  gsoSDK.Spell:CastManualSpell(_E, { q = 0.33, w = 0.33, e = 0.5, r = 1.13 })
-                  -- Is Attacking
-                  if not gsoSDK.Orbwalker:CanMove() then
-                        return
-                  end
-                  -- Get Mode
-                  local mode = gsoSDK.Orbwalker:GetMode()
-                  -- Can Attack
-                  local AATarget = gsoSDK.TS:GetComboTarget()
-                  if AATarget and mode ~= "None" and gsoSDK.Orbwalker:CanAttack() then
-                        return
-                  end
-                  -- Q
-                  if gsoSDK.Spell:IsReady(_Q, { q = 0.5, w = 0.33, e = 0.33, r = 1.13 } ) then
-                        -- Get Mana Percent
-                        local manaPercent = 100 * myHero.mana / myHero.maxMana
-                        -- Auto
-                        if mode == "None" and gsoSDK.Menu.autoq.enable:Value() and manaPercent > gsoSDK.Menu.autoq.mana:Value() then
-                              local enemyHeroes = gsoSDK.ObjectManager:GetEnemyHeroes(1150, false, "spell")
-                              for i = 1, #enemyHeroes do
-                                    local unit = enemyHeroes[i]
-                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(unit, self.qData.delay, self.qData.radius, self.qData.range, self.qData.speed, myHero.pos, self.qData.collision, self.qData.sType)
-                                    if HitChance > gsoSDK.Menu.autoq.hitchance:Value()-1 and myHero.pos:DistanceTo(castpos) < self.qData.range and unit.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_Q, castpos, true) then
-                                          return
-                                    end
-                              end
-                        end
-                        -- Combo / Harass
-                        if (mode == "Combo" and gsoSDK.Menu.qset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.qset.harass:Value()) then
-                              local QTarget
-                              if AATarget then
-                                    QTarget = AATarget
-                              else
-                                    QTarget = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(1150, false, "spell"), false)
-                              end
-                              if QTarget then
-                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(QTarget, self.qData.delay, self.qData.radius, self.qData.range, self.qData.speed, myHero.pos, self.qData.collision, self.qData.sType)
-                                    if HitChance > gsoSDK.Menu.qset.hitchance:Value()-1 and myHero.pos:DistanceTo(castpos) < self.qData.range and QTarget.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_Q, castpos, true) then
-                                          return
-                                    end
-                              end
-                        end
-                        -- Lasthit / LaneClear
-                        local isLH = gsoSDK.Menu.qset.lasthit:Value() and mode == "Lasthit" and manaPercent > gsoSDK.Menu.qset.qlh:Value()
-                        local isLC = gsoSDK.Menu.qset.laneclear:Value() and mode == "Clear" and manaPercent > gsoSDK.Menu.qset.qlc:Value()
-                        if isLH or isLC then
-                              local success, castpos = self:QFarm(isLH)
-                              if success and gsoSDK.Spell:CastSpell(HK_Q, castpos, true) then
-                                    return
-                              end
-                        end
-                  end
-                  -- W
-                  if gsoSDK.Spell:IsReady(_W, { q = 0.33, w = 0.5, e = 0.33, r = 1.13 } ) then
-                        if (mode == "Combo" and gsoSDK.Menu.wset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.wset.harass:Value()) then
-                              local WTarget
-                              if AATarget then
-                                    WTarget = AATarget
-                              else
-                                    WTarget = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(1000, false, "spell"), false)
-                              end
-                              if WTarget then
-                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(WTarget, self.wData.delay, self.wData.radius, self.wData.range, self.wData.speed, myHero.pos, self.wData.collision, self.wData.sType)
-                                    if HitChance > gsoSDK.Menu.wset.hitchance:Value()-1 and myHero.pos:DistanceTo(castpos) < self.wData.range and WTarget.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_W, castpos, true) then
-                                          return
-                                    end
-                              end
-                        end
-                  end
-            end
-      end
+      -- END -> farm
 --[[
 ▒█░▄▀ ▒█▀▀▀█ ▒█▀▀█ 　 ▒█▀▄▀█ ░█▀▀█ ▒█░░▒█ 
 ▒█▀▄░ ▒█░░▒█ ▒█░▄▄ 　 ▒█▒█▒█ ▒█▄▄█ ▒█▒█▒█ 
@@ -2465,6 +2276,7 @@ class "__gsoKogMaw"
             gsoSDK.Menu:MenuElement({name = "Q settings", id = "qset", type = MENU })
                   gsoSDK.Menu.qset:MenuElement({id = "combo", name = "Combo", value = true})
                   gsoSDK.Menu.qset:MenuElement({id = "harass", name = "Harass", value = false})
+                  gsoSDK.Menu.qset:MenuElement({id = "hitchance", name = "Hitchance", value = 1, drop = { "normal", "high" } })
             gsoSDK.Menu:MenuElement({name = "W settings", id = "wset", type = MENU })
                   gsoSDK.Menu.wset:MenuElement({id = "combo", name = "Combo", value = true})
                   gsoSDK.Menu.wset:MenuElement({id = "harass", name = "Harass", value = false})
@@ -2475,6 +2287,7 @@ class "__gsoKogMaw"
                   gsoSDK.Menu.eset:MenuElement({id = "combo", name = "Combo", value = true})
                   gsoSDK.Menu.eset:MenuElement({id = "harass", name = "Harass", value = false})
                   gsoSDK.Menu.eset:MenuElement({id = "emana", name = "Minimum Mana %", value = 20, min = 1, max = 100, step = 1 })
+                  gsoSDK.Menu.eset:MenuElement({id = "hitchance", name = "Hitchance", value = 1, drop = { "normal", "high" } })
             gsoSDK.Menu:MenuElement({name = "R settings", id = "rset", type = MENU })
                   gsoSDK.Menu.rset:MenuElement({id = "combo", name = "Combo", value = true})
                   gsoSDK.Menu.rset:MenuElement({id = "harass", name = "Harass", value = false})
@@ -2490,21 +2303,7 @@ class "__gsoKogMaw"
                         gsoSDK.Menu.rset.semirkog:MenuElement({name = "Only 0-40 % HP enemies", id = "semilow",  value = false})
                         gsoSDK.Menu.rset.semirkog:MenuElement({name = "Use on:", id = "useon", type = MENU })
                               gsoSDK.ObjectManager:OnEnemyHeroLoad(function(hero) gsoSDK.Menu.rset.semirkog.useon:MenuElement({id = hero.charName, name = hero.charName, value = true}) end)
-      end
-      function __gsoKogMaw:CastSpell(spell, AATarget, range, bb, enemies, ap, sd, linear)
-            local t
-            if AATarget then
-                  t = AATarget
-            else
-                  t = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(range, bb, enemies), ap)
-            end
-            if t then
-                  local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
-                  if HitChance > 0 and myHero.pos:DistanceTo(castpos) < sd.range and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(spell, castpos, linear) then
-                        return true
-                  end
-            end
-            return false
+                  gsoSDK.Menu.rset:MenuElement({id = "hitchance", name = "Hitchance", value = 1, drop = { "normal", "high" } })
       end
       function __gsoKogMaw:AddTickEvent()
             gsoSDK.ChampTick = function()
@@ -2568,12 +2367,8 @@ class "__gsoKogMaw"
                                     end
                               end
                               local t = gsoSDK.TS:GetTarget(rTargets, true)
-                              local sd = self.rData
-                              if t then
-                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
-                                    if HitChance > 0 and myHero.pos:DistanceTo(castpos) < sd.range and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_R, castpos, false) then
-                                          return
-                                    end
+                              if t and gsoSDK.Spell:CastSpell(HK_R, t, myHero.pos, self.rData, gsoSDK.Menu.rset.hitchance:Value()) then
+                                    return
                               end
                         end
                         -- SEMI MANUAL
@@ -2592,12 +2387,8 @@ class "__gsoKogMaw"
                                     rTargets = enemyList
                               end
                               local t = gsoSDK.TS:GetTarget(rTargets, true)
-                              local sd = self.rData
-                              if t then
-                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
-                                    if HitChance > 0 and myHero.pos:DistanceTo(castpos) < sd.range and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_R, castpos, false) then
-                                          return
-                                    end
+                              if t and gsoSDK.Spell:CastSpell(HK_R, t, myHero.pos, self.rData, gsoSDK.Menu.rset.hitchance:Value()) then
+                                    return
                               end
                         end
                         -- Combo / Harass
@@ -2628,12 +2419,8 @@ class "__gsoKogMaw"
                                           end
                                           t = gsoSDK.TS:GetTarget(rTargets, true)
                                     end
-                                    local sd = self.rData
-                                    if t then
-                                          local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
-                                          if HitChance > 0 and myHero.pos:DistanceTo(castpos) < sd.range and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_R, castpos, false) then
-                                                return
-                                          end
+                                    if t and gsoSDK.Spell:CastSpell(HK_R, t, myHero.pos, self.rData, gsoSDK.Menu.rset.hitchance:Value()) then
+                                          return
                                     end
                               end
                         end
@@ -2643,7 +2430,13 @@ class "__gsoKogMaw"
                   if not stopQIfW and meMana > myHero:GetSpellData(_Q).mana and gsoSDK.Spell:IsReady(_Q, { q = 0.5, w = 0.15, e = 0.33, r = 0.33 } ) then
                         -- Combo / Harass
                         if (mode == "Combo" and gsoSDK.Menu.qset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.qset.harass:Value()) then
-                              if self:CastSpell(HK_Q, AATarget, 1175, false, "spell", true, self.qData, true) then
+                              local t
+                              if AATarget then
+                                    t = AATarget
+                              else
+                                    t = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(1175, false, "spell"), true)
+                              end
+                              if t and gsoSDK.Spell:CastSpell(HK_Q, t, myHero.pos, self.qData, gsoSDK.Menu.qset.hitchance:Value()) then
                                     return
                               end
                         end
@@ -2652,7 +2445,13 @@ class "__gsoKogMaw"
                   local stopEifW = gsoSDK.Menu.wset.stope:Value() and self.HasWBuff
                   if not stopEifW and manaPercent > gsoSDK.Menu.eset.emana:Value() and meMana > myHero:GetSpellData(_E).mana and gsoSDK.Spell:IsReady(_E, { q = 0.33, w = 0.15, e = 0.5, r = 0.33 } ) then
                         if (mode == "Combo" and gsoSDK.Menu.eset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.eset.harass:Value()) then
-                              if self:CastSpell(HK_E, AATarget, 1280, false, "spell", true, self.eData, true) then
+                              local t
+                              if AATarget then
+                                    t = AATarget
+                              else
+                                    t = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(1280, false, "spell"), true)
+                              end
+                              if t and gsoSDK.Spell:CastSpell(HK_E, t, myHero.pos, self.eData, gsoSDK.Menu.eset.hitchance:Value()) then
                                     return
                               end
                         end
@@ -2676,7 +2475,7 @@ class "__gsoVarus"
             self:AddTickEvent()
       end
       function __gsoVarus:SetSpellData()
-            self.qData = { delay = 0.25, radius = 70, range = 1650, speed = 1900, collision = false, sType = "line" }
+            self.qData = { delay = 0.1, radius = 70, range = 1650, speed = 1900, collision = false, sType = "line" }
             self.eData = { delay = 0.5, radius = 235, range = 925, speed = 1500, collision = false, sType = "circular" }
             self.rData = { delay = 0.25, radius = 120, range = 1075, speed = 1950, collision = false, sType = "line" }
       end
@@ -2687,6 +2486,7 @@ class "__gsoVarus"
                   gsoSDK.Menu.qset:MenuElement({id = "stacks", name = "If enemy has 3 W stacks [ W passive ]", value = true})
                   gsoSDK.Menu.qset:MenuElement({id = "active", name = "If varus has W buff [ W active ]", value = true})
                   gsoSDK.Menu.qset:MenuElement({id = "range", name = "No enemies in AA range", value = true})
+                  gsoSDK.Menu.qset:MenuElement({id = "hitchance", name = "Hitchance", value = 1, drop = { "normal", "high" } })
             gsoSDK.Menu:MenuElement({name = "W settings", id = "wset", type = MENU })
                   gsoSDK.Menu.wset:MenuElement({id = "combo", name = "Combo", value = true})
                   gsoSDK.Menu.wset:MenuElement({id = "harass", name = "Harass", value = false})
@@ -2696,12 +2496,14 @@ class "__gsoVarus"
                   gsoSDK.Menu.eset:MenuElement({id = "harass", name = "Harass", value = false})
                   gsoSDK.Menu.eset:MenuElement({id = "range", name = "No enemies in AA range", value = true})
                   gsoSDK.Menu.eset:MenuElement({id = "stacks", name = "If enemy has 3 W stacks [ W passive ]", value = false})
+                  gsoSDK.Menu.eset:MenuElement({id = "hitchance", name = "Hitchance", value = 1, drop = { "normal", "high" } })
             gsoSDK.Menu:MenuElement({name = "R settings", id = "rset", type = MENU })
                   gsoSDK.Menu.rset:MenuElement({id = "combo", name = "Use R Combo", value = true})
                   gsoSDK.Menu.rset:MenuElement({id = "harass", name = "Use R Harass", value = false})
                   gsoSDK.Menu.rset:MenuElement({id = "rci", name = "Use R if enemy isImmobile", value = true})
                   gsoSDK.Menu.rset:MenuElement({id = "rcd", name = "Use R if enemy distance < X", value = true})
                   gsoSDK.Menu.rset:MenuElement({id = "rdist", name = "use R if enemy distance < X", value = 500, min = 250, max = 1000, step = 50})
+                  gsoSDK.Menu.rset:MenuElement({id = "hitchance", name = "Hitchance", value = 1, drop = { "normal", "high" } })
       end
       function __gsoVarus:AddTickEvent()
             gsoSDK.ChampTick = function()
@@ -2731,17 +2533,13 @@ class "__gsoVarus"
                   if canR and gsoSDK.Spell:IsReady(_R, { q = 0.33, w = 0, e = 0.63, r = 0.5 } ) then
                         if gsoSDK.Menu.rset.rcd:Value() then
                               local t = gsoSDK.TS:GetClosestEnemy(enemyList, gsoSDK.Menu.rset.rdist:Value())
-                              if t then
-                                    local sd = self.rData
-                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
-                                    if HitChance > 0 and myHero.pos:DistanceTo(castpos) < sd.range and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_R, castpos, true) then
-                                          return
-                                    end
+                              if t and gsoSDK.Spell:CastSpell(HK_R, t, myHero.pos, self.rData, gsoSDK.Menu.rset.hitchance:Value()) then
+                                    return
                               end
                         end
                         if gsoSDK.Menu.rset.rci:Value() then
                               local t = gsoSDK.TS:GetImmobileEnemy(enemyList, 900)
-                              if t and myHero.pos:DistanceTo(t.pos) < self.rData.range and gsoSDK.Spell:CastSpell(HK_R, t.pos, true) then
+                              if t and myHero.pos:DistanceTo(t.pos) < self.rData.range and gsoSDK.Spell:CastSpell(HK_R, t) then
                                     return
                               end
                         end
@@ -2760,12 +2558,8 @@ class "__gsoVarus"
                               end
                         end
                         local t = gsoSDK.TS:GetTarget(eTargets, false)
-                        if t then
-                              local sd = self.eData
-                              local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
-                              if HitChance > 0 and myHero.pos:DistanceTo(castpos) < sd.range and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_E, castpos, false) then
-                                    return
-                              end
+                        if t and gsoSDK.Spell:CastSpell(HK_E, t, myHero.pos, self.eData, gsoSDK.Menu.eset.hitchance:Value()) then
+                              return
                         end
                   end
                   -- Q
@@ -2823,12 +2617,8 @@ class "__gsoVarus"
                               local qExtraRange = qTimer < 2 and qTimer * 0.5 * 700 or 700
                               local qRange = 925 + qExtraRange
                               local t = gsoSDK.TS:GetTarget(qTargets, false)
-                              if t then
-                                    local sd = self.qData
-                                    local castpos,HitChance,pos = gsoSDK.Prediction:GetBestCastPosition(t, sd.delay, sd.radius, sd.range, sd.speed, myHero.pos, sd.collision, sd.sType)
-                                    if HitChance > 0 and myHero.pos:DistanceTo(castpos) < qRange and t.pos:DistanceTo(castpos) < 500 and gsoSDK.Spell:CastSpell(HK_Q, castpos, true) then
-                                          return
-                                    end
+                              if t and gsoSDK.Spell:CastSpell(HK_Q, t, myHero.pos, self.qData, gsoSDK.Menu.qset.hitchance:Value()) then
+                                    return
                               end
                         end
                   end
