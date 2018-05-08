@@ -2774,7 +2774,7 @@ class "__gsoVarus"
                         local aaRange = gsoSDK.Menu.qset.range:Value() and not AATarget
                         local wActive = gsoSDK.Menu.qset.active:Value() and GameTimer() < gsoSDK.Spell.LastWk + 3
                         -- Q1
-                        if not self.HasQBuff and gsoSDK.Spell:IsReady(_Q, { q = 0.5, w = 0, e = 0.63, r = 0.33 } ) then
+                        if not self.HasQBuff and gsoSDK.Spell:IsReady(_Q, { q = 0.5, w = 0.1, e = 1, r = 0.33 } ) then
                               if ControlIsKeyDown(HK_Q) then
                                     ControlKeyUp(HK_Q)
                               end
