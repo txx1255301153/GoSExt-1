@@ -464,6 +464,7 @@ class "__gsoOrbwalker"
             self.LastAttackLocal = 0
             self.LastAttackServer = 0
             self.LastMoveLocal = 0
+            self.LastMoveTime = 0
             self.LastMouseDown = 0
             self.LastMovePos = myHero.pos
             self.ResetAttack = false
@@ -499,7 +500,7 @@ class "__gsoOrbwalker"
                   gsoSDK.Menu.orb.keys:MenuElement({name = "LastHit Key", id = "lasthit", key = string.byte("X")})
                   gsoSDK.Menu.orb.keys:MenuElement({name = "LaneClear Key", id = "laneclear", key = string.byte("V")})
                   gsoSDK.Menu.orb.keys:MenuElement({name = "Flee Key", id = "flee", key = string.byte("A")})
-                  gsoSDK.Menu.orb:MenuElement({name = "Extra WindUp Delay", tooltip = "Less Value = Better KITE", id = "windupdelay", value = 25, min = 0, max = 150, step = 10 })
+                  gsoSDK.Menu.orb:MenuElement({name = "Extra WindUp Delay", tooltip = "Less Value = Better KITE", id = "windupdelay", value = 25, min = 0, max = 150, step = 5 })
                   gsoSDK.Menu.orb:MenuElement({name = "Extra Anim Delay", tooltip = "Less Value = Better DPS [ for me 80 is ideal ] - lower value than 80 cause slow KITE ! Maybe for your PC ideal value is 0 ? You need test it in debug mode.", id = "animdelay", value = 80, min = 0, max = 150, step = 10 })
                   gsoSDK.Menu.orb:MenuElement({name = "Extra LastHit Delay", tooltip = "Less Value = Faster Last Hit Reaction", id = "lhDelay", value = 0, min = 0, max = 50, step = 1 })
                   gsoSDK.Menu.orb:MenuElement({name = "Extra Move Delay", tooltip = "Less Value = More Movement Clicks Per Sec", id = "humanizer", value = 200, min = 120, max = 300, step = 10 })
@@ -666,6 +667,7 @@ class "__gsoOrbwalker"
             ControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
             ControlMouseEvent(MOUSEEVENTF_RIGHTUP)
             self.LastMoveLocal = GameTimer() + gsoSDK.Menu.orb.humanizer:Value() * 0.001
+            self.LastMoveTime = GameTimer()
       end
       function __gsoOrbwalker:MoveToPos(pos)
             if ControlIsKeyDown(2) then self.LastMouseDown = GameTimer() end
@@ -674,6 +676,7 @@ class "__gsoOrbwalker"
             ControlMouseEvent(MOUSEEVENTF_RIGHTDOWN)
             ControlMouseEvent(MOUSEEVENTF_RIGHTUP)
             self.LastMoveLocal = GameTimer() + gsoSDK.Menu.orb.humanizer:Value() * 0.001
+            self.LastMoveTime = GameTimer()
       end
       function __gsoOrbwalker:CanAttack()
             if not self.CanAttackC() then return false end
@@ -1377,6 +1380,9 @@ class "__gsoSpell"
                   ControlKeyUp(spell)
                   result = true
             else
+                  if GameTimer() < gsoSDK.Orbwalker.LastMoveTime + 0.05 then
+                        return false
+                  end
                   local castpos = target.x and target or target.pos
                   if linear then castpos = myHero.pos:Extended(castpos, 750) end
                   if castpos:ToScreen().onScreen then
@@ -2678,11 +2684,18 @@ class "__gsoVarus"
             gsoSDK.Menu:MenuElement({name = "Q settings", id = "qset", type = MENU })
                   gsoSDK.Menu.qset:MenuElement({id = "combo", name = "Combo", value = true})
                   gsoSDK.Menu.qset:MenuElement({id = "harass", name = "Harass", value = false})
-                  gsoSDK.Menu.qset:MenuElement({id = "onlystacks", name = "Only 3 stacks", value = false})
+                  gsoSDK.Menu.qset:MenuElement({id = "stacks", name = "If enemy has 3 W stacks [ W passive ]", value = true})
+                  gsoSDK.Menu.qset:MenuElement({id = "active", name = "If varus has W buff [ W active ]", value = true})
+                  gsoSDK.Menu.qset:MenuElement({id = "range", name = "No enemies in AA range", value = true})
+            gsoSDK.Menu:MenuElement({name = "W settings", id = "wset", type = MENU })
+                  gsoSDK.Menu.wset:MenuElement({id = "combo", name = "Combo", value = true})
+                  gsoSDK.Menu.wset:MenuElement({id = "harass", name = "Harass", value = false})
+                  gsoSDK.Menu.wset:MenuElement({id = "whp", name = "min. hp %", value = 50, min = 1, max = 100, step = 1})
             gsoSDK.Menu:MenuElement({name = "E settings", id = "eset", type = MENU })
                   gsoSDK.Menu.eset:MenuElement({id = "combo", name = "Combo", value = true})
                   gsoSDK.Menu.eset:MenuElement({id = "harass", name = "Harass", value = false})
-                  gsoSDK.Menu.eset:MenuElement({id = "onlystacks", name = "Only 3 stacks", value = false})
+                  gsoSDK.Menu.eset:MenuElement({id = "range", name = "No enemies in AA range", value = true})
+                  gsoSDK.Menu.eset:MenuElement({id = "stacks", name = "If enemy has 3 W stacks [ W passive ]", value = false})
             gsoSDK.Menu:MenuElement({name = "R settings", id = "rset", type = MENU })
                   gsoSDK.Menu.rset:MenuElement({id = "combo", name = "Use R Combo", value = true})
                   gsoSDK.Menu.rset:MenuElement({id = "harass", name = "Use R Harass", value = false})
@@ -2736,11 +2749,12 @@ class "__gsoVarus"
                   --E
                   local canE = (mode == "Combo" and gsoSDK.Menu.eset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.eset.harass:Value())
                   if canE and gsoSDK.Spell:IsReady(_E, { q = 0.33, w = 0, e = 0.63, r = 0.33 } ) then
-                        local onlyStacksE = gsoSDK.Menu.eset.onlystacks:Value()
+                        local aaRange = gsoSDK.Menu.eset.range:Value() and not AATarget
+                        local onlyStacksE = gsoSDK.Menu.eset.stacks:Value()
                         local eTargets = {}
                         for i = 1, #enemyList do
                               local hero = enemyList[i]
-                              local hasStacks = gsoSDK.Spell:GetBuffCount(hero, "varuswdebuff") == 3 or not onlyStacksE or myHero:GetSpellData(_W).level == 0
+                              local hasStacks = gsoSDK.Spell:GetBuffCount(hero, "varuswdebuff") == 3 or not onlyStacksE or myHero:GetSpellData(_W).level == 0 or aaRange
                               if hasStacks and myHero.pos:DistanceTo(hero.pos) < 925 then
                                     eTargets[#eTargets+1] = hero
                               end
@@ -2757,16 +2771,29 @@ class "__gsoVarus"
                   -- Q
                   local canQ = (mode == "Combo" and gsoSDK.Menu.qset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.qset.harass:Value())
                   if canQ then
+                        local aaRange = gsoSDK.Menu.qset.range:Value() and not AATarget
+                        local wActive = gsoSDK.Menu.qset.active:Value() and GameTimer() < gsoSDK.Spell.LastWk + 3
                         -- Q1
                         if not self.HasQBuff and gsoSDK.Spell:IsReady(_Q, { q = 0.5, w = 0, e = 0.63, r = 0.33 } ) then
                               if ControlIsKeyDown(HK_Q) then
                                     ControlKeyUp(HK_Q)
                               end
-                              local onlyStacksQ = gsoSDK.Menu.qset.onlystacks:Value()
+                              local canW = (mode == "Combo" and gsoSDK.Menu.wset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.wset.harass:Value())
+                              if canW and gsoSDK.Spell:IsReady(_W, { q = 0.33, w = 0.5, e = 0.63, r = 0.33 } ) then
+                                    local whp = gsoSDK.Menu.wset.whp:Value()
+                                    for i = 1, #enemyList do
+                                          local hero = enemyList[i]
+                                          local hp = 100 * ( hero.health / hero.maxHealth )
+                                          if hp < whp and myHero.pos:DistanceTo(hero.pos) < 1500 and gsoSDK.Spell:CastSpell(HK_W) then
+                                                return
+                                          end
+                                    end
+                              end
+                              local onlyStacksQ = gsoSDK.Menu.qset.stacks:Value()
                               for i = 1, #enemyList do
                                     local hero = enemyList[i]
-                                    local hasStacks = gsoSDK.Spell:GetBuffCount(hero, "varuswdebuff") == 3 or not onlyStacksQ or myHero:GetSpellData(_W).level == 0
-                                    if hasStacks and myHero.pos:DistanceTo(hero.pos) < 1400 then
+                                    local hasStacks = gsoSDK.Spell:GetBuffCount(hero, "varuswdebuff") == 3 or not onlyStacksQ or myHero:GetSpellData(_W).level == 0 or wActive or aaRange
+                                    if hasStacks and myHero.pos:DistanceTo(hero.pos) < 1500 then
                                           ControlKeyDown(HK_Q)
                                           gsoSDK.Spell.LastQ = GameTimer()
                                           return
@@ -2775,10 +2802,10 @@ class "__gsoVarus"
                         -- Q2
                         elseif self.HasQBuff and gsoSDK.Spell:IsReady(_Q, { q = 0.2, w = 0, e = 0.63, r = 0.33 } ) then
                               local qTargets = {}
-                              local onlyStacksQ = gsoSDK.Menu.qset.onlystacks:Value()
+                              local onlyStacksQ = gsoSDK.Menu.qset.stacks:Value()
                               for i = 1, #enemyList do
                                     local hero = enemyList[i]
-                                    local hasStacks = gsoSDK.Spell:GetBuffCount(hero, "varuswdebuff") == 3 or not onlyStacksQ or myHero:GetSpellData(_W).level == 0
+                                    local hasStacks = gsoSDK.Spell:GetBuffCount(hero, "varuswdebuff") == 3 or not onlyStacksQ or myHero:GetSpellData(_W).level == 0 or wActive or aaRange
                                     if hasStacks and myHero.pos:DistanceTo(hero.pos) < 1650 then
                                           qTargets[#qTargets+1] = hero
                                     end
