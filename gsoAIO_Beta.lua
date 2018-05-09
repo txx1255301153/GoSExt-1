@@ -1151,13 +1151,14 @@ class "__gsoSpell"
                   --return Vector({ x = ax + t * bxax, z = az + t * bzaz, y = ay + t * byay }), true
             end
       end
-      function __gsoSpell:IsMinionCollision(unit, width)
+      function __gsoSpell:IsMinionCollision(unit, spellData, prediction)
+            local width = spellData.radius * 0.77
             local enemyMinions = gsoSDK.ObjectManager.Units.EnemyMinions
             for i = 1, #enemyMinions do
                   local minion = enemyMinions[i]
                   if minion ~= unit then
                         local minionPos = minion.pos
-                        local point,onLineSegment = self:ClosestPointOnLineSegment(minionPos, unit.pos, myHero.pos)
+                        local point,onLineSegment = self:ClosestPointOnLineSegment(minionPos, prediction and unit:GetPrediction(spellData.speed,spellData.delay) or unit.pos, myHero.pos)
                         local distanceToPoint = minionPos:DistanceTo(Vector(point))
                         local bbox = minion.boundingRadius
                         if onLineSegment and distanceToPoint < width +  bbox then
@@ -1188,8 +1189,10 @@ class "__gsoSpell"
                         if sType == "line" then
                               range = range - (radius * 0.5)
                         end
-                        if collision and unit:GetCollision(radius, speed, delay) > 0 then
-                              return false
+                        if collision then
+                              if unit:GetCollision(radius, speed, delay) > 0 or gsoSDK.Spell:IsMinionCollision(unit, spellData) or gsoSDK.Spell:IsMinionCollision(unit, spellData, true) then
+                                    return false
+                              end
                         end
                         local hitChance = 1
                         local lastWP = GameTimer() - self.Waypoints[unit.networkID].current.Tick
@@ -2219,7 +2222,7 @@ class "__gsoEzreal"
                         local enemyMinion = self.FarmMinions[i]
                         if enemyMinion.LastHitable then
                               local unit = enemyMinion.Minion
-                              if unit.handle ~= gsoSDK.TS.LastHandle and not unit.pathing.hasMovePath and not gsoSDK.Spell:IsMinionCollision(unit, self.qData.radius * 0.5) and not unit.dead and gsoSDK.Spell:CastSpell(HK_Q, unit) then
+                              if unit.handle ~= gsoSDK.TS.LastHandle and not unit.pathing.hasMovePath and not gsoSDK.Spell:IsMinionCollision(unit, self.qData) and not unit.dead and gsoSDK.Spell:CastSpell(HK_Q, unit) then
                                     gsoSDK.Orbwalker.AttackEnabled = false
                                     self.FarmTimer = GameTimer()
                                     return true
@@ -2240,7 +2243,7 @@ class "__gsoEzreal"
                   for i = 1, #self.FarmMinions do
                         local enemyMinion = self.FarmMinions[i]
                         local unit = enemyMinion.Minion
-                        if unit.handle ~= gsoSDK.TS.LastLCHandle and not unit.pathing.hasMovePath and not gsoSDK.Spell:IsMinionCollision(unit, self.qData.radius * 0.5) and not unit.dead and gsoSDK.Spell:CastSpell(HK_Q, unit) then
+                        if unit.handle ~= gsoSDK.TS.LastLCHandle and not unit.pathing.hasMovePath and not gsoSDK.Spell:IsMinionCollision(unit, self.qData) and not unit.dead and gsoSDK.Spell:CastSpell(HK_Q, unit) then
                               gsoSDK.Orbwalker.AttackEnabled = false
                               self.FarmTimer = GameTimer()
                               return true
@@ -2677,33 +2680,68 @@ class "__gsoBrand"
             self.wData = { delay = 0.625, radius = 50, range = 900, speed = math.huge, collision = false, sType = "circular" }
       end
       function __gsoBrand:CreateMenu()
+            -- Q
             gsoSDK.Menu:MenuElement({name = "Q settings", id = "qset", type = MENU })
+                  -- KS
+                  gsoSDK.Menu.qset:MenuElement({name = "KS", id = "killsteal", type = MENU })
+                        gsoSDK.Menu.qset.killsteal:MenuElement({id = "enabled", name = "Enabled", value = true})
+                        gsoSDK.Menu.qset.killsteal:MenuElement({id = "minhp", name = "minimum enemy hp", value = 200, min = 1, max = 300, step = 1})
+                        gsoSDK.Menu.qset.killsteal:MenuElement({id = "hitchance", name = "Hitchance", value = 2, drop = { "normal", "high" } })
+                  -- Auto
                   gsoSDK.Menu.qset:MenuElement({name = "Auto", id = "auto", type = MENU })
                         gsoSDK.Menu.qset.auto:MenuElement({id = "stun", name = "Auto Stun", value = true})
                         gsoSDK.Menu.qset.auto:MenuElement({id = "hitchance", name = "Hitchance", value = 2, drop = { "normal", "high" } })
+                  -- Combo / Harass
                   gsoSDK.Menu.qset:MenuElement({name = "Combo / Harass", id = "comhar", type = MENU })
                         gsoSDK.Menu.qset.comhar:MenuElement({id = "combo", name = "Combo", value = true})
                         gsoSDK.Menu.qset.comhar:MenuElement({id = "harass", name = "Harass", value = false})
                         gsoSDK.Menu.qset.comhar:MenuElement({id = "stun", name = "Only if will stun", value = true})
                         gsoSDK.Menu.qset.comhar:MenuElement({id = "hitchance", name = "Hitchance", value = 1, drop = { "normal", "high" } })
+            -- W
             gsoSDK.Menu:MenuElement({name = "W settings", id = "wset", type = MENU })
                   gsoSDK.Menu.wset:MenuElement({id = "disaa", name = "Disable attack if ready or almostReady", value = true})
+                  -- KS
+                  gsoSDK.Menu.wset:MenuElement({name = "KS", id = "killsteal", type = MENU })
+                        gsoSDK.Menu.wset.killsteal:MenuElement({id = "enabled", name = "Enabled", value = true})
+                        gsoSDK.Menu.wset.killsteal:MenuElement({id = "minhp", name = "minimum enemy hp", value = 200, min = 1, max = 300, step = 1})
+                        gsoSDK.Menu.wset.killsteal:MenuElement({id = "hitchance", name = "Hitchance", value = 2, drop = { "normal", "high" } })
+                  -- Auto
                   gsoSDK.Menu.wset:MenuElement({name = "Auto", id = "auto", type = MENU })
                         gsoSDK.Menu.wset.auto:MenuElement({id = "enabled", name = "Enabled", value = true})
                         gsoSDK.Menu.wset.auto:MenuElement({id = "hitchance", name = "Hitchance", value = 2, drop = { "normal", "high" } })
+                  -- Combo / Harass
                   gsoSDK.Menu.wset:MenuElement({name = "Combo / Harass", id = "comhar", type = MENU })
                         gsoSDK.Menu.wset.comhar:MenuElement({id = "combo", name = "Combo", value = true})
                         gsoSDK.Menu.wset.comhar:MenuElement({id = "harass", name = "Harass", value = false})
                         gsoSDK.Menu.wset.comhar:MenuElement({id = "hitchance", name = "Hitchance", value = 1, drop = { "normal", "high" } })
+            -- E
             gsoSDK.Menu:MenuElement({name = "E settings", id = "eset", type = MENU })
                   gsoSDK.Menu.eset:MenuElement({id = "disaa", name = "Disable attack if ready or almostReady", value = true})
-                  gsoSDK.Menu.eset:MenuElement({id = "combo", name = "Combo", value = true})
-                  gsoSDK.Menu.eset:MenuElement({id = "harass", name = "Harass", value = false})
+                  -- KS
+                  gsoSDK.Menu.eset:MenuElement({name = "KS", id = "killsteal", type = MENU })
+                        gsoSDK.Menu.eset.killsteal:MenuElement({id = "enabled", name = "Enabled", value = true})
+                        gsoSDK.Menu.eset.killsteal:MenuElement({id = "minhp", name = "minimum enemy hp", value = 100, min = 1, max = 300, step = 1})
+                  -- Auto
+                  gsoSDK.Menu.eset:MenuElement({name = "Auto", id = "auto", type = MENU })
+                        gsoSDK.Menu.eset.auto:MenuElement({id = "stun", name = "If Q ready | no collision & W not ready $ mana for Q + E", value = true})
+                        gsoSDK.Menu.eset.auto:MenuElement({id = "passive", name = "If Q not ready & W not ready $ enemy has passive buff", value = true})
+                  -- Combo / Harass
+                  gsoSDK.Menu.eset:MenuElement({name = "Combo / Harass", id = "comhar", type = MENU })
+                        gsoSDK.Menu.eset.comhar:MenuElement({id = "combo", name = "Combo", value = true})
+                        gsoSDK.Menu.eset.comhar:MenuElement({id = "harass", name = "Harass", value = false})
+            --R
             gsoSDK.Menu:MenuElement({name = "R settings", id = "rset", type = MENU })
-                  gsoSDK.Menu.rset:MenuElement({id = "combo", name = "Use R Combo", value = true})
-                  gsoSDK.Menu.rset:MenuElement({id = "harass", name = "Use R Harass", value = false})
-                  gsoSDK.Menu.rset:MenuElement({id = "xenemies", name = ">= X enemies near target", value = 2, min = 1, max = 4, step = 1})
-                  gsoSDK.Menu.rset:MenuElement({id = "xrange", name = "< X distance enemies to target", value = 300, min = 100, max = 600, step = 50})
+                  -- Auto
+                  gsoSDK.Menu.rset:MenuElement({name = "Auto", id = "auto", type = MENU })
+                        gsoSDK.Menu.rset.auto:MenuElement({id = "enabled", name = "Enabled", value = true})
+                        gsoSDK.Menu.rset.auto:MenuElement({id = "xenemies", name = ">= X enemies near target", value = 2, min = 1, max = 4, step = 1})
+                        gsoSDK.Menu.rset.auto:MenuElement({id = "xrange", name = "< X distance enemies to target", value = 300, min = 100, max = 600, step = 50})
+                  -- Combo / Harass
+                  gsoSDK.Menu.rset:MenuElement({name = "Combo / Harass", id = "comhar", type = MENU })
+                        gsoSDK.Menu.rset.comhar:MenuElement({id = "combo", name = "Use R Combo", value = true})
+                        gsoSDK.Menu.rset.comhar:MenuElement({id = "harass", name = "Use R Harass", value = false})
+                        gsoSDK.Menu.rset.comhar:MenuElement({id = "xenemies", name = ">= X enemies near target", value = 1, min = 1, max = 4, step = 1})
+                        gsoSDK.Menu.rset.comhar:MenuElement({id = "xrange", name = "< X distance enemies to target", value = 300, min = 100, max = 600, step = 50})
       end
       function __gsoBrand:AddTickEvent()
             gsoSDK.ChampTick = function()
@@ -2717,6 +2755,22 @@ class "__gsoBrand"
                   local enemyList = gsoSDK.ObjectManager:GetEnemyHeroes(math.huge, false, "spell")
                   -- Q
                   if gsoSDK.Spell:IsReady(_Q, { q = 0.5, w = 0.33, e = 0.33, r = 0.33 } ) then
+                        -- KS
+                        if gsoSDK.Menu.qset.killsteal.enabled:Value() then
+                              local baseDmg = 50
+                              local lvlDmg = 30 * myHero:GetSpellData(_Q).level
+                              local apDmg = myHero.ap * 0.55
+                              local qDmg = baseDmg + lvlDmg + apDmg
+                              local minHP = gsoSDK.Menu.qset.killsteal.minhp:Value()
+                              if qDmg > minHP then
+                                    for i = 1, #enemyList do
+                                          local unit = enemyList[i]
+                                          if myHero.pos:DistanceTo(unit.pos) < 1050 and unit.health > minHP and unit.health < gsoSDK.Spell:CalculateDmg(unit, { dmgType = "ap", dmgAP = qDmg }) and gsoSDK.Spell:CastSpell(HK_Q, unit, myHero.pos, self.qData, gsoSDK.Menu.qset.killsteal.hitchance:Value()) then
+                                                return
+                                          end
+                                    end
+                              end
+                        end
                         -- Combo Harass
                         if (mode == "Combo" and gsoSDK.Menu.qset.comhar.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.qset.comhar.harass:Value()) then
                               local onlyStun = gsoSDK.Menu.qset.comhar.stun:Value()
@@ -2732,10 +2786,12 @@ class "__gsoBrand"
                                           end
                                     end
                               end
-                              for i = 1, #QTargets do
-                                    local unit = QTargets[i]
-                                    if gsoSDK.Spell:CastSpell(HK_Q, unit, myHero.pos, self.qData, gsoSDK.Menu.qset.comhar.hitchance:Value()) then
-                                          return
+                              if GameTimer() > gsoSDK.Spell.LastWk + 0.77 and GameTimer() > gsoSDK.Spell.LastEk + 0.77 and GameTimer() > gsoSDK.Spell.LastRk + 0.77 then
+                                    for i = 1, #QTargets do
+                                          local unit = QTargets[i]
+                                          if gsoSDK.Spell:CastSpell(HK_Q, unit, myHero.pos, self.qData, gsoSDK.Menu.qset.comhar.hitchance:Value()) then
+                                                return
+                                          end
                                     end
                               end
                         -- Auto
@@ -2750,39 +2806,181 @@ class "__gsoBrand"
                   end
                   -- W
                   if gsoSDK.Spell:IsReady(_W, { q = 0.33, w = 0.5, e = 0.33, r = 0.33 } ) then
+                        -- KS
+                        if gsoSDK.Menu.wset.killsteal.enabled:Value() then
+                              local baseDmg = 30
+                              local lvlDmg = 45 * myHero:GetSpellData(_W).level
+                              local apDmg = myHero.ap * 0.6
+                              local wDmg = baseDmg + lvlDmg + apDmg
+                              local minHP = gsoSDK.Menu.wset.killsteal.minhp:Value()
+                              if wDmg > minHP then
+                                    for i = 1, #enemyList do
+                                          local unit = enemyList[i]
+                                          if myHero.pos:DistanceTo(unit.pos) < 1100 and unit.health > minHP and unit.health < gsoSDK.Spell:CalculateDmg(unit, { dmgType = "ap", dmgAP = wDmg }) and gsoSDK.Spell:CastSpell(HK_W, unit, myHero.pos, self.wData, gsoSDK.Menu.wset.killsteal.hitchance:Value()) then
+                                                return
+                                          end
+                                    end
+                              end
+                        end
                         -- Combo / Harass
                         if (mode == "Combo" and gsoSDK.Menu.wset.comhar.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.wset.comhar.harass:Value()) then
                               for i = 1, 5 do
-                                    local t = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(1300 - (100 * i), false, "spell"), true)
+                                    local list = gsoSDK.ObjectManager:GetEnemyHeroes(1300 - (100 * i), false, "spell")
+                                    local wTargets = {}
+                                    for j = 1, #list do
+                                          local u = list[j]
+                                          if gsoSDK.Spell:GetBuffDuration(u, "brandablaze") > 0.35 then
+                                                wTargets[#wTargets+1] = u
+                                          end
+                                    end
+                                    local t = gsoSDK.TS:GetTarget(wTargets, true)
                                     if t and gsoSDK.Spell:CastSpell(HK_W, t, myHero.pos, self.wData, gsoSDK.Menu.wset.comhar.hitchance:Value()) then
                                           return
+                                    end
+                              end
+                              if GameTimer() > gsoSDK.Spell.LastQk + 0.77 and GameTimer() > gsoSDK.Spell.LastEk + 0.77 and GameTimer() > gsoSDK.Spell.LastRk + 0.77 then 
+                                    for i = 1, 5 do
+                                          local t = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(1300 - (100 * i), false, "spell"), true)
+                                          if t and gsoSDK.Spell:CastSpell(HK_W, t, myHero.pos, self.wData, gsoSDK.Menu.wset.comhar.hitchance:Value()) then
+                                                return
+                                          end
                                     end
                               end
                         -- Auto
                         elseif gsoSDK.Menu.wset.auto.enabled:Value() then
                               for i = 1, #enemyList do
                                     local unit = enemyList[i]
-                                    if myHero.pos:DistanceTo(unit.pos) < 1100 and gsoSDK.Spell:CastSpell(HK_W, unit, myHero.pos, self.wData, gsoSDK.Menu.wset.auto.hitchance:Value()) then
+                                    if myHero.pos:DistanceTo(unit.pos) < 1100 and gsoSDK.Spell:GetBuffDuration(unit, "brandablaze") > 0.35 and gsoSDK.Spell:CastSpell(HK_W, unit, myHero.pos, self.wData, gsoSDK.Menu.wset.auto.hitchance:Value()) then
                                           return
+                                    end
+                              end
+                              if GameTimer() > gsoSDK.Spell.LastQk + 0.77 and GameTimer() > gsoSDK.Spell.LastEk + 0.77 and GameTimer() > gsoSDK.Spell.LastRk + 0.77 then
+                                    for i = 1, #enemyList do
+                                          local unit = enemyList[i]
+                                          if myHero.pos:DistanceTo(unit.pos) < 1100 and gsoSDK.Spell:CastSpell(HK_W, unit, myHero.pos, self.wData, gsoSDK.Menu.wset.auto.hitchance:Value()) then
+                                                return
+                                          end
                                     end
                               end
                         end
                   end
                   -- E
                   if gsoSDK.Spell:IsReady(_E, { q = 0.33, w = 0.33, e = 0.5, r = 0.33 } ) then
-                        if (mode == "Combo" and gsoSDK.Menu.eset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.eset.harass:Value()) then
-                              local t = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(650, false, "spell"), true) --E range = 670
+                        -- KS
+                        if gsoSDK.Menu.eset.killsteal.enabled:Value() then
+                              local baseDmg = 50
+                              local lvlDmg = 20 * myHero:GetSpellData(_E).level
+                              local apDmg = myHero.ap * 0.35
+                              local eDmg = baseDmg + lvlDmg + apDmg
+                              local minHP = gsoSDK.Menu.eset.killsteal.minhp:Value()
+                              if eDmg > minHP then
+                                    for i = 1, #enemyList do
+                                          local unit = enemyList[i]
+                                          if myHero.pos:DistanceTo(unit.pos) < 650 and unit.health > minHP and unit.health < gsoSDK.Spell:CalculateDmg(unit, { dmgType = "ap", dmgAP = eDmg }) and gsoSDK.Spell:CastSpell(HK_E, unit) then
+                                                return
+                                          end
+                                    end
+                              end
+                        end
+                        -- Combo / Harass
+                        if (mode == "Combo" and gsoSDK.Menu.eset.comhar.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.eset.comhar.harass:Value()) then
+                              local list = gsoSDK.ObjectManager:GetEnemyHeroes(650, false, "spell") --E range = 670
+                              local eList = {}
+                              local eList2 = {}
+                              for i = 1, #list do
+                                    local unit = list[i]
+                                    if gsoSDK.Spell:GetBuffDuration(unit, "brandablaze") > 0.35 then
+                                          eList[#eList+1] = unit
+                                    else
+                                          eList2[#eList2+1] = unit
+                                    end
+                              end
+                              local t = gsoSDK.TS:GetTarget(eList, true)
                               if t and gsoSDK.Spell:CastSpell(HK_E, t) then
                                     return
+                              end
+                              if GameTimer() > gsoSDK.Spell.LastQk + 0.77 and GameTimer() > gsoSDK.Spell.LastWk + 0.77 and GameTimer() > gsoSDK.Spell.LastRk + 0.77 then 
+                                    local t2 = gsoSDK.TS:GetTarget(eList2, true)
+                                    if t2 and gsoSDK.Spell:CastSpell(HK_E, t2) then
+                                          return
+                                    end
+                              end
+                        -- Auto
+                        elseif myHero:GetSpellData(_Q).level > 0 and myHero:GetSpellData(_W).level > 0 then
+                              -- EQ -> if Q ready | no collision & W not ready $ mana for Q + E
+                              if gsoSDK.Menu.eset.auto.stun:Value() and myHero.mana > myHero:GetSpellData(_Q).mana + myHero:GetSpellData(_E).mana then
+                                    local isQReady = GameCanUseSpell(_Q) == 0 or myHero:GetSpellData(_Q).currentCd < 0.25
+                                    local isWReady = GameCanUseSpell(_W) == 0 or myHero:GetSpellData(_W).currentCd < 0.75
+                                    if isQReady and not isWReady then
+                                          local list = gsoSDK.ObjectManager:GetEnemyHeroes(650, false, "spell") --E range = 670
+                                          local eList = {}
+                                          local eList2 = {}
+                                          for i = 1, #list do
+                                                local unit = list[i]
+                                                if gsoSDK.Spell:GetBuffDuration(unit, "brandablaze") > 0.35 then
+                                                      eList[#eList+1] = unit
+                                                else
+                                                      eList2[#eList2+1] = unit
+                                                end
+                                          end
+                                          local t = gsoSDK.TS:GetTarget(eList, true)
+                                          if t and t:GetCollision(self.qData.radius, self.qData.speed, self.qData.delay) == 0 and not gsoSDK.Spell:IsMinionCollision(t, self.qData) and not gsoSDK.Spell:IsMinionCollision(t, self.qData, true) and gsoSDK.Spell:CastSpell(HK_E, t) then
+                                                return
+                                          end
+                                          if GameTimer() > gsoSDK.Spell.LastQk + 0.77 and GameTimer() > gsoSDK.Spell.LastWk + 0.77 and GameTimer() > gsoSDK.Spell.LastRk + 0.77 then 
+                                                local t2 = gsoSDK.TS:GetTarget(eList2, true)
+                                                if t2 and t2:GetCollision(self.qData.radius, self.qData.speed, self.qData.delay) == 0 and not gsoSDK.Spell:IsMinionCollision(t2, self.qData) and not gsoSDK.Spell:IsMinionCollision(t2, self.qData, true) and gsoSDK.Spell:CastSpell(HK_E, t2) then
+                                                      return
+                                                end
+                                          end
+                                    end
+                              end
+                              -- Passive -> If Q not ready & W not ready $ enemy has passive buff
+                              if gsoSDK.Menu.eset.auto.passive:Value() then
+                                    local isQReady = GameCanUseSpell(_Q) == 0 or myHero:GetSpellData(_Q).currentCd < 0.75
+                                    local isWReady = GameCanUseSpell(_W) == 0 or myHero:GetSpellData(_W).currentCd < 0.75
+                                    if not isQReady and not isWReady then
+                                          local list = gsoSDK.ObjectManager:GetEnemyHeroes(650, false, "spell") --E range = 670
+                                          local eList = {}
+                                          for i = 1, #list do
+                                                local unit = list[i]
+                                                if gsoSDK.Spell:GetBuffDuration(unit, "brandablaze") > 0.35 then
+                                                      eList[#eList+1] = unit
+                                                end
+                                          end
+                                          local t = gsoSDK.TS:GetTarget(eList, true)
+                                          if t and gsoSDK.Spell:CastSpell(HK_E, t) then
+                                                return
+                                          end
+                                    end
                               end
                         end
                   end
                   -- R
                   if gsoSDK.Spell:IsReady(_R, { q = 0.33, w = 0.33, e = 0.5, r = 0.33 } ) then
-                        if (mode == "Combo" and gsoSDK.Menu.rset.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.rset.harass:Value()) then
+                        -- Combo / Harass
+                        if (mode == "Combo" and gsoSDK.Menu.rset.comhar.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.rset.comhar.harass:Value()) then
                               local rTargets = gsoSDK.ObjectManager:GetEnemyHeroes(730, false, "spell") --R range = 750
-                              local xRange = gsoSDK.Menu.rset.xrange:Value()
-                              local xEnemies = gsoSDK.Menu.rset.xenemies:Value()
+                              local xRange = gsoSDK.Menu.rset.combar.xrange:Value()
+                              local xEnemies = gsoSDK.Menu.rset.comhar.xenemies:Value()
+                              for i = 1, #rTargets do
+                                    local count = 0
+                                    local t = rTargets[i]
+                                    for j = 1, #rTargets do
+                                          local tt = rTargets[j]
+                                          if t ~= tt and t.pos:DistanceTo(tt.pos) < xRange then
+                                                count = count + 1
+                                          end
+                                    end
+                                    if count >= xEnemies and gsoSDK.Spell:CastSpell(HK_R, t) then
+                                          return
+                                    end
+                              end
+                        -- Auto
+                        elseif gsoSDK.Menu.rset.auto.enabled:Value() then
+                              local rTargets = gsoSDK.ObjectManager:GetEnemyHeroes(730, false, "spell") --R range = 750
+                              local xRange = gsoSDK.Menu.rset.auto.xrange:Value()
+                              local xEnemies = gsoSDK.Menu.rset.auto.xenemies:Value()
                               for i = 1, #rTargets do
                                     local count = 0
                                     local t = rTargets[i]
