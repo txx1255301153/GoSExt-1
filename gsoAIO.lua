@@ -2820,7 +2820,7 @@ class "__gsoBrand"
                         end
                   end
                   -- W
-                  if gsoSDK.Spell:IsReady(_W, { q = 0.33, w = 0.5, e = 0.33, r = 0.33 } ) then
+                  if gsoSDK.Spell:IsReady(_W, { q = 0.33, w = 0.5, e = 0.5, r = 0.33 } ) then
                         -- KS
                         if gsoSDK.Menu.wset.killsteal.enabled:Value() then
                               local baseDmg = 30
@@ -2895,7 +2895,7 @@ class "__gsoBrand"
                         end
                   end
                   -- E
-                  if gsoSDK.Spell:IsReady(_E, { q = 0.33, w = 0.33, e = 0.5, r = 0.33 } ) then
+                  if gsoSDK.Spell:IsReady(_E, { q = 0.33, w = 1, e = 0.5, r = 0.33 } ) then
                         -- KS
                         if gsoSDK.Menu.eset.killsteal.enabled:Value() then
                               local baseDmg = 50
