@@ -1222,6 +1222,9 @@ class "__gsoSpell"
                         if from:DistanceTo(CastPos) > range - 25 then
                               return false
                         end
+                        if unit.pos:DistanceTo(CastPos) > 250 then
+                              hitChance = 1
+                        end
                         if hitChance >= HitChance then
                               gsoSDK.Cursor:SetCursor(cursorPos, CastPos, 0.06)
                               ControlSetCursorPos(CastPos)
