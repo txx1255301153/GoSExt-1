@@ -2750,6 +2750,7 @@ class "__gsoBrand"
       end
       function __gsoBrand:AddTickEvent()
             gsoSDK.ChampTick = function()
+                  local o = os.clock()
                   -- Is Attacking
                   if not gsoSDK.Orbwalker:CanMove() then
                         return
@@ -2757,7 +2758,7 @@ class "__gsoBrand"
                   -- Get Mode
                   local mode = gsoSDK.Orbwalker:GetMode()
                   -- Q
-                  if gsoSDK.Spell:IsReady(_Q, { q = 0.5, w = 0.75, e = 0.33, r = 0.33 } ) then
+                  if gsoSDK.Spell:IsReady(_Q, { q = 0.5, w = 0.5, e = 0.33, r = 0.33 } ) then
                         -- KS
                         if gsoSDK.Menu.qset.killsteal.enabled:Value() then
                               local baseDmg = 50
@@ -2770,6 +2771,7 @@ class "__gsoBrand"
                                     for i = 1, #enemyList do
                                           local qTarget = enemyList[i]
                                           if qTarget.health > minHP and qTarget.health < gsoSDK.Spell:CalculateDmg(qTarget, { dmgType = "ap", dmgAP = qDmg }) and gsoSDK.Spell:CastSpell(HK_Q, qTarget, myHero.pos, self.qData, gsoSDK.Menu.qset.killsteal.hitchance:Value()) then
+                                                if os.clock() - o > 0.01 then print("qks " .. tostring(os.clock() - o)) end
                                                 return
                                           end
                                     end
@@ -2789,6 +2791,7 @@ class "__gsoBrand"
                                     end
                                     local qTarget = gsoSDK.TS:GetTarget(blazeList, true)
                                     if qTarget and gsoSDK.Spell:CastSpell(HK_Q, qTarget, myHero.pos, self.qData, gsoSDK.Menu.qset.comhar.hitchance:Value()) then
+                                          if os.clock() - o > 0.01 then print("qcombo blazed " .. tostring(os.clock() - o)) end
                                           return
                                     end
                               end
@@ -2796,6 +2799,7 @@ class "__gsoBrand"
                                     for i = 1, 5 do
                                           local qTarget = gsoSDK.TS:GetTarget(gsoSDK.ObjectManager:GetEnemyHeroes(1450 - (i * 100), false, "spell"), true)
                                           if qTarget and gsoSDK.Spell:CastSpell(HK_Q, qTarget, myHero.pos, self.qData, gsoSDK.Menu.qset.comhar.hitchance:Value()) then
+                                                if os.clock() - o > 0.01 then print("qcombo not blazed " .. tostring(os.clock() - o)) end
                                                 return
                                           end
                                     end
@@ -2814,6 +2818,7 @@ class "__gsoBrand"
                                     end
                                     local qTarget = gsoSDK.TS:GetTarget(blazeList, true)
                                     if qTarget and gsoSDK.Spell:CastSpell(HK_Q, qTarget, myHero.pos, self.qData, gsoSDK.Menu.qset.comhar.hitchance:Value()) then
+                                          if os.clock() - o > 0.01 then print("qauto " .. tostring(os.clock() - o)) end
                                           return
                                     end
                               end
@@ -2833,6 +2838,7 @@ class "__gsoBrand"
                                     for i = 1, #enemyList do
                                           local wTarget = enemyList[i]
                                           if wTarget.health > minHP and wTarget.health < gsoSDK.Spell:CalculateDmg(wTarget, { dmgType = "ap", dmgAP = wDmg }) and gsoSDK.Spell:CastSpell(HK_W, wTarget, myHero.pos, self.wData, gsoSDK.Menu.wset.killsteal.hitchance:Value()) then
+                                                if os.clock() - o > 0.01 then print("w ks " .. tostring(os.clock() - o)) end
                                                 return
                                           end
                                     end
@@ -2852,6 +2858,7 @@ class "__gsoBrand"
                                     end
                                     local wTarget = gsoSDK.TS:GetTarget(blazeList, true)
                                     if wTarget and gsoSDK.Spell:CastSpell(HK_W, wTarget, myHero.pos, self.wData, gsoSDK.Menu.wset.comhar.hitchance:Value()) then
+                                          if os.clock() - o > 0.01 then print("wcombo blazed " .. tostring(os.clock() - o)) end
                                           return
                                     end
                               end
@@ -2861,6 +2868,7 @@ class "__gsoBrand"
                                           if #enemyList == 0 then break end
                                           local wTarget = gsoSDK.TS:GetTarget(enemyList, true)
                                           if wTarget and gsoSDK.Spell:CastSpell(HK_W, wTarget, myHero.pos, self.wData, gsoSDK.Menu.wset.comhar.hitchance:Value()) then
+                                                if os.clock() - o > 0.01 then print("wcombo not blazed " .. tostring(os.clock() - o)) end
                                                 return
                                           end
                                     end
@@ -2879,6 +2887,7 @@ class "__gsoBrand"
                                     end
                                     local wTarget = gsoSDK.TS:GetTarget(blazeList, true)
                                     if wTarget and gsoSDK.Spell:CastSpell(HK_W, wTarget, myHero.pos, self.wData, gsoSDK.Menu.wset.comhar.hitchance:Value()) then
+                                          if os.clock() - o > 0.01 then print("wauto " .. tostring(os.clock() - o)) end
                                           return
                                     end
                               end
@@ -2888,6 +2897,7 @@ class "__gsoBrand"
                                           if #enemyList == 0 then break end
                                           local wTarget = gsoSDK.TS:GetTarget(enemyList, true)
                                           if wTarget and gsoSDK.Spell:CastSpell(HK_W, wTarget, myHero.pos, self.wData, gsoSDK.Menu.wset.comhar.hitchance:Value()) then
+                                                if os.clock() - o > 0.01 then print("w auto blazed " .. tostring(os.clock() - o)) end
                                                 return
                                           end
                                     end
@@ -2895,7 +2905,7 @@ class "__gsoBrand"
                         end
                   end
                   -- E
-                  if gsoSDK.Spell:IsReady(_E, { q = 0.33, w = 1, e = 0.5, r = 0.33 } ) then
+                  if gsoSDK.Spell:IsReady(_E, { q = 0.33, w = 0.5, e = 0.5, r = 0.33 } ) then
                         -- KS
                         if gsoSDK.Menu.eset.killsteal.enabled:Value() then
                               local baseDmg = 50
@@ -2982,7 +2992,7 @@ class "__gsoBrand"
                         end
                   end
                   -- R
-                  if gsoSDK.Spell:IsReady(_R, { q = 0.33, w = 0.33, e = 0.5, r = 0.33 } ) then
+                  if gsoSDK.Spell:IsReady(_R, { q = 0.33, w = 0.75, e = 0.33, r = 0.33 } ) then
                         -- Combo / Harass
                         if (mode == "Combo" and gsoSDK.Menu.rset.comhar.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.rset.comhar.harass:Value()) then
                               local enemyList = gsoSDK.ObjectManager:GetEnemyHeroes(750, false, "spell")
