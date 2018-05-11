@@ -16,6 +16,7 @@ local gsoSDK = {
       TS = nil,
       Orbwalker = nil
 }
+local debugMode = false
 local myHero = myHero
 local GetTickCount = GetTickCount
 local MathSqrt = math.sqrt
@@ -37,6 +38,11 @@ local GameTurretCount = Game.TurretCount
 local GameTurret = Game.Turret
 local GameIsChatOpen = Game.IsChatOpen
 local GameLatency = Game.Latency
+local function GetFastDistance(p1, p2)
+      local x = p1.x - p2.x
+      local z = p1.z - p2.z
+      return x * x + z * z
+end
 --[[
 ▒█▀▀█ █░░█ █▀▀█ █▀▀ █▀▀█ █▀▀█ 
 ▒█░░░ █░░█ █▄▄▀ ▀▀█ █░░█ █▄▄▀ 
@@ -874,6 +880,7 @@ class "__gsoSpell"
                   -- eliseq ?
                   -- aurelionsol ?
             }
+            self.MoveLenght = {}
             self.Waypoints = {}
             self.LastQ = 0
             self.LastQk = 0
@@ -1116,62 +1123,114 @@ class "__gsoSpell"
                   return { IsMoving = false, Path = unit.pos, Tick = GameTimer() }
             end
       end
+      function __gsoSpell:SaveWaypointsSingle(unit)
+            local unitID = unit.networkID
+            -- move lenght
+            if not self.MoveLenght[unitID] then
+                  self.MoveLenght[unitID] = { Pos = unit.pos, Lenght = 0, Tick = GameTimer() }
+            elseif GameTimer() > self.MoveLenght[unitID].Tick + 0.025 then
+                  self.MoveLenght[unitID].Lenght = unit.pos:DistanceTo(self.MoveLenght[unitID].Pos)
+                  self.MoveLenght[unitID].Tick = GameTimer()
+                  self.MoveLenght[unitID].Pos = unit.pos
+            end
+            -- create waypoints key
+            if not self.Waypoints[unitID] then
+                  self.Waypoints[unitID] = self:GetWaypoints(unit)
+                  return
+            end
+            -- get new waypoints
+            local currentWaypoints = self:GetWaypoints(unit)
+            local currentWaypointsT = self.Waypoints[unitID]
+            -- isMoving is not equal -> save new waypoint
+            if currentWaypoints.IsMoving ~= currentWaypointsT.IsMoving then
+                  self.Waypoints[unitID] = currentWaypoints
+                  if debugMode then print("[saveWaypoints] -> isMoving not equal") end
+                  return
+            end
+            -- check if paths are equal
+            if currentWaypoints.IsMoving then
+                  local count = #currentWaypoints.Path
+                  local countT = #currentWaypointsT.Path
+                  -- paths lenght are not equal
+                  if count ~= countT then
+                        if debugMode then print("[saveWaypoints] -> count not equal") end
+                        self.Waypoints[unitID] = currentWaypoints
+                        return
+                  end
+                  -- too short path
+                  if count < 2 then
+                        self.Waypoints[unitID].IsMoving = false
+                        return
+                  end
+                  -- first
+                  local x = math.floor(currentWaypoints.Path[1].x)
+                  local z = math.floor(currentWaypoints.Path[1].z)
+                  local xT = math.floor(currentWaypointsT.Path[1].x)
+                  local zT = math.floor(currentWaypointsT.Path[1].z)
+                  -- last
+                  local xx = math.floor(currentWaypoints.Path[count].x)
+                  local zz = math.floor(currentWaypoints.Path[count].z)
+                  local xxT = math.floor(currentWaypointsT.Path[count].x)
+                  local zzT = math.floor(currentWaypointsT.Path[count].z)
+                  -- paths vectors are not equal
+                  if x ~= xT or z ~= zT or xx ~= xxT or zz ~= zzT then
+                        if debugMode then print("[saveWaypoints] -> paths vectors are not equal") end
+                        self.Waypoints[unitID] = currentWaypoints
+                  end
+            end
+      end
       function __gsoSpell:SaveWaypoints(enemyList)
             for i = 1, #enemyList do
                   local unit = enemyList[i]
-                  local unitID = unit.networkID
-                  if not self.Waypoints[unitID] then self.Waypoints[unitID] = {} end
-                  if not self.Waypoints[unitID].current then
-                        self.Waypoints[unitID].current = self:GetWaypoints(unit)
-                  else
-                        local currentWaypoints = self:GetWaypoints(unit)
-                        local currentWaypointsT = self.Waypoints[unitID].current
-                        if currentWaypointsT.IsMoving == currentWaypoints.IsMoving then
-                              if not currentWaypointsT.IsMoving then
-                                    if currentWaypointsT.Path == currentWaypoints.Path then return end
-                              else
-                                    local count = #currentWaypoints.Path
-                                    local countT = #currentWaypointsT.Path
-                                    if count == countT then
-                                          local canReturn = true
-                                          for i = 1, countT do
-                                                if currentWaypointsT.Path[i] ~= currentWaypoints.Path[i] then
-                                                      canReturn = false
-                                                      break
-                                                end
-                                          end
-                                          if canReturn then
-                                                return
-                                          end
-                                    end
-                              end
-                        end
-                        self.Waypoints[unitID].current = currentWaypoints
-                  end
+                  self:SaveWaypointsSingle(unit)
             end
       end
-      function __gsoSpell:CanMove(unit, delay)
-            for i = 1, unit.buffCount do
-                  local buff = unit:GetBuff(i);
-                  if buff.count > 0 and buff.duration >= delay then
-                        if (buff.type == 5 or buff.type == 8 or buff.type == 21 or buff.type == 22 or buff.type == 24 or buff.type == 11) then
-                              return false
+      --[[ http://leagueoflegends.wikia.com/wiki/Types_of_Crowd_Control
+      ok
+            STUN = 5
+            SNARE = 11
+            SUPRESS = 24
+            KNOCKUP = 29
+      good
+            FEAR = 21 -> fiddle Q, ...
+            CHARM = 22 -> ahri E, ...
+      not good
+            TAUNT = 8 -> rammus E, ... can move too fast + anyway will detect attack
+            SLOW = 10 -> can move too fast -> nasus W, zilean E are ok. Rylai item, ... not good
+            KNOCKBACK = 30 -> alistar W, lee sin R, ... - no no
+      ]]
+      function __gsoSpell:IsImmobile(unit, delay)
+            for i = 0, unit.buffCount do
+                  local buff = unit:GetBuff(i)
+                  if buff and buff.count > 0 and buff.duration > delay then
+                        local bType = buff.type
+                        if bType == 5 or bType == 11 or bType == 21 or bType == 22 or bType == 24 or bType == 29 or buff.name == "recall" then
+                              return true
                         end
                   end
-            end
-            return true
-      end
-      function __gsoSpell:IsImmobile(unit, delay, radius, speed, from, spelltype)
-            local ExtraDelay = from:DistanceTo(unit.pos) / speed
-            if not self:CanMove(unit, delay + ExtraDelay) then
-                  return true
             end
             return false
       end
-      function __gsoSpell:isSlowed(unit, delay, speed, from)
-            for i = 1, unit.buffCount do
+      function __gsoSpell:ImmobileTime(unit)
+            local iT = 0
+            for i = 0, unit.buffCount do
                   local buff = unit:GetBuff(i)
-                  if from and buff.count > 0 and buff.type == 10 and buff.duration >= delay + from:DistanceTo(unit.pos) / speed then
+                  if buff and buff.count > 0 then
+                        local bType = buff.type
+                        if bType == 5 or bType == 11 or bType == 21 or bType == 22 or bType == 24 or bType == 29 or buff.name == "recall" then
+                              local bDuration = buff.duration
+                              if bDuration > iT then
+                                    iT = bDuration
+                              end
+                        end
+                  end
+            end
+            return iT
+      end
+      function __gsoSpell:IsSlowed(unit, delay)
+            for i = 0, unit.buffCount do
+                  local buff = unit:GetBuff(i)
+                  if from and buff.count > 0 and buff.type == 10 and buff.duration >= delay then
                         return true
                   end
             end
@@ -1201,15 +1260,31 @@ class "__gsoSpell"
       function __gsoSpell:IsMinionCollision(unit, spellData, prediction)
             local width = spellData.radius * 0.77
             local enemyMinions = gsoSDK.ObjectManager.Units.EnemyMinions
+            local mePos = myHero.pos
             for i = 1, #enemyMinions do
                   local minion = enemyMinions[i]
                   if minion ~= unit then
+                        -- get prediction width
+                        local bbox = minion.boundingRadius
+                        local predWidth = width + bbox + 20
+                        -- get middle point of not moving minion
                         local minionPos = minion.pos
                         local point,onLineSegment = self:ClosestPointOnLineSegment(minionPos, prediction and unit:GetPrediction(spellData.speed,spellData.delay) or unit.pos, myHero.pos)
-                        local distanceToPoint = minionPos:DistanceTo(Vector(point))
-                        local bbox = minion.boundingRadius
-                        if distanceToPoint < width +  bbox then
+                        local x = minionPos.x - point.x
+                        local z = minionPos.z - point.z
+                        if onLineSegment and x * x + z * z < predWidth * predWidth then
                               return true
+                        end
+                        -- get middle point of moving minion
+                        local mPathing = minion.pathing
+                        if mPathing.hasMovePath then
+                              local minionPosPred = minionPos:Extended(mPathing.endPos, spellData.delay + (mePos:DistanceTo(minionPos) / spellData.speed))
+                              point,onLineSegment = self:ClosestPointOnLineSegment(minionPosPred, prediction and unit:GetPrediction(spellData.speed,spellData.delay) or unit.pos, myHero.pos)
+                              local xx = minionPosPred.x - point.x
+                              local zz = minionPosPred.z - point.z
+                              if onLineSegment and xx * xx + zz * zz < predWidth * predWidth then
+                                    return true
+                              end
                         end
                   end
             end
@@ -1232,51 +1307,101 @@ class "__gsoSpell"
                         return false
                   end
                   local CastPos
+                  local unitPos = unit.pos
                   if from and spellData and HitChance then
-                        local range = spellData.range
+                        local unitID = unit.networkID
+                        local range = spellData.range - 25
                         local radius = spellData.radius
                         local speed = spellData.speed
                         local delay = spellData.delay
                         local sType = spellData.sType
                         local collision = spellData.collision
+                        -- extended linear castpos works only right/left, circular in all directions
                         if sType == "line" then
                               range = range - (radius * 0.5)
                         end
+                        -- check collision
                         if collision and self:IsCollision(unit, spellData) then
                               return false
                         end
+                        -- declare hitchance
                         local hitChance = 1
-                        if not self.Waypoints[unit.networkID] or not self.Waypoints[unit.networkID].current then return false end
-                        local lastWP = GameTimer() - self.Waypoints[unit.networkID].current.Tick
-                        local longWP = lastWP > 1.5 and lastWP < 5
-                        local isCastingSpell = unit.activeSpell and unit.activeSpell.valid
+                        -- stop if dashing (galio E etc.)
                         if unit.pathing.isDashing then
+                              if debugMode then print("PREDICTION FALSE: IS DASHING") end
                               return false
                         end
+                        -- stop if has predash, dash, tp, speed spells
+                        local isCastingSpell = unit.activeSpell and unit.activeSpell.valid
                         if isCastingSpell and self.dashSpell[unit.activeSpell.name:lower()] then
+                              if debugMode then print("PREDICTION FALSE: DASH SPELL") end
                               return false
                         end
-                        if lastWP < 0.2 or longWP then
-                              hitChance = 2
-                        end
-                        if self:IsImmobile(unit, delay, radius, speed, from, sType) or self:isSlowed(unit, delay, speed, from) or isCastingSpell then
-                              hitChance = 2
-                              CastPos = unit.pos
+                        -- get prediction pos
+                        local fromToUnit = from:DistanceTo(unitPos) / speed
+                        -- enemy is immobile
+                        if self:IsImmobile(unit, delay + fromToUnit) or isCastingSpell then
+                              --hitChance = 2
+                              CastPos = unitPos
                         elseif unit.pathing.hasMovePath then
-                              CastPos = unit:GetPrediction(speed,delay):Extended(unit.pos, radius * 0.5)
-                              local angletemp = from:AngleBetween(unit.pos, CastPos)
-                              if angletemp < 33 then
+                              -- get endPos
+                              local endPos = unit.pathing.endPos
+                              local x = unitPos.x - endPos.x
+                              local z = unitPos.z - endPos.z
+                              local UnitEnd = x * x + z * z
+                              -- not moving or too short click
+                              if UnitEnd < 10000 then
+                                    if debugMode then print("PREDICTION FALSE: SHORT CLICK") end
+                                    return false
+                              end
+                              -- get last waypoint
+                              self:SaveWaypointsSingle(unit)
+                              -- not moving
+                              if not self.Waypoints[unitID].IsMoving then
+                                    return false
+                              end
+                              -- hitchance high -> last move click < 0.2 or dc
+                              local lastWP = GameTimer() - self.Waypoints[unitID].Tick
+                              local longWP = lastWP > 1.5 and lastWP < 5
+                              if lastWP < 0.2 or longWP then
+                                    if debugMode then print("HITCHANCE HIGH: LAST CLICK < " .. tostring(lastWP)) end
                                     hitChance = 2
+                              end
+                              -- not moving
+                              if self.MoveLenght[unitID].Lenght < 10 then
+                                    if debugMode then print("PREDICTION FALSE: LENGHT < 10") end
+                                    return false
+                              end
+                              -- is slowed
+                              if hitChance == 1 and self:IsSlowed(unit, delay + fromToUnit) then
+                                    if debugMode then print("HITCHANCE HIGH: SLOWED") end
+                                    hitChance = 2
+                              end
+                              -- enemy is facing or run away
+                              if hitChance == 1 and from:AngleBetween(unitPos, unit.pathing.endPos) < 33 then
+                                    if debugMode then print("HITCHANCE HIGH: IS FACING") end
+                                    hitChance = 2
+                              end
+                              -- enemy long click
+                              if hitChance == 1 and UnitEnd > 1000000 then
+                                    if debugMode then print("HITCHANCE HIGH: LONG CLICK") end
+                                    hitChance = 2
+                              end
+                              -- get move pos
+                              CastPos = unit:GetPrediction(speed,delay):Extended(unitPos, radius * 0.5)
+                              -- castpos too far away from unitPos (too high move speed or low spell speed and high distance)
+                              if hitChance == 2 and GetFastDistance(unitPos, CastPos) > 250000 then -- 500*500
+                                    if debugMode then print("HITCHANCE NORMAL: TOO FAR AWAY > 500") end
+                                    hitChance = 1
                               end
                         end
                         if not CastPos or not CastPos:ToScreen().onScreen then
+                              if debugMode then print("PREDICTION FALSE: NOT ON SCREEN") end
                               return false
                         end
-                        if from:DistanceTo(CastPos) > range - 25 then
+                        if GetFastDistance(from, CastPos) > range * range then
+                              if debugMode then print("PREDICTION FALSE: OUT OF RANGE") end
                               return false
-                        end
-                        if unit.pos:DistanceTo(CastPos) > 250 then
-                              hitChance = 1
                         end
                         if hitChance >= HitChance then
                               gsoSDK.Cursor:SetCursor(cursorPos, CastPos, 0.06)
@@ -1287,7 +1412,7 @@ class "__gsoSpell"
                               result = true
                         end
                   else
-                        CastPos = unit.pos
+                        CastPos = unitPos
                         gsoSDK.Cursor:SetCursor(cursorPos, CastPos, 0.06)
                         ControlSetCursorPos(CastPos)
                         ControlKeyDown(spell)
@@ -1308,22 +1433,6 @@ class "__gsoSpell"
                   end
             end
             return result
-      end
-      function __gsoSpell:ImmobileTime(unit)
-            local iT = 0
-            for i = 0, unit.buffCount do
-                  local buff = unit:GetBuff(i)
-                  if buff and buff.count > 0 then
-                        local bType = buff.type
-                        if bType == 5 or bType == 11 or bType == 29 or bType == 24 or buff.name == "recall" then
-                              local bDuration = buff.duration
-                              if bDuration > iT then
-                                    iT = bDuration
-                              end
-                        end
-                  end
-            end
-            return iT
       end
       function __gsoSpell:CastManualSpell(spell, delays)
             local kNum = 0
@@ -3119,7 +3228,9 @@ class "__gsoMorgana"
                   gsoSDK.Menu.qset.comhar:MenuElement({id = "hitchance", name = "Hitchance", value = 2, drop = { "normal", "high" } })
             -- W
             gsoSDK.Menu:MenuElement({name = "W settings", id = "wset", type = MENU })
-                  gsoSDK.Menu.wset:MenuElement({id = "enabled", name = "Auto -> only Q target", value = true})
+                  gsoSDK.Menu.wset:MenuElement({id = "slow", name = "Slow", value = false})
+                  gsoSDK.Menu.wset:MenuElement({id = "immobile", name = "Immobile", value = true})
+                  gsoSDK.Menu.wset:MenuElement({id = "time", name = "Minimum milliseconds", value = 500, min = 250, max = 2000, step = 50})
             -- E
             gsoSDK.Menu:MenuElement({name = "E settings", id = "eset", type = MENU })
                   gsoSDK.Menu.eset:MenuElement({id = "note1", name = "Note: not ready yet !", type = SPACE})
@@ -3207,12 +3318,18 @@ class "__gsoMorgana"
                         end
                   end
                   -- W
-                  if gsoSDK.Menu.wset.enabled:Value() and gsoSDK.Spell:IsReady(_W, { q = 0.33, w = 0.5, e = 0.33, r = 0.33 } ) then
-                        local enemyList = gsoSDK.ObjectManager:GetEnemyHeroes(900, false, "spell")
-                        for i = 1, #enemyList do
-                              local unit = enemyList[i]
-                              if gsoSDK.Spell:GetBuffDuration(unit, "darkbindingmissile") > 0.35 and gsoSDK.Spell:CastSpell(HK_W, unit) then
-                                    return
+                  if gsoSDK.Spell:IsReady(_W, { q = 0.33, w = 0.5, e = 0.33, r = 0.33 } ) then
+                        local mSlow = gsoSDK.Menu.wset.slow:Value()
+                        local mImmobile = gsoSDK.Menu.wset.immobile:Value()
+                        local mTime = gsoSDK.Menu.wset.time:Value() * 0.001
+                        if mSlow or mImmobile then
+                              local enemyList = gsoSDK.ObjectManager:GetEnemyHeroes(900, false, "spell")
+                              for i = 1, #enemyList do
+                                    local unit = enemyList[i]
+                                    local canW = (mImmobile and gsoSDK.Spell:IsImmobile(unit, mTime)) or (mSlow and gsoSDK.Spell:IsSlowed(unit, mTime))
+                                    if canW and gsoSDK.Spell:CastSpell(HK_W, unit) then
+                                          return
+                                    end
                               end
                         end
                   end
@@ -3221,7 +3338,7 @@ class "__gsoMorgana"
                   end
                   ]]
                   -- R
-                  if gsoSDK.Spell:IsReady(_R, { q = 0.33, w = 0.75, e = 0.33, r = 0.33 } ) then
+                  if gsoSDK.Spell:IsReady(_R, { q = 0.33, w = 0.33, e = 0.33, r = 0.5 } ) then
                         -- KS
                         if gsoSDK.Menu.rset.killsteal.enabled:Value() then
                               local baseDmg = 75
