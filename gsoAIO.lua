@@ -2819,8 +2819,8 @@ class "__gsoBrand"
             self.ETarget = nil
             gsoSDK.Menu = MenuElement({name = "Gamsteron Brand", id = "gsobrand", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/x1xxbrandx3xx.png" })
             __gsoLoader()
-            gsoSDK.Orbwalker:SetSpellMoveDelays( { q = 0.2, w = 0.43, e = 0.2, r = 0.2 } )
-            gsoSDK.Orbwalker:SetSpellAttackDelays( { q = 0.33, w = 0.53, e = 0.33, r = 0.33 } )
+            gsoSDK.Orbwalker:SetSpellMoveDelays( { q = 0.2, w = 0.2, e = 0.2, r = 0.2 } )
+            gsoSDK.Orbwalker:SetSpellAttackDelays( { q = 0.33, w = 0.33, e = 0.33, r = 0.33 } )
             self:SetSpellData()
             self:CreateMenu()
             self:AddTickEvent()
