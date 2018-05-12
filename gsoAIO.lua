@@ -2985,7 +2985,7 @@ class "__gsoBrand"
                         end
                   end
                   -- E
-                  if gsoSDK.Spell:IsReady(_E, { q = 0.33, w = 1.33, e = 0.5, r = 0.33 } ) then
+                  if gsoSDK.Spell:IsReady(_E, { q = 0.33, w = 0.33, e = 0.5, r = 0.33 } ) then
                         -- KS
                         if gsoSDK.Menu.eset.killsteal.enabled:Value() then
                               local baseDmg = 50
@@ -3076,7 +3076,7 @@ class "__gsoBrand"
                         end
                   end
                   -- W
-                  if gsoSDK.Spell:IsReady(_W, { q = 0.33, w = 0.5, e = 0.77, r = 0.33 } ) then
+                  if gsoSDK.Spell:IsReady(_W, { q = 0.33, w = 0.5, e = 0.33, r = 0.33 } ) then
                         -- KS
                         if gsoSDK.Menu.wset.killsteal.enabled:Value() then
                               local baseDmg = 30
@@ -3139,7 +3139,7 @@ class "__gsoBrand"
                         end
                   end
                   -- R
-                  if gsoSDK.Spell:IsReady(_R, { q = 0.33, w = 0.6, e = 0.33, r = 0.33 } ) then
+                  if gsoSDK.Spell:IsReady(_R, { q = 0.33, w = 0.33, e = 0.33, r = 0.5 } ) then
                         -- Combo / Harass
                         if (mode == "Combo" and gsoSDK.Menu.rset.comhar.combo:Value()) or (mode == "Harass" and gsoSDK.Menu.rset.comhar.harass:Value()) then
                               local enemyList = gsoSDK.ObjectManager:GetEnemyHeroes(750, false, "spell")
