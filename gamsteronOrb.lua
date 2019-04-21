@@ -328,8 +328,8 @@ local gsoAttacks = {
     ["viktorqbuff"] = true
 }
 local gsoIcons = {
-    ["orb"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orb.png",
-    ["ts"] = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/ts.png"
+    ["orb"] = "https://raw.githubusercontent.com/txx1255301153/GoSExt-1/master/Icons/orb.png",
+    ["ts"] = "https://raw.githubusercontent.com/txx1255301153/GoSEx-1t/master/Icons/ts.png"
 }
 local gsoUndyingBuffs = {
     ["zhonyasringshield"] = true
