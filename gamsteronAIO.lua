@@ -4903,21 +4903,4 @@ function OnLoad()
   print("gamsteronAIO "..gsoINFO.version.." | loaded!")
   gsoLoaded = true
 end
-function OnDraw()
-    if not gsoLoaded or not gsoMenu.gsodraw.enabled:Value() then return end
-    local mePos = gsoMyHero.pos
-    local drawMenu = gsoMenu.gsodraw.circle1
-    if gsoSpellDraw.q and drawMenu.qrange:Value() then
-        local qrange = gsoSpellDraw.qf and gsoSpellDraw.qf() or gsoSpellDraw.qr
-        gsoDrawCircle(mePos, qrange, drawMenu.qrangewidth:Value(), drawMenu.qrangecolor:Value()) end
-    if gsoSpellDraw.w and drawMenu.wrange:Value() then
-        local wrange = gsoSpellDraw.wf and gsoSpellDraw.wf() or gsoSpellDraw.wr
-        gsoDrawCircle(mePos, wrange, drawMenu.wrangewidth:Value(), drawMenu.wrangecolor:Value()) end
-    if gsoSpellDraw.e and drawMenu.erange:Value() then
-        local erange = gsoSpellDraw.ef and gsoSpellDraw.ef() or gsoSpellDraw.er
-        gsoDrawCircle(mePos, erange, drawMenu.erangewidth:Value(), drawMenu.erangecolor:Value()) end
-    if gsoSpellDraw.r and drawMenu.rrange:Value() then
-        local rrange = gsoSpellDraw.rf and gsoSpellDraw.rf() or gsoSpellDraw.rr
-        gsoDrawCircle(mePos, rrange, drawMenu.rrangewidth:Value(), drawMenu.rrangecolor:Value()) end
-end
 
