@@ -4750,7 +4750,7 @@ function OnLoad()
     __Zoe = function() end,
     __Zyra = function() end
   }
-  gsoMenu:MenuElement({name = "Drawings", id = "gsodraw", leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/circles.png", type = MENU })
+ local gsoMenu:MenuElement({name = "Drawings", id = "gsodraw", leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/circles.png", type = MENU })
     gsoMenu.gsodraw:MenuElement({name = "Enabled",  id = "enabled", value = true})
   gsoMenu:MenuElement({name = "Items", id = "gsoitem", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/item.png" })
     gsoMenu.gsoitem:MenuElement({id = "botrk", name = "        botrk", value = true, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/botrk.png" })
