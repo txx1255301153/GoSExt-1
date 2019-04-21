@@ -4921,6 +4921,7 @@ function OnDraw()
         gsoDrawCircle(mePos, rrange, drawMenu.rrangewidth:Value(), drawMenu.rrangecolor:Value()) end
 end
 function OnWndMsg(msg, wParam)
+
   if not gsoLoaded then return end
   local getTick = gsoGetTickCount()
   local manualNum = -1
@@ -4929,4 +4930,3 @@ function OnWndMsg(msg, wParam)
   elseif wParam == HK_E and getTick > gsoSpellTimers.lek + 1000 and Game.CanUseSpell(_E) == 0 then gsoSpellTimers.lek = getTick; manualNum = 2
   elseif wParam == HK_R and getTick > gsoSpellTimers.lrk + 1000 and Game.CanUseSpell(_R) == 0 then gsoSpellTimers.lrk = getTick; manualNum = 3 end
   if manualNum > -1 and not gsoDelayedSpell[manualNum] then if gsoMode.isCombo() or gsoMode.isHarass() or gsoMode.isLaneClear() or gsoMode.isLastHit() then gsoDelayedSpell[manualNum] = { function() Control.KeyDown(wParam);Control.KeyUp(wParam);Control.KeyDown(wParam);Control.KeyUp(wParam);Control.KeyDown(wParam);Control.KeyUp(wParam); end, getTick} end end
-end
