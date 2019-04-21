@@ -4784,7 +4784,7 @@ function OnLoad()
       if gsoSpellDraw.r then
         gsoMenu.gsodraw.circle1.rrange:Hide(true)
         gsoMenu.gsodraw.circle1.rrangecolor:Hide(true)
-        gsoMenu.gsodraw.circle1.rrangewidth:Hide(true) end end })
+        gsoMenu.gsodraw.circle1.rrangewidth:Hide(true) end 
   if myHero.charName == "Twitch" then
     gsoMenu.gsodraw.circle1:MenuElement({name = "Q Invisible Range", id = "note9", icon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/arrow.png", type = SPACE,
       onclick = function()
