@@ -1232,7 +1232,7 @@ function OnTick()
 end
 
 function OnLoad()
-   MenuElement({name = "Target Selector", id = "ts", type = MENU, leftIcon = gsoIcons["ts"] })
+  Menu.gsoMenu:MenuElement({name = "Target Selector", id = "ts", type = MENU })
         gsoMenu.ts:MenuElement({ id = "Mode", name = "Mode", value = 1, drop = { "Auto", "Closest", "Least Health", "Least Priority" } })
         gsoMenu.ts:MenuElement({ id = "priority", name = "Priorities", type = MENU })
         gsoMenu.ts:MenuElement({ id = "selected", name = "Selected Target", type = MENU })
