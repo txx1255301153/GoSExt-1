@@ -259,7 +259,7 @@ local gsoHarassKeys = {}
 local gsoLastHitKeys = {}
 local gsoLaneClearKeys = {}
 
-local gsoMenu = MenuElement({name = "Gamsteron", id = "gamsteronorb", type = MENU, leftIcon = "https://raw.githubusercontent.com/gamsteron/GoSExt/master/Icons/orbbb.png" })
+local gsoMenu = MenuElement({name = "Gamsteron", id = "gamsteronorb", type = MENU, leftIcon = "https://raw.githubusercontent.com/txx1255301153/GoSExt-1/master/Icons/orbbb.png" })
 local gsoMode = {
     isCombo = function()
                   for i = 1, #gsoComboKeys do
@@ -329,7 +329,7 @@ local gsoAttacks = {
 }
 local gsoIcons = {
     ["orb"] = "https://raw.githubusercontent.com/txx1255301153/GoSExt-1/master/Icons/orb.png",
-    ["ts"] = "https://raw.githubusercontent.com/txx1255301153/GoSEx-1t/master/Icons/ts.png"
+    ["ts"] = "https://raw.githubusercontent.com/txx1255301153/GoSEx-1/master/Icons/ts.png"
 }
 local gsoUndyingBuffs = {
     ["zhonyasringshield"] = true
@@ -1232,7 +1232,7 @@ function OnTick()
 end
 
 function OnLoad()
-  Menu.gsoMenu:MenuElement({name = "Target Selector", id = "ts", type = MENU })
+ gsoMenu:MenuElement({name = "Target Selector", id = "ts", type = MENU })
         gsoMenu.ts:MenuElement({ id = "Mode", name = "Mode", value = 1, drop = { "Auto", "Closest", "Least Health", "Least Priority" } })
         gsoMenu.ts:MenuElement({ id = "priority", name = "Priorities", type = MENU })
         gsoMenu.ts:MenuElement({ id = "selected", name = "Selected Target", type = MENU })
