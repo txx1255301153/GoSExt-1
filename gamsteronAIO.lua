@@ -397,7 +397,7 @@ local gsoSpellData = { q = {}, w = {}, e = {}, r = {} }
 local gsoSpellDraw = { q = false, w = false, e = false, r = false }
 local gsoSpellCan = { q = true, w = true, e = true, r = true, botrk = true }
 local gsoSpellTimers = { lq = 0, lqk = 0, lw = 0, lwk = 0, le = 0, lek = 0, lr = 0, lrk = 0 }
-function OnLoad()
+
   local gsoOrbwalker = __gsoOrbwalker()
         gsoMenu = gsoOrbwalker.Menu
         gsoMode = gsoOrbwalker.Mode
